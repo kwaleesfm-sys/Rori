@@ -241,6 +241,7 @@
             height: 100%;
             background: var(--neon-green);
             width: 100%;
+            transition: width 0.3s;
         }
 
         /* Market */
@@ -313,6 +314,18 @@
             justify-content: center;
             height: 80vh;
         }
+        
+        .auth-input {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid var(--neon-blue);
+            background: #222;
+            color: #fff;
+            width: 80%;
+            max-width: 300px;
+            font-size: 1rem;
+        }
 
         .hidden { display: none !important; }
     </style>
@@ -322,7 +335,14 @@
     <div id="login-screen" class="container">
         <h1 style="color: var(--neon-green); margin-bottom: 20px; font-size: 2.5rem; text-shadow: 0 0 20px var(--neon-green);">HOMOS Football Universe</h1>
         <p style="margin-bottom: 30px; font-size: 1.2rem;">أهلاً بيك يا عالمي في أقوى لعبة كورة .. ادخل وورينا مهاراتك!</p>
-        <button id="btn-login" style="font-size: 1.2rem; padding: 15px 30px;">سجل دخول يا بطل (Google)</button>
+        
+        <input type="email" id="email-input" class="auth-input" placeholder="اكتب الإيميل بتاعك">
+        <input type="password" id="password-input" class="auth-input" placeholder="الباسورد يا بطل (6 حروف/أرقام عالأقل)">
+        
+        <div style="display: flex; gap: 15px; margin-top: 10px;">
+            <button id="btn-login" style="font-size: 1.2rem; padding: 10px 30px;">سجل دخول</button>
+            <button id="btn-register" style="font-size: 1.2rem; padding: 10px 30px; border-color: var(--neon-green); color: var(--neon-green);">حساب جديد</button>
+        </div>
     </div>
 
     <div id="main-game" class="hidden">
@@ -389,7 +409,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, onSnapshot, addDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
         const firebaseConfig = {
@@ -426,10 +446,22 @@
             });
         });
 
-        // Authentication
+        // Authentication (Email/Password)
         document.getElementById('btn-login').addEventListener('click', () => {
-            const provider = new GoogleAuthProvider();
-            signInWithPopup(auth, provider).catch(error => alert("حصلت مشكلة في تسجيل الدخول يا كابتن!"));
+            const email = document.getElementById('email-input').value;
+            const pass = document.getElementById('password-input').value;
+            if(!email || !pass) { alert("اكتب الإيميل والباسورد يا بطل!"); return; }
+            signInWithEmailAndPassword(auth, email, pass).catch(error => alert("الإيميل أو الباسورد غلط يا كابتن.. ركز شوية!"));
+        });
+
+        document.getElementById('btn-register').addEventListener('click', () => {
+            const email = document.getElementById('email-input').value;
+            const pass = document.getElementById('password-input').value;
+            if(!email || pass.length < 6) { alert("لازم إيميل وباسورد لا يقل عن 6 حروف/أرقام يا عالمي!"); return; }
+            createUserWithEmailAndPassword(auth, email, pass).catch(error => {
+                if(error.code === 'auth/email-already-in-use') alert("الإيميل ده متسجل بيه قبل كدا يا بطل!");
+                else alert("حصلت مشكلة في عمل الحساب!");
+            });
         });
 
         document.getElementById('btn-logout').addEventListener('click', () => {
@@ -453,6 +485,9 @@
                 currentUser = null;
                 loginScreen.classList.remove('hidden');
                 mainGame.classList.add('hidden');
+                document.getElementById('email-input').value = '';
+                document.getElementById('password-input').value = '';
+                document.getElementById('nav-admin').classList.add('hidden');
             }
         });
 
@@ -463,7 +498,7 @@
             
             if (!userSnap.exists()) {
                 userData = {
-                    name: user.displayName,
+                    email: user.email,
                     gems: 200,
                     squad: [],
                     friends: [],
@@ -612,7 +647,7 @@
                     rating: player.rating,
                     atk: player.atk,
                     def: player.def,
-                    stamina: 100 // Full stamina on purchase
+                    stamina: 100 
                 };
                 userData.squad.push(newPlayer);
                 
@@ -622,13 +657,13 @@
                 });
                 alert(`مبروك يا بطل! ${player.name} بقى معاك في التشكيلة.`);
                 updateUI();
-                renderMarket(); // update button states
+                renderMarket();
             } else {
                 alert("معكش فلوس كفاية يا كابتن! استنى الهدية اليومية.");
             }
         }
 
-        // Match Engine Logic
+        // Smart Match Engine Logic
         document.getElementById('btn-start-match').addEventListener('click', startMatch);
 
         async function startMatch() {
@@ -644,111 +679,148 @@
             const commBox = document.getElementById('commentary-box');
             commBox.innerHTML = '';
 
-            const addComment = (text, delay) => {
-                setTimeout(() => {
-                    commBox.innerHTML += `<p>⚽ ${text}</p>`;
-                    commBox.scrollTop = commBox.scrollHeight;
-                }, delay);
+            const addComment = (text) => {
+                commBox.innerHTML += `<p>⚽ ${text}</p>`;
+                commBox.scrollTop = commBox.scrollHeight;
             };
 
-            // Calculate Team Power
-            let teamAtk = 0;
-            let teamDef = 0;
+            // Smart Stat Calculation Base
+            let baseTeamAtk = 0;
+            let baseTeamDef = 0;
             
+            // Get base stats considering chemistry
             userData.squad.forEach(p => {
-                // Fatigue penalty (if stamina < 50, stats drop by 20%)
-                let multiplier = p.stamina < 50 ? 0.8 : 1.0;
-                teamAtk += (p.atk * multiplier);
-                teamDef += (p.def * multiplier);
+                baseTeamAtk += p.atk;
+                baseTeamDef += p.def;
             });
 
-            // Chemistry boost (+10%)
             if(userData.squad.length >= 5) {
-                teamAtk *= 1.1;
-                teamDef *= 1.1;
+                baseTeamAtk *= 1.1; // 10% Chemistry Boost
+                baseTeamDef *= 1.1;
             }
 
-            // Bot stats (Random scale based on user level to make it fair but challenging)
-            const botAtk = Math.floor(Math.random() * (teamDef + 50)) + (teamDef * 0.5);
-            const botDef = Math.floor(Math.random() * (teamAtk + 50)) + (teamAtk * 0.5);
-
-            addComment("بسم الله، الحكم بيصفر والماتش بيبدأ في أجواء عالمية!", 1000);
-            addComment("فريقك نازل وعينه على المكسب...", 2500);
+            // Calculate Bot stats intelligently (Adaptive Difficulty)
+            // The bot adjusts to the player's level but has a random edge factor
+            const botAtk = Math.floor(baseTeamDef * 0.8) + Math.floor(Math.random() * 40);
+            const botDef = Math.floor(baseTeamAtk * 0.8) + Math.floor(Math.random() * 40);
 
             let myScore = 0;
             let botScore = 0;
             const scoreEl = document.getElementById('score-board');
             scoreEl.innerText = "0 - 0";
 
-            // Event 1: User Attack
-            setTimeout(() => {
-                addComment("هجمة خطيرة لفريقك، باص حلو أوي...", 4000);
-                setTimeout(() => {
-                    const chance = (teamAtk / (teamAtk + botDef)) * 100;
-                    const roll = Math.random() * 100;
-                    if(roll < chance) {
-                        myScore++;
-                        scoreEl.innerText = `${myScore} - ${botScore}`;
-                        addComment("جوووووول! ايه الحلاوة دي! صاروخ في المقص يا لعيب!", 0);
-                    } else {
-                        addComment("يا خسارة! الكورة في السما، هجمة ضاعت بعبط.", 0);
-                    }
-                }, 1500);
-            }, 4000);
+            addComment("بسم الله، الحكم بيصفر والماتش بيبدأ في أجواء عالمية!");
+            
+            // Match Simulation Loop (4 events)
+            let currentMinute = 0;
+            let currentFatiguePenalty = 0; // Starts at 0, increases as match goes on
 
-            // Event 2: Bot Attack
-            setTimeout(() => {
-                addComment("الخصم بيبني هجمة مرتدة سريعة...", 8000);
-                setTimeout(() => {
-                    const chance = (botAtk / (botAtk + teamDef)) * 100;
-                    const roll = Math.random() * 100;
-                    if(roll < chance) {
-                        botScore++;
-                        scoreEl.innerText = `${myScore} - ${botScore}`;
-                        addComment("دفاعك شوارع يا كابتن! الخصم جاب جون فينا بسهولة.", 0);
-                    } else {
-                        addComment("عاش الدفاع! قطع الكورة بامتياز وقفل المساحات.", 0);
-                    }
-                }, 1500);
-            }, 8000);
-
-            // Event 3: Final push
-            setTimeout(() => {
-                addComment("الدقيقة 90 والكل على أعصابه...", 12000);
-                setTimeout(() => {
-                    const chance = (teamAtk / (teamAtk + botDef + 20)) * 100; // Harder at the end
-                    const roll = Math.random() * 100;
-                    if(roll < chance) {
-                        myScore++;
-                        scoreEl.innerText = `${myScore} - ${botScore}`;
-                        addComment("جوووول قاتل! هدف بـ 3 نقط يقلب الموازين!", 0);
-                    } else {
-                        addComment("فرصة بتضيع في آخر ثانية... الحكم بيبص في ساعته.", 0);
-                    }
-                }, 1500);
-            }, 12000);
-
-            // Match End Logic
-            setTimeout(async () => {
-                addComment(`نهاية الماتش بنتيجة ${myScore} - ${botScore}.`, 16000);
+            const simulateEvent = (eventNum) => {
+                // Calculate Dynamic Stats based on real-time stamina drop
+                let dynamicTeamAtk = 0;
+                let dynamicTeamDef = 0;
                 
+                // Average stamina of the squad affects performance heavily in late game
+                let avgStamina = userData.squad.reduce((sum, p) => sum + p.stamina, 0) / userData.squad.length;
+                let staminaFactor = Math.max(0.4, (avgStamina - currentFatiguePenalty) / 100); 
+
+                dynamicTeamAtk = baseTeamAtk * staminaFactor;
+                dynamicTeamDef = baseTeamDef * staminaFactor;
+
+                // Random luck factor (0.8 to 1.2)
+                let luck = 0.8 + (Math.random() * 0.4);
+
+                if (eventNum === 1) {
+                    currentMinute = 22;
+                    addComment(`الدقيقة ${currentMinute}: هجمة منظمة لفريقك، باص حلو أوي...`);
+                    setTimeout(() => {
+                        const chance = ((dynamicTeamAtk * luck) / ((dynamicTeamAtk * luck) + botDef)) * 100;
+                        if(Math.random() * 100 < chance) {
+                            myScore++; scoreEl.innerText = `${myScore} - ${botScore}`;
+                            addComment("جوووووول! ايه الحلاوة دي! صاروخ في المقص يا لعيب!");
+                        } else {
+                            addComment("يا خسارة! الكورة في السما، هجمة ضاعت بعبط.");
+                        }
+                    }, 1500);
+                } 
+                else if (eventNum === 2) {
+                    currentMinute = 45;
+                    currentFatiguePenalty += 10; // Players getting tired
+                    addComment(`الدقيقة ${currentMinute}: الخصم بيبني هجمة مرتدة سريعة خطيرة...`);
+                    setTimeout(() => {
+                        const chance = ((botAtk * luck) / ((botAtk * luck) + dynamicTeamDef)) * 100;
+                        if(Math.random() * 100 < chance) {
+                            botScore++; scoreEl.innerText = `${myScore} - ${botScore}`;
+                            addComment("دفاعك شوارع يا كابتن! الخصم جاب جون فينا بسهولة.");
+                        } else {
+                            addComment("عاش الدفاع! قطع الكورة بامتياز وقفل المساحات.");
+                        }
+                    }, 1500);
+                }
+                else if (eventNum === 3) {
+                    currentMinute = 70;
+                    currentFatiguePenalty += 15; // Heavy fatigue kicks in
+                    if (staminaFactor < 0.6) addComment("اللعيبة بتنهج ومش قادرة تجري في الملعب! اللياقة في النازل.");
+                    
+                    addComment(`الدقيقة ${currentMinute}: ضربة حرة مباشرة لفريقك من مكان خطير...`);
+                    setTimeout(() => {
+                        const chance = ((dynamicTeamAtk * luck) / ((dynamicTeamAtk * luck) + botDef)) * 100;
+                        if(Math.random() * 100 < chance) {
+                            myScore++; scoreEl.innerText = `${myScore} - ${botScore}`;
+                            addComment("جوووووول! حطها بماركة الكبار! المعلم معلم!");
+                        } else {
+                            addComment("في حيطة الصد! ضاعت فرصة دهب.");
+                        }
+                    }, 1500);
+                }
+                else if (eventNum === 4) {
+                    currentMinute = 90;
+                    addComment(`الدقيقة ${currentMinute}: الثواني الأخيرة والكل حاطط إيده على قلبه...`);
+                    setTimeout(() => {
+                        // AI pushes hard in last minute
+                        const aiFinalPush = botAtk * 1.2;
+                        const chance = (aiFinalPush / (aiFinalPush + dynamicTeamDef)) * 100;
+                        if(Math.random() * 100 < chance && botScore <= myScore) {
+                            botScore++; scoreEl.innerText = `${myScore} - ${botScore}`;
+                            addComment("يا نهار أبيض! الخصم بيخطف جون في الوقت القاتل!");
+                        } else if (botScore > myScore) {
+                           addComment("الخصم بيقفل دفاعاته وبيلعب على تضييع الوقت.");
+                        } else {
+                            addComment("استبسال دفاعي عظيم من فريقك بيمنع كارثة!");
+                        }
+                    }, 1500);
+                }
+                else if (eventNum === 5) { // Match End
+                    addComment(`نهاية الماتش بنتيجة ${myScore} - ${botScore}.`);
+                    finalizeMatch(myScore, botScore);
+                }
+            };
+
+            // Execute events with timing
+            setTimeout(() => simulateEvent(1), 3000);
+            setTimeout(() => simulateEvent(2), 7000);
+            setTimeout(() => simulateEvent(3), 11000);
+            setTimeout(() => simulateEvent(4), 15000);
+            setTimeout(() => simulateEvent(5), 18000);
+            
+            async function finalizeMatch(myScore, botScore) {
                 let gemReward = 0;
                 if(myScore > botScore) {
-                    addComment("عاش يا وحش! كسبت الماتش ونورت الدنيا وخدت 30 H-Gems.", 16500);
+                    addComment("عاش يا وحش! كسبت الماتش ونورت الدنيا وخدت 30 H-Gems.");
                     gemReward = 30;
                 } else if (myScore === botScore) {
-                    addComment("تعادل عادل! استلم 10 H-Gems.", 16500);
+                    addComment("تعادل عادل! استلم 10 H-Gems.");
                     gemReward = 10;
                 } else {
-                    addComment("هارد لك يا كابتن.. محتاجين نظبط التشكيلة شوية. خد 5 H-Gems ترضية.", 16500);
+                    addComment("هارد لك يا كابتن.. محتاجين نظبط التشكيلة والياقة شوية. خد 5 H-Gems ترضية.");
                     gemReward = 5;
                 }
 
-                // Update Stats (Fatigue & Rewards)
+                // Update Stats (Fatigue Penalty)
                 userData.gems += gemReward;
                 userData.matchesPlayed = (userData.matchesPlayed || 0) + 1;
                 
-                // Reduce Stamina by 15 per match
+                // Reduce Stamina by 15 per match permanently until healed
                 userData.squad = userData.squad.map(p => {
                     p.stamina = Math.max(0, p.stamina - 15);
                     return p;
@@ -763,7 +835,7 @@
                 updateUI();
                 btn.disabled = false;
                 btn.innerText = "صفّر يا حكم (ابدأ الماتش)";
-            }, 16000);
+            }
         }
 
         // Admin functionality
