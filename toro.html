@@ -4,199 +4,86 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>نيش-Nesh | القمة الإخبارية</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        /* المتغيرات والألوان الأساسية */
         :root {
-            --bg-dark: #0a0e17;
-            --card-bg: rgba(20, 26, 40, 0.6);
-            --primary-red: #e63946;
-            --primary-gold: #f4a261;
-            --text-light: #f8f9fa;
-            --text-muted: #adb5bd;
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            --glass: rgba(255, 255, 255, 0.1);
+            --accent: #ff4d4d;
+            --gold: #ffd700;
+            --dark-bg: #0f172a;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Cairo', sans-serif;
-            scroll-behavior: smooth;
-        }
+        * { box-sizing: border-box; transition: all 0.3s ease; }
 
         body {
-            background: var(--bg-dark);
-            background-image: 
-                radial-gradient(circle at 15% 50%, rgba(230, 57, 70, 0.05), transparent 25%),
-                radial-gradient(circle at 85% 30%, rgba(244, 162, 97, 0.05), transparent 25%);
-            color: var(--text-light);
+            font-family: 'Cairo', sans-serif;
+            margin: 0;
+            background: radial-gradient(circle at top right, #1e293b, #0f172a);
+            color: white;
+            min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* شريط الأخبار العاجلة (Ticker) */
-        .ticker-wrap {
-            background: var(--primary-red);
-            width: 100%;
-            height: 40px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(230, 57, 70, 0.3);
-            position: relative;
-            z-index: 1001;
-        }
-        .ticker-title {
-            background: #900000;
-            color: white;
-            padding: 0 20px;
-            font-weight: 900;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            position: absolute;
-            right: 0;
-            z-index: 2;
-        }
-        .ticker-move {
-            display: inline-block;
-            white-space: nowrap;
-            padding-right: 120px;
-            animation: ticker 25s linear infinite;
-        }
-        .ticker-item { margin-left: 40px; font-weight: 600; font-size: 0.95rem; }
-        @keyframes ticker {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        }
-
-        /* الهيدر الاحترافي (Glassmorphism) */
+        /* هيدر أسطوري */
         header {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            padding: 30px 5%;
             position: sticky;
             top: 0;
             z-index: 1000;
-            background: rgba(10, 14, 23, 0.85);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--glass-border);
-            padding: 15px 5%;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        .header-content {
+        .logo-box {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .h-logo {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--accent), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(255, 77, 77, 0.5);
+        }
+
+        .search-bar {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 15px 25px;
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(0,0,0,0.3);
+            color: white;
+            font-size: 1.1rem;
+            outline: none;
+        }
+
+        .search-bar input:focus { border-color: var(--accent); box-shadow: 0 0 15px var(--accent); }
+
+        /* شريط الأخبار المتحرك */
+        .breaking-news {
+            background: var(--accent);
+            padding: 10px;
+            font-weight: bold;
+            display: flex;
             gap: 20px;
         }
 
-        /* مكان اللوجو */
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            cursor: pointer;
-        }
-        .logo-img {
-            width: 60px; /* يمكنك تعديل حجم اللوجو من هنا */
-            height: auto;
-            border-radius: 8px;
-            /* تأثير إضاءة للوجو */
-            filter: drop-shadow(0 0 10px rgba(244, 162, 97, 0.4));
-            transition: transform 0.3s;
-        }
-        .logo-container:hover .logo-img {
-            transform: scale(1.05);
-        }
-        .brand-name {
-            font-size: 2.2rem;
-            font-weight: 900;
-            background: linear-gradient(45deg, var(--primary-gold), var(--primary-red));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: 1px;
-        }
-
-        /* شريط البحث */
-        .search-box {
-            position: relative;
-            width: 100%;
-            max-width: 450px;
-        }
-        .search-box input {
-            width: 100%;
-            padding: 12px 20px 12px 45px;
-            border-radius: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(0, 0, 0, 0.4);
-            color: white;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-        .search-box input:focus {
-            border-color: var(--primary-gold);
-            box-shadow: 0 0 15px rgba(244, 162, 97, 0.2);
-            outline: none;
-        }
-        .search-btn {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: var(--primary-gold);
-            cursor: pointer;
-            font-size: 1.2rem;
-        }
-
-        /* شريط الأقسام */
-        .nav-categories {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            overflow-x: auto;
-            padding-bottom: 5px;
-        }
-        .nav-categories::-webkit-scrollbar { height: 4px; }
-        .nav-categories::-webkit-scrollbar-thumb { background: var(--primary-red); border-radius: 10px; }
-        
-        .cat-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--glass-border);
-            color: var(--text-muted);
-            padding: 8px 20px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 600;
-            white-space: nowrap;
-            transition: all 0.3s;
-        }
-        .cat-btn:hover, .cat-btn.active {
-            background: var(--primary-red);
-            color: white;
-            border-color: var(--primary-red);
-            box-shadow: 0 4px 15px rgba(230, 57, 70, 0.4);
-            transform: translateY(-2px);
-        }
-
-        /* المحتوى الرئيسي وشبكة الأخبار */
-        main {
-            padding: 40px 5%;
-            min-height: 80vh;
-        }
-
-        .section-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 30px;
-            border-right: 5px solid var(--primary-gold);
-            padding-right: 15px;
-        }
-        .section-header h2 { font-size: 2rem; font-weight: 900; }
+        /* كروت الأخبار بتصميم 3D */
+        main { padding: 40px 5%; }
 
         .news-grid {
             display: grid;
@@ -204,341 +91,145 @@
             gap: 30px;
         }
 
-        /* كروت الأخبار (3D Hover Effect) */
         .news-card {
-            background: var(--card-bg);
-            border: 1px solid var(--glass-border);
+            background: var(--glass);
             border-radius: 20px;
             overflow: hidden;
-            cursor: pointer;
-            backdrop-filter: blur(10px);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255,255,255,0.05);
             position: relative;
         }
+
         .news-card:hover {
-            transform: translateY(-12px) scale(1.02);
-            border-color: var(--primary-gold);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), 0 0 20px rgba(244, 162, 97, 0.2);
+            transform: scale(1.03) rotate(1deg);
+            border-color: var(--gold);
         }
-        .img-wrapper {
-            position: relative;
-            width: 100%;
-            height: 220px;
-            overflow: hidden;
-        }
+
         .news-img {
             width: 100%;
-            height: 100%;
+            height: 220px;
             object-fit: cover;
-            transition: transform 0.5s ease;
+            filter: grayscale(30%);
         }
-        .news-card:hover .news-img { transform: scale(1.1); }
-        
-        .source-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(0, 0, 0, 0.7);
-            color: var(--primary-gold);
-            padding: 5px 12px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            font-weight: 800;
-            backdrop-filter: blur(5px);
-        }
+
+        .news-card:hover .news-img { filter: grayscale(0%); }
 
         .news-info { padding: 20px; }
-        .news-date { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px; display: block; }
-        .news-title {
-            font-size: 1.2rem;
-            line-height: 1.5;
-            font-weight: 800;
-            margin-bottom: 15px;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-        .read-more {
-            color: var(--primary-red);
-            font-weight: 700;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
 
-        /* نافذة القراءة (Modal) المتطورة */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(15px);
-            z-index: 2000;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        .modal-overlay.active { display: flex; opacity: 1; }
-        
-        .modal-content {
-            background: #111827;
-            width: 90%;
-            max-width: 850px;
-            max-height: 85vh;
-            border-radius: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            overflow-y: auto;
-            position: relative;
-            transform: translateY(50px);
-            transition: transform 0.4s ease;
-        }
-        .modal-overlay.active .modal-content { transform: translateY(0); }
-        
-        .modal-header { position: relative; width: 100%; height: 350px; }
-        .modal-header img { width: 100%; height: 100%; object-fit: cover; }
-        .modal-header::after {
-            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 70%;
-            background: linear-gradient(to top, #111827, transparent);
-        }
-        
-        .close-btn {
-            position: absolute;
-            top: 20px; left: 20px;
-            background: rgba(0, 0, 0, 0.5);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            width: 45px; height: 45px;
-            border-radius: 50%;
-            font-size: 1.2rem;
-            cursor: pointer;
-            z-index: 10;
-            transition: all 0.3s;
-            display: flex; justify-content: center; align-items: center;
-        }
-        .close-btn:hover { background: var(--primary-red); transform: rotate(90deg); }
-
-        .modal-body { padding: 40px; position: relative; z-index: 2; margin-top: -80px; }
-        .modal-title { font-size: 2rem; font-weight: 900; margin-bottom: 15px; color: white; line-height: 1.4; }
-        .modal-meta { display: flex; gap: 20px; margin-bottom: 25px; color: var(--primary-gold); font-weight: 700; font-size: 0.95rem; }
-        .modal-desc { font-size: 1.2rem; line-height: 1.8; color: #d1d5db; margin-bottom: 25px; }
-        .source-link {
-            display: inline-block;
-            background: var(--primary-red);
-            color: white;
-            padding: 12px 25px;
-            border-radius: 30px;
-            text-decoration: none;
+        .news-tag {
+            background: var(--accent);
+            padding: 4px 12px;
+            border-radius: 5px;
+            font-size: 0.8rem;
             font-weight: bold;
-            transition: 0.3s;
         }
-        .source-link:hover { background: #c81e2b; box-shadow: 0 0 15px rgba(230, 57, 70, 0.5); }
 
-        /* الأنيميشن والتحميل */
+        .news-title {
+            margin: 15px 0;
+            font-size: 1.3rem;
+            line-height: 1.5;
+        }
+
+        .btn-more {
+            display: inline-block;
+            padding: 10px 20px;
+            background: linear-gradient(to left, var(--accent), #b30000);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
         .loader {
-            grid-column: 1 / -1;
             text-align: center;
-            padding: 80px;
-        }
-        .spinner {
-            width: 60px; height: 60px;
-            border: 5px solid rgba(255, 255, 255, 0.1);
-            border-top-color: var(--primary-red);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        
-        footer {
-            text-align: center;
-            padding: 30px;
-            background: #05070a;
-            color: var(--text-muted);
-            border-top: 1px solid var(--glass-border);
-            font-weight: 600;
+            font-size: 2rem;
+            padding: 100px;
+            animation: pulse 1.5s infinite;
         }
 
+        @keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        @media (max-width: 768px) {
+            .h-logo { font-size: 2rem; }
+        }
     </style>
 </head>
 <body>
 
-    <div class="ticker-wrap">
-        <div class="ticker-title">عاجل</div>
-        <div class="ticker-move" id="breaking-ticker">
-            <span class="ticker-item">جاري تحميل الأخبار العاجلة...</span>
-        </div>
-    </div>
-
     <header>
-        <div class="header-content">
-            <div class="logo-container" onclick="loadNews('مصر')">
-                <img src="ضع_رابط_صورة_اللوجو_هنا.jpg" alt="لوجو نيش" class="logo-img" onerror="this.src='https://via.placeholder.com/60/1a1a1a/f4a261?text=N'">
-                <span class="brand-name">NESH</span>
-            </div>
-            
-            <div class="search-box">
-                <input type="text" id="search-input" placeholder="ابحث في الأخبار والتقارير..." onkeypress="if(event.key==='Enter')handleSearch()">
-                <button class="search-btn" onclick="handleSearch()"><i class="fas fa-search"></i></button>
-            </div>
+        <div class="logo-box">
+            <span class="h-logo">H</span>
+            <h1 style="margin:0; letter-spacing: 2px;">نيش - NESH</h1>
         </div>
-
-        <div class="nav-categories">
-            <button class="cat-btn active" onclick="loadCategory('مصر', this)">أهم الأخبار</button>
-            <button class="cat-btn" onclick="loadCategory('رياضة', this)">رياضة</button>
-            <button class="cat-btn" onclick="loadCategory('تكنولوجيا', this)">تكنولوجيا</button>
-            <button class="cat-btn" onclick="loadCategory('اقتصاد', this)">اقتصاد وأعمال</button>
-            <button class="cat-btn" onclick="loadCategory('فلسطين', this)">تغطية خاصة</button>
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="استكشف الأخبار الحصرية الآن...">
+            <button onclick="handleSearch()" style="position:absolute; left:10px; top:50%; transform:translateY(-50%); background:none; border:none; color:var(--gold); cursor:pointer; font-weight:bold;">بحث</button>
         </div>
     </header>
 
     <main>
-        <div class="section-header">
-            <h2 id="section-title">التغطية المباشرة</h2>
-        </div>
-        <div id="news-grid" class="news-grid"></div>
+        <h2 style="border-right: 4px solid var(--accent); padding-right: 15px; margin-bottom: 40px;" id="title-text">
+            التغطية المباشرة لـ نيش
+        </h2>
+        <div id="news-grid" class="news-grid">
+            </div>
     </main>
-
-    <div id="newsModal" class="modal-overlay">
-        <div class="modal-content">
-            <button class="close-btn" onclick="closeModal()"><i class="fas fa-times"></i></button>
-            <div class="modal-header">
-                <img id="m-img" src="" alt="صورة الخبر">
-            </div>
-            <div class="modal-body">
-                <h1 id="m-title" class="modal-title"></h1>
-                <div class="modal-meta">
-                    <span id="m-source"><i class="fas fa-newspaper"></i> </span>
-                    <span id="m-date"><i class="far fa-clock"></i> </span>
-                </div>
-                <p id="m-desc" class="modal-desc"></p>
-                <a id="m-link" href="#" target="_blank" class="source-link">عرض التفاصيل في المصدر الأصلي <i class="fas fa-external-link-alt"></i></a>
-            </div>
-        </div>
-    </div>
-
-    <footer>
-        تم التطوير بكل فخر بواسطة HOMOS Studio &copy; 2026
-    </footer>
 
     <script>
         const API_KEY = '7074b582c78b49de9496d5a09127cb31';
-        let currentArticles = [];
 
-        // تنسيق التاريخ والوقت
-        function formatDate(dateString) {
-            const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-            return new Date(dateString).toLocaleDateString('ar-EG', options);
-        }
-
-        // جلب الأخبار
-        async function loadNews(query) {
+        // دالة تعمل تلقائياً عند فتح الموقع لجلب أهم أخبار مصر والحرب/الأحداث الجارية
+        async function loadAutoNews() {
             const grid = document.getElementById('news-grid');
-            grid.innerHTML = `
-                <div class="loader">
-                    <div class="spinner"></div>
-                    <h3>جاري إعداد التغطية الإخبارية...</h3>
-                </div>`;
-            
-            const url = `https://newsapi.org/v2/everything?q=${query}&language=ar&sortBy=publishedAt&pageSize=30&apiKey=${API_KEY}`;
+            grid.innerHTML = '<div class="loader">جاري استحضار العظمة...</div>';
+
+            // هذا الرابط يجمع بين أخبار مصر (eg) ومواضيع الحرب/الأحداث الجارية باستخدام البحث المتقدم
+            const url = `https://newsapi.org/v2/everything?q=(مصر OR سيناء OR غزة OR الحرب)&language=ar&sortBy=publishedAt&apiKey=${API_KEY}`;
 
             try {
-                const res = await fetch(url);
-                const data = await res.json();
-                if (data.articles && data.articles.length > 0) {
-                    currentArticles = data.articles.filter(art => art.title && !art.title.includes("[Removed]"));
-                    renderNews(currentArticles);
-                    updateTicker(currentArticles);
-                } else {
-                    grid.innerHTML = '<div class="loader"><h3>لا توجد أخبار مطابقة لبحثك حالياً.</h3></div>';
-                }
-            } catch (e) { 
-                grid.innerHTML = '<div class="loader"><h3 style="color:var(--primary-red)">خطأ في الاتصال بالسيرفر. يرجى التحقق من الإنترنت.</h3></div>'; 
+                const response = await fetch(url);
+                const data = await response.json();
+                renderNews(data.articles);
+            } catch (e) {
+                grid.innerHTML = "خطأ في الاتصال بالسيرفر";
             }
         }
 
-        // تحديث شريط الأخبار العاجلة
-        function updateTicker(articles) {
-            const ticker = document.getElementById('breaking-ticker');
-            ticker.innerHTML = '';
-            articles.slice(0, 5).forEach(art => {
-                ticker.innerHTML += `<span class="ticker-item"><i class="fas fa-bolt" style="color:#f4a261; margin-left:5px;"></i> ${art.title}</span>`;
-            });
+        // دالة البحث اليدوي
+        async function handleSearch() {
+            const q = document.getElementById('search-input').value;
+            if(!q) return;
+            document.getElementById('title-text').innerText = `نتائج البحث عن: ${q}`;
+            const url = `https://newsapi.org/v2/everything?q=${q}&language=ar&apiKey=${API_KEY}`;
+            const res = await fetch(url);
+            const data = await res.json();
+            renderNews(data.articles);
         }
 
-        // رسم كروت الأخبار
         function renderNews(articles) {
             const grid = document.getElementById('news-grid');
             grid.innerHTML = '';
-            articles.forEach((art, index) => {
-                const imgUrl = art.urlToImage || 'https://images.unsplash.com/photo-1495020689067-958852a7765e?w=800&q=80';
+            articles.slice(0, 21).forEach(art => { // عرض أول 21 خبر
+                if(!art.title || art.title.includes("[Removed]")) return;
+                
                 grid.innerHTML += `
-                    <div class="news-card" onclick="openModal(${index})">
-                        <div class="img-wrapper">
-                            <span class="source-badge">${art.source.name}</span>
-                            <img src="${imgUrl}" class="news-img" loading="lazy">
-                        </div>
+                    <div class="news-card">
+                        <img src="${art.urlToImage || 'https://images.unsplash.com/photo-1504711432869-efd597cdd042?w=800'}" class="news-img">
                         <div class="news-info">
-                            <span class="news-date">${formatDate(art.publishedAt)}</span>
+                            <span class="news-tag">${art.source.name}</span>
                             <h3 class="news-title">${art.title}</h3>
-                            <div class="read-more">التفاصيل <i class="fas fa-arrow-left"></i></div>
+                            <a href="${art.url}" target="_blank" class="btn-more">اقرأ الخبر كاملاً</a>
                         </div>
                     </div>
                 `;
             });
         }
 
-        // وظائف النافذة المنبثقة
-        function openModal(index) {
-            const art = currentArticles[index];
-            document.getElementById('m-img').src = art.urlToImage || 'https://images.unsplash.com/photo-1495020689067-958852a7765e?w=800&q=80';
-            document.getElementById('m-title').innerText = art.title;
-            document.getElementById('m-source').innerHTML = `<i class="fas fa-newspaper"></i> المصدر: ${art.source.name}`;
-            document.getElementById('m-date').innerHTML = `<i class="far fa-clock"></i> ${formatDate(art.publishedAt)}`;
-            document.getElementById('m-desc').innerText = art.description || 'تفاصيل إضافية غير متوفرة في الوقت الحالي، يمكنك زيارة المصدر للحصول على التقرير الكامل.';
-            document.getElementById('m-link').href = art.url;
-            
-            const modal = document.getElementById('newsModal');
-            modal.style.display = 'flex';
-            setTimeout(() => modal.classList.add('active'), 10);
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeModal() {
-            const modal = document.getElementById('newsModal');
-            modal.classList.remove('active');
-            setTimeout(() => modal.style.display = 'none', 300);
-            document.body.style.overflow = 'auto';
-        }
-
-        // التبديل بين الأقسام
-        function loadCategory(q, btn) {
-            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            document.getElementById('section-title').innerText = btn.innerText;
-            loadNews(q);
-        }
-
-        // البحث اليدوي
-        function handleSearch() {
-            const q = document.getElementById('search-input').value;
-            if(q.trim() !== '') {
-                document.getElementById('section-title').innerText = `نتائج البحث: ${q}`;
-                loadNews(q);
-            }
-        }
-
-        // إغلاق النافذة عند الضغط خارجها
-        window.onclick = function(event) {
-            const modal = document.getElementById('newsModal');
-            if (event.target == modal) { closeModal(); }
-        }
-
-        // التشغيل المبدئي
-        window.onload = () => loadNews('مصر');
+        // تنفيذ الجلب التلقائي فور التحميل
+        window.onload = loadAutoNews;
     </script>
 </body>
 </html>
