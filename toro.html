@@ -3,141 +3,165 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HOMOS BET - الاحتراف في التوقعات</title>
-    <!-- استدعاء خطوط جوجل لتصميم عصري -->
+    <title>HOMOS BET - المنظومة الذكية</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
-    <!-- أيقونات -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-dark: #0f172a;
-            --bg-card: #1e293b;
+            --glass: rgba(255, 255, 255, 0.07);
+            --glass-border: rgba(255, 255, 255, 0.12);
             --primary: #f59e0b;
-            --primary-hover: #d97706;
             --success: #10b981;
             --danger: #ef4444;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
+            --text: #ffffff;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
         
-        body { background-color: var(--bg-dark); color: var(--text-main); }
+        body { 
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #020617 100%);
+            background-attachment: fixed;
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-        /* Header & Navbar */
-        header { background: var(--bg-card); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-        .logo { font-size: 1.8rem; font-weight: 900; color: var(--primary); letter-spacing: 1px; }
-        .logo span { color: var(--text-main); }
-        .admin-gear { font-size: 1.5rem; color: var(--text-muted); cursor: pointer; transition: 0.3s; }
-        .admin-gear:hover { color: var(--primary); transform: rotate(90deg); }
+        /* Animated Background Mesh */
+        body::before {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(245, 158, 11, 0.05) 0%, transparent 50%);
+            z-index: -1; animation: pulseBg 10s infinite alternate;
+        }
+        @keyframes pulseBg { 0% { transform: scale(1); } 100% { transform: scale(1.5); } }
+
+        /* Glass Header */
+        header { 
+            background: var(--glass); backdrop-filter: blur(15px);
+            padding: 20px; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--glass-border); position: sticky; top: 0; z-index: 100;
+        }
+        .logo { font-size: 1.8rem; font-weight: 900; color: var(--primary); text-shadow: 0 0 15px rgba(245, 158, 11, 0.5); }
+
+        /* Success Gauge Section */
+        .gauge-section {
+            background: var(--glass); margin: 20px; padding: 20px; border-radius: 20px;
+            backdrop-filter: blur(10px); border: 1px solid var(--glass-border); text-align: center;
+        }
+        .gauge-container { width: 100%; height: 12px; background: #334155; border-radius: 10px; margin: 15px 0; overflow: hidden; position: relative; }
+        #globalGauge { width: 50%; height: 100%; background: linear-gradient(90deg, var(--danger), var(--success)); transition: 1s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .gauge-labels { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: bold; }
 
         /* Tabs */
-        .tabs { display: flex; justify-content: center; gap: 10px; padding: 20px; }
-        .tab-btn { background: var(--bg-card); color: var(--text-main); border: 1px solid #334155; padding: 10px 25px; border-radius: 8px; cursor: pointer; font-size: 1.1rem; font-weight: bold; transition: 0.3s; }
-        .tab-btn.active { background: var(--primary); color: #000; border-color: var(--primary); }
-        
-        .tab-content { display: none; padding: 20px; max-width: 600px; margin: 0 auto; }
+        .tabs { display: flex; justify-content: center; gap: 15px; padding: 10px; }
+        .tab-btn { 
+            background: var(--glass); color: var(--text); border: 1px solid var(--glass-border);
+            padding: 12px 25px; border-radius: 30px; cursor: pointer; transition: 0.4s;
+            backdrop-filter: blur(5px); font-weight: bold;
+        }
+        .tab-btn.active { background: var(--primary); color: #000; box-shadow: 0 0 20px rgba(245, 158, 11, 0.4); }
+
+        .tab-content { display: none; padding: 20px; animation: fadeIn 0.5s ease; }
         .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Apple Screen Section */
-        .generator-box { text-align: center; }
-        .generate-btn { background: var(--success); color: white; border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: bold; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); transition: 0.3s; margin-bottom: 20px; width: 100%; }
-        .generate-btn:hover { background: #059669; }
-        
-        .board { display: flex; flex-direction: column-reverse; gap: 8px; background: var(--bg-card); padding: 15px; border-radius: 12px; margin-bottom: 20px; }
-        .row { display: flex; justify-content: space-between; gap: 8px; }
-        .row-label { width: 30px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--text-muted); font-size: 0.9rem; }
-        .cell { background-color: #334155; flex: 1; aspect-ratio: 1; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; position: relative; }
-        .cell.suggested { background-color: rgba(16, 185, 129, 0.2); border: 2px solid var(--success); box-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
-        .cell.bad { opacity: 0.5; }
-        
-        .advice-box { background: rgba(245, 158, 11, 0.1); border: 1px solid var(--primary); padding: 15px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 1.1rem; color: var(--primary); }
+        /* Apple Board Glass Design */
+        .board { 
+            background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 20px; 
+            border: 1px solid var(--glass-border); box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+        }
+        .cell { 
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.05);
+            transition: 0.3s; border-radius: 12px;
+        }
+        .cell.suggested { 
+            background: rgba(16, 185, 129, 0.15); border: 2px solid var(--success);
+            box-shadow: 0 0 15px var(--success); transform: scale(1.05);
+        }
 
-        /* Slips Section */
-        .slips-container { display: flex; flex-direction: column; gap: 15px; }
-        .slip-card { background: var(--bg-card); padding: 15px; border-radius: 10px; border-right: 4px solid var(--primary); display: flex; justify-content: space-between; align-items: center; }
-        .slip-info h3 { margin-bottom: 5px; font-size: 1.2rem; }
-        .slip-info p { color: var(--text-muted); font-size: 0.9rem; }
-        .copy-btn { background: #334155; border: none; color: var(--text-main); padding: 10px 15px; border-radius: 6px; cursor: pointer; transition: 0.2s; font-weight: bold; display: flex; gap: 8px; align-items: center; }
-        .copy-btn:hover { background: var(--primary); color: #000; }
+        /* Neon Slips */
+        .slip-card { 
+            background: var(--glass); border-radius: 15px; padding: 20px;
+            margin-bottom: 15px; border: 1px solid var(--glass-border);
+            transition: 0.3s; position: relative; overflow: hidden;
+        }
+        /* 1xbet Glow */
+        .slip-card.glow-1xbet { border: 1px solid var(--danger); box-shadow: 0 0 15px rgba(239, 68, 68, 0.3); }
+        .slip-card.glow-1xbet .copy-btn { background: var(--danger); box-shadow: 0 0 10px var(--danger); }
+        /* Linebet Glow */
+        .slip-card.glow-linebet { border: 1px solid var(--success); box-shadow: 0 0 15px rgba(16, 185, 129, 0.3); }
+        .slip-card.glow-linebet .copy-btn { background: var(--success); box-shadow: 0 0 10px var(--success); }
 
-        /* Modal (Admin Form) */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; z-index: 1000; }
-        .modal.active { display: flex; }
-        .modal-content { background: var(--bg-card); padding: 30px; border-radius: 12px; width: 90%; max-width: 400px; text-align: center; }
-        .modal-content h2 { margin-bottom: 20px; color: var(--primary); }
-        .input-group { margin-bottom: 15px; text-align: right; }
-        .input-group label { display: block; margin-bottom: 5px; color: var(--text-muted); }
-        .input-group input { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: white; font-size: 1rem; outline: none; }
-        .input-group input:focus { border-color: var(--primary); }
-        .submit-btn { width: 100%; background: var(--primary); border: none; padding: 12px; border-radius: 6px; color: #000; font-size: 1.1rem; font-weight: bold; cursor: pointer; }
-        .close-modal { margin-top: 15px; background: none; border: none; color: var(--danger); cursor: pointer; font-size: 1rem; text-decoration: underline; }
+        /* Feedback Buttons */
+        .feedback-btns { display: flex; gap: 10px; margin-top: 15px; justify-content: center; display: none; }
+        .f-btn { padding: 8px 20px; border-radius: 20px; border: none; cursor: pointer; font-weight: bold; }
+        .f-win { background: var(--success); color: white; }
+        .f-lose { background: var(--danger); color: white; }
 
-        .disclaimer { font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-top: 20px; }
+        /* Custom Admin Modal */
+        .modal-content { background: #1e293b; border: 1px solid var(--primary); box-shadow: 0 0 30px rgba(245, 158, 11, 0.2); }
     </style>
 </head>
 <body>
 
-    <!-- Header -->
     <header>
-        <div class="logo">HOMOS <span>BET</span></div>
-        <i class="fas fa-cog admin-gear" id="adminGearBtn"></i>
+        <div class="logo">HOMOS <span>BET v2.0</span></div>
+        <i class="fas fa-shield-halved admin-gear" id="adminGearBtn"></i>
     </header>
 
-    <!-- Tabs -->
+    <!-- Global Success Gauge -->
+    <div class="gauge-section">
+        <h3 id="systemMsg">تحليل أداء المنظومة الآن...</h3>
+        <div class="gauge-container">
+            <div id="globalGauge"></div>
+        </div>
+        <div class="gauge-labels">
+            <span style="color: var(--danger)">خسارة ❌</span>
+            <span id="gaugePercent">50% جودة</span>
+            <span style="color: var(--success)">نجاح ✅</span>
+        </div>
+    </div>
+
     <div class="tabs">
-        <button class="tab-btn active" data-target="apple-screen">🍎 سكرين التفاحة</button>
-        <button class="tab-btn" data-target="slips-screen">🎟️ قسائم اليوم</button>
+        <button class="tab-btn active" data-target="apple">🍎 سكرين التفاحة</button>
+        <button class="tab-btn" data-target="slips">🎟️ قسائم حصرية</button>
     </div>
 
-    <!-- Apple Screen Tab -->
-    <div class="tab-content active" id="apple-screen">
+    <!-- Apple Screen -->
+    <div class="tab-content active" id="apple">
         <div class="generator-box">
-            <button class="generate-btn" id="generateBtn">توليد مسار احترافي <i class="fas fa-bolt"></i></button>
+            <button class="generate-btn" id="generateBtn" style="background: var(--primary); color: #000; width: 100%; padding: 15px; border-radius: 15px; font-weight: 900; border: none; cursor: pointer; margin-bottom: 20px;">
+                <i class="fas fa-microchip"></i> تحليل المسار بالذكاء الاصطناعي
+            </button>
+            <div class="board" id="gameBoard"></div>
+            <div class="advice-box" id="adviceBox" style="display: none; margin-top: 20px;"></div>
             
-            <div class="board" id="gameBoard">
-                <!-- Grid will be injected here -->
+            <div class="feedback-btns" id="appleFeedback">
+                <button class="f-btn f-win" onclick="submitFeedback(true)">كسبت ✅</button>
+                <button class="f-btn f-lose" onclick="submitFeedback(false)">خسرت ❌</button>
             </div>
-
-            <div class="advice-box" id="adviceBox" style="display: none;">
-                <!-- Advice will appear here -->
-            </div>
-            
-            <p class="disclaimer">تنويه: هذا المسار مبني على خوارزميات محاكاة لتقليل نسبة المخاطرة. إدارة رأس مالك هي مسؤوليتك.</p>
         </div>
     </div>
 
-    <!-- Slips Screen Tab -->
-    <div class="tab-content" id="slips-screen">
-        <h2 style="margin-bottom: 15px; text-align: center;">🔥 أجدد القسائم والأكواد</h2>
-        <div class="slips-container" id="slipsContainer">
-            <p style="text-align: center; color: var(--text-muted);">جاري تحميل البيانات من السيرفر...</p>
-        </div>
+    <!-- Slips Screen -->
+    <div class="tab-content" id="slips">
+        <div class="slips-container" id="slipsContainer"></div>
     </div>
 
     <!-- Admin Modal -->
     <div class="modal" id="adminModal">
         <div class="modal-content">
-            <h2>إضافة قسيمة جديدة</h2>
-            <div class="input-group">
-                <label>اسم التطبيق (مثل: 1xbet)</label>
-                <input type="text" id="appNameInput" placeholder="ادخل اسم التطبيق">
-            </div>
-            <div class="input-group">
-                <label>كود القسيمة</label>
-                <input type="text" id="slipCodeInput" placeholder="مثال: X7B9M">
-            </div>
-            <button class="submit-btn" id="addSlipBtn">إضافة للقاعدة</button>
-            <button class="close-modal" id="closeModalBtn">إغلاق</button>
+            <h2>إضافة للمنظومة</h2>
+            <div class="input-group"><input type="text" id="appNameInput" placeholder="اسم التطبيق (1xbet / Linebet)"></div>
+            <div class="input-group"><input type="text" id="slipCodeInput" placeholder="كود القسيمة"></div>
+            <button class="submit-btn" id="addSlipBtn">نشر الآن</button>
+            <button class="close-modal" id="closeModalBtn">تراجع</button>
         </div>
     </div>
 
-    <!-- Firebase SDK & Logic (Type Module) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getDatabase, ref, push, onValue, set, update, get } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyB5fbIJ3rbV5Ud1mnQgZGTcjYZSrnQqNbA",
             authDomain: "fir-cb754.firebaseapp.com",
@@ -145,183 +169,145 @@
             projectId: "fir-cb754",
             storageBucket: "fir-cb754.firebasestorage.app",
             messagingSenderId: "14696382194",
-            appId: "1:14696382194:web:c3879f894094d67eae1a6b",
-            measurementId: "G-QBRPLL0465"
+            appId: "1:14696382194:web:c3879f894094d67eae1a6b"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const slipsRef = ref(db, 'daily_slips');
+        const statsRef = ref(db, 'global_stats');
 
-        // ==========================================
-        // 1. UI & Tabs Logic
-        // ==========================================
-        const tabBtns = document.querySelectorAll('.tab-btn');
-        const tabContents = document.querySelectorAll('.tab-content');
-
-        tabBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                tabBtns.forEach(b => b.classList.remove('active'));
-                tabContents.forEach(c => c.classList.remove('active'));
-                
-                btn.classList.add('active');
-                document.getElementById(btn.getAttribute('data-target')).classList.add('active');
-            });
+        // --- Logic: Global Success Gauge ---
+        onValue(statsRef, (snap) => {
+            const data = snap.val() || { wins: 50, total: 100 };
+            const winPercent = Math.round((data.wins / data.total) * 100);
+            document.getElementById('globalGauge').style.width = winPercent + '%';
+            document.getElementById('gaugePercent').innerText = winPercent + '% قوة المنظومة';
+            
+            const msg = winPercent > 70 ? "🔥 المنظومة في أعلى مستويات الدقة حالياً" : "⚠️ السيرفر متقلب.. اتبع تعليمات الأمان";
+            document.getElementById('systemMsg').innerText = msg;
         });
 
-        // ==========================================
-        // 2. Apple Path Generator Logic
-        // ==========================================
-        const generateBtn = document.getElementById('generateBtn');
-        const gameBoard = document.getElementById('gameBoard');
-        const adviceBox = document.getElementById('adviceBox');
+        window.submitFeedback = async (isWin) => {
+            const snap = await get(statsRef);
+            let current = snap.val() || { wins: 50, total: 100 };
+            update(statsRef, {
+                wins: isWin ? current.wins + 1 : current.wins,
+                total: current.total + 1
+            });
+            alert(isWin ? "عاش يا وحش! كمل بتركيز" : "معلش، الخوارزمية هتحسن نفسها الدور الجاي");
+            document.getElementById('appleFeedback').style.display = 'none';
+        };
 
-        // نفس احتمالات 1xbet
-        const oddsConfig = [
-            { level: 1, badCount: 1 }, { level: 2, badCount: 1 }, { level: 3, badCount: 1 },
-            { level: 4, badCount: 1 }, { level: 5, badCount: 2 }, { level: 6, badCount: 2 },
-            { level: 7, badCount: 2 }, { level: 8, badCount: 3 }, { level: 9, badCount: 3 }, { level: 10, badCount: 4 }
-        ];
+        // --- Logic: Tabs ---
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.tab-btn, .tab-content').forEach(el => el.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.target).classList.add('active');
+            }
+        });
 
-        generateBtn.addEventListener('click', () => {
-            gameBoard.innerHTML = '';
+        // --- Logic: Apple Simulator (AI Feel) ---
+        document.getElementById('generateBtn').onclick = () => {
+            const btn = document.getElementById('generateBtn');
+            const board = document.getElementById('gameBoard');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري اختراق الاحتمالات...';
+            
+            setTimeout(() => {
+                renderAppleBoard();
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check"></i> تم استخراج المسار الآمن';
+                document.getElementById('appleFeedback').style.display = 'flex';
+            }, 1500);
+        };
+
+        function renderAppleBoard() {
+            const board = document.getElementById('gameBoard');
+            board.innerHTML = '';
+            const config = [1, 1, 1, 1, 2, 2, 2, 3, 3, 4]; // تفاح بايز لكل صف
             
             for (let i = 0; i < 10; i++) {
-                const config = oddsConfig[i];
-                let rowValues = new Array(5).fill('🍎');
+                const row = document.createElement('div');
+                row.className = 'row' + (i > 3 ? ' cell-bad' : ''); // تمييز الصفوف الصعبة
+                row.style.display = 'flex'; row.style.gap = '8px'; row.style.marginBottom = '8px';
                 
-                // توزيع التفاح الخربان
-                let badApplesPlaced = 0;
-                while (badApplesPlaced < config.badCount) {
-                    let randPos = Math.floor(Math.random() * 5);
-                    if (rowValues[randPos] !== '🍏') {
-                        rowValues[randPos] = '🍏';
-                        badApplesPlaced++;
-                    }
+                let cells = new Array(5).fill('🍎');
+                let badIdx = [];
+                while(badIdx.length < config[i]) {
+                    let r = Math.floor(Math.random()*5);
+                    if(!badIdx.includes(r)) badIdx.push(r);
                 }
-
-                // اختيار تفاحة واحدة سليمة لتكون هي "المسار المقترح"
-                let safeIndexes = [];
-                rowValues.forEach((val, index) => { if(val === '🍎') safeIndexes.push(index); });
-                let suggestedPathIndex = safeIndexes[Math.floor(Math.random() * safeIndexes.length)];
-
-                // بناء واجهة الصف
-                const rowEl = document.createElement('div');
-                rowEl.className = 'row';
+                badIdx.forEach(idx => cells[idx] = '🍏');
                 
-                const label = document.createElement('div');
-                label.className = 'row-label';
-                label.innerText = `x${i+1}`;
-                rowEl.appendChild(label);
+                // اختيار المسار
+                let safe = []; cells.forEach((v, idx) => { if(v==='🍎') safe.push(idx)});
+                let suggested = safe[Math.floor(Math.random()*safe.length)];
 
-                for (let j = 0; j < 5; j++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'cell';
-                    cell.innerText = rowValues[j];
-                    
-                    if (rowValues[j] === '🍏') {
-                        cell.classList.add('bad');
-                    }
-                    if (j === suggestedPathIndex) {
-                        cell.classList.add('suggested'); // تلوين المسار المقترح
-                    }
-                    
-                    rowEl.appendChild(cell);
-                }
-                gameBoard.appendChild(rowEl);
+                cells.forEach((val, idx) => {
+                    const c = document.createElement('div');
+                    c.className = 'cell' + (idx === suggested ? ' suggested' : '');
+                    c.style.flex = '1'; c.style.aspectRatio = '1'; c.style.display = 'flex';
+                    c.style.alignItems = 'center'; c.style.justifyContent = 'center';
+                    c.innerHTML = val;
+                    row.appendChild(c);
+                });
+                board.appendChild(row);
             }
+            const advice = document.getElementById('adviceBox');
+            advice.className = "advice-box"; advice.style.display = 'block';
+            advice.innerHTML = "💡 <b>توجيه المنظومة:</b> المسار الأخضر مضمون لغاية <b>الصف الرابع</b>. اسحب أرباحك فوراً هناك لضمان المكسب.";
+        }
 
-            // إظهار النصيحة
-            adviceBox.style.display = 'block';
-            adviceBox.innerHTML = `💡 <strong>نصيحة HOMOS:</strong><br> اتبع المربعات المضيئة باللون الأخضر. <strong>اسحب أرباحك عند الصف الرابع (x4)</strong> لضمان المكسب وتجنب الخسارة المبرمجة في المستويات العليا!`;
-        });
-
-        // ==========================================
-        // 3. Firebase Slips Logic & Admin Panel
-        // ==========================================
-        const slipsContainer = document.getElementById('slipsContainer');
-        const adminGearBtn = document.getElementById('adminGearBtn');
-        const adminModal = document.getElementById('adminModal');
-        const closeModalBtn = document.getElementById('closeModalBtn');
-        const addSlipBtn = document.getElementById('addSlipBtn');
-        
-        // جلب البيانات لحظياً من Firebase
-        onValue(slipsRef, (snapshot) => {
-            slipsContainer.innerHTML = ''; // مسح المحتوى القديم
-            const data = snapshot.val();
-            
+        // --- Logic: Slips (Glow Logic) ---
+        onValue(slipsRef, (snap) => {
+            const container = document.getElementById('slipsContainer');
+            container.innerHTML = '';
+            const data = snap.val();
             if (data) {
-                // تحويل الكائن إلى مصفوفة وعكسها لعرض الأحدث أولاً
-                const slipsArray = Object.values(data).reverse(); 
-                
-                slipsArray.forEach(slip => {
+                Object.values(data).reverse().forEach(slip => {
+                    const app = slip.appName.toLowerCase();
+                    let glowClass = '';
+                    if(app.includes('1xbet')) glowClass = 'glow-1xbet';
+                    else if(app.includes('linebet')) glowClass = 'glow-linebet';
+
                     const card = document.createElement('div');
-                    card.className = 'slip-card';
+                    card.className = `slip-card ${glowClass}`;
                     card.innerHTML = `
-                        <div class="slip-info">
-                            <h3>${slip.appName}</h3>
-                            <p>تم الإضافة اليوم</p>
+                        <div>
+                            <h3 style="margin-bottom:5px;">${slip.appName.toUpperCase()}</h3>
+                            <p style="font-size:0.8rem; color:var(--text-muted)">تم التحقق من الكود بنجاح</p>
                         </div>
-                        <button class="copy-btn" onclick="copyToClipboard('${slip.code}')">
-                            <i class="far fa-copy"></i> ${slip.code}
+                        <button class="copy-btn" style="padding:10px 20px; border-radius:10px; border:none; color:white; font-weight:bold; cursor:pointer;" onclick="copyToClipboard('${slip.code}')">
+                            ${slip.code} <i class="far fa-copy"></i>
                         </button>
                     `;
-                    slipsContainer.appendChild(card);
+                    container.appendChild(card);
                 });
-            } else {
-                slipsContainer.innerHTML = '<p style="text-align: center; color: var(--text-muted);">لا توجد قسائم اليوم حتى الآن.</p>';
             }
         });
 
-        // نظام المشرف (إضافة قسيمة)
-        adminGearBtn.addEventListener('click', () => {
-            const pwd = prompt("أدخل كلمة مرور المشرف:");
-            if (pwd === "homos123") { // الباسورد المطلوب
-                adminModal.classList.add('active');
-            } else if (pwd !== null) {
-                alert("كلمة المرور خاطئة!");
+        // --- Logic: Admin Gear ---
+        document.getElementById('adminGearBtn').onclick = () => {
+            if(prompt("كلمة سر المنظومة:") === "homos123") {
+                document.getElementById('adminModal').classList.add('active');
             }
-        });
-
-        closeModalBtn.addEventListener('click', () => {
-            adminModal.classList.remove('active');
-        });
-
-        addSlipBtn.addEventListener('click', async () => {
+        };
+        document.getElementById('closeModalBtn').onclick = () => document.getElementById('adminModal').classList.remove('active');
+        document.getElementById('addSlipBtn').onclick = async () => {
             const appName = document.getElementById('appNameInput').value;
             const code = document.getElementById('slipCodeInput').value;
-
-            if (!appName || !code) {
-                alert("الرجاء ملء جميع الحقول!");
-                return;
+            if(appName && code) {
+                await push(slipsRef, { appName, code, timestamp: Date.now() });
+                document.getElementById('adminModal').classList.remove('active');
+                alert("تم النشر في المنظومة!");
             }
+        };
 
-            try {
-                // رفع البيانات للفايربيز
-                await push(slipsRef, {
-                    appName: appName,
-                    code: code,
-                    timestamp: Date.now()
-                });
-                
-                document.getElementById('appNameInput').value = '';
-                document.getElementById('slipCodeInput').value = '';
-                adminModal.classList.remove('active');
-                alert("تم إضافة القسيمة بنجاح للحظياً للجميع!");
-            } catch (error) {
-                console.error("Error adding document: ", error);
-                alert("حدث خطأ أثناء الإضافة.");
-            }
-        });
-
-        // دالة النسخ العامة
-        window.copyToClipboard = function(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                alert(`تم نسخ الكود: ${text}`);
-            }).catch(err => {
-                console.error('Failed to copy text: ', err);
-            });
+        window.copyToClipboard = (text) => {
+            navigator.clipboard.writeText(text);
+            alert("تم نسخ الكود: " + text + "\nبالتوفيق يا بطل!");
         };
     </script>
 </body>
