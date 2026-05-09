@@ -3,218 +3,289 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نيش-Nesh | القمة الإخبارية</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <title>HOMOS Apple Simulator 🍎</title>
     <style>
         :root {
-            --bg-dark: #0a0e17;
-            --card-bg: rgba(20, 26, 40, 0.6);
-            --primary-red: #e63946;
-            --primary-gold: #f4a261;
-            --text-light: #f8f9fa;
-            --glass-border: rgba(255, 255, 255, 0.08);
+            --bg-color: #121212;
+            --box-bg: #2a2a2a;
+            --primary: #e67e22;
+            --success: #27ae60;
+            --danger: #c0392b;
+            --text-light: #ecf0f1;
         }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
-
         body {
-            background: var(--bg-dark);
-            background-image: radial-gradient(circle at 15% 50%, rgba(230, 57, 70, 0.05), transparent 25%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
             color: var(--text-light);
-            overflow-x: hidden;
-        }
-
-        /* شريط الأخبار العاجلة */
-        .ticker-wrap {
-            background: var(--primary-red);
-            width: 100%;
-            height: 40px;
-            overflow: hidden;
+            margin: 0;
+            padding: 20px;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            position: relative;
-            z-index: 1001;
         }
-        .ticker-title {
-            background: #900000;
-            color: white;
-            padding: 0 20px;
-            font-weight: 900;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            position: absolute;
-            right: 0;
-            z-index: 2;
-        }
-        .ticker-move {
-            display: inline-block;
-            white-space: nowrap;
-            animation: ticker 30s linear infinite;
-        }
-        .ticker-item { margin-left: 50px; font-weight: 600; }
-        @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-
-        /* الهيدر واللوجو */
-        header {
-            position: sticky; top: 0; z-index: 1000;
-            background: rgba(10, 14, 23, 0.85);
-            backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--glass-border);
-            padding: 15px 5%;
-        }
-        .header-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h1 { color: var(--primary); font-size: 2.5rem; margin: 0; text-transform: uppercase; letter-spacing: 2px; }
         
-        .logo-container { display: flex; align-items: center; gap: 15px; cursor: pointer; }
-        .logo-img { width: 55px; height: auto; border-radius: 10px; filter: drop-shadow(0 0 8px var(--primary-gold)); }
-        .brand-name { font-size: 2.2rem; font-weight: 900; background: linear-gradient(45deg, var(--primary-gold), var(--primary-red)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-
-        .search-box { position: relative; width: 100%; max-width: 400px; }
-        .search-box input { width: 100%; padding: 12px 45px 12px 20px; border-radius: 30px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.3); color: white; outline: none; }
-        .search-btn { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--primary-gold); cursor: pointer; }
-
-        .nav-categories { display: flex; gap: 10px; margin-top: 20px; overflow-x: auto; padding-bottom: 10px; }
-        .cat-btn { background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: #ccc; padding: 8px 22px; border-radius: 25px; cursor: pointer; font-weight: 700; white-space: nowrap; transition: 0.3s; }
-        .cat-btn:hover, .cat-btn.active { background: var(--primary-red); color: white; border-color: var(--primary-red); transform: translateY(-3px); }
-
-        /* الشبكة الإخبارية */
-        main { padding: 40px 5%; }
-        .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; }
-
-        .news-card {
-            background: var(--card-bg);
-            border-radius: 20px;
-            overflow: hidden;
-            border: 1px solid var(--glass-border);
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer;
+        /* رسالة التحذير - مهمة جداً لشفافية النظام */
+        .warning-box {
+            background-color: rgba(192, 57, 43, 0.1);
+            border: 1px solid var(--danger);
+            padding: 15px;
+            border-radius: 8px;
+            max-width: 600px;
+            text-align: center;
+            margin-bottom: 20px;
         }
-        .news-card:hover { transform: translateY(-10px); border-color: var(--primary-gold); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .img-wrapper { height: 210px; position: relative; }
-        .news-img { width: 100%; height: 100%; object-fit: cover; }
-        .source-badge { position: absolute; top: 15px; right: 15px; background: rgba(230, 57, 70, 0.9); padding: 4px 12px; border-radius: 5px; font-size: 0.75rem; font-weight: 800; }
+        .warning-box h3 { color: var(--danger); margin-top: 0; }
+        .warning-box p { font-size: 0.9rem; line-height: 1.5; margin-bottom: 0; }
 
-        .news-info { padding: 20px; }
-        .news-title { font-size: 1.15rem; font-weight: 800; line-height: 1.5; margin-bottom: 15px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .game-container {
+            background-color: var(--box-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 500px;
+        }
 
-        /* نافذة القراءة Modal */
-        .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); backdrop-filter:blur(10px); z-index:2000; display:none; justify-content:center; align-items:center; }
-        .modal-content { background:#111827; width:90%; max-width:800px; max-height:85vh; border-radius:24px; overflow-y:auto; border:1px solid var(--primary-red); position:relative; }
-        .close-btn { position:absolute; top:20px; left:20px; background:var(--primary-red); border:none; color:white; width:40px; height:40px; border-radius:50%; cursor:pointer; font-weight:bold; }
-        .modal-body { padding: 30px; }
-        .modal-img { width: 100%; border-radius: 15px; margin-bottom: 20px; }
+        /* اللوحة معكوسة عشان تبدأ من تحت لفوق زي اللعبة الأصلية */
+        .board {
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .row { display: flex; justify-content: space-between; gap: 8px; opacity: 0.5; transition: 0.3s; pointer-events: none; }
+        .row.active { opacity: 1; pointer-events: auto; }
+        .cell {
+            background-color: #3b3b3b;
+            flex: 1;
+            aspect-ratio: 1;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 2px solid transparent;
+        }
+        .row.active .cell:hover { border-color: var(--primary); transform: scale(1.05); }
+        .cell.revealed-good { background-color: rgba(39, 174, 96, 0.2); }
+        .cell.revealed-bad { background-color: rgba(192, 57, 43, 0.2); }
 
-        .loader { grid-column: 1/-1; text-align: center; padding: 100px; font-size: 1.5rem; }
+        .controls { text-align: center; }
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+            margin: 5px;
+        }
+        button:hover { background-color: #d35400; }
+        button:disabled { background-color: #555; cursor: not-allowed; }
+        .cashout-btn { background-color: var(--success); display: none; }
+        .cashout-btn:hover { background-color: #219653; }
+
+        .status { margin-top: 15px; font-size: 1.2rem; font-weight: bold; min-height: 30px; color: #f1c40f; }
+        .multiplier { color: var(--success); font-size: 1.5rem; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-    <div class="ticker-wrap">
-        <div class="ticker-title">عاجل نيش</div>
-        <div class="ticker-move" id="ticker-content">جاري سحب التغطية الحية...</div>
+    <div class="header">
+        <h1>HOMOS Simulator</h1>
+        <p>محاكي خوارزميات التفاحة الدقيق</p>
     </div>
 
-    <header>
-        <div class="header-content">
-            <div class="logo-container" onclick="location.reload()">
-                <img src="logo.png" alt="N" class="logo-img" onerror="this.src='https://via.placeholder.com/60/000/ffd700?text=N'">
-                <span class="brand-name">NESH</span>
-            </div>
-            <div class="search-box">
-                <input type="text" id="search-input" placeholder="بحث في الأحداث العالمية..." onkeypress="if(event.key==='Enter')handleSearch()">
-                <button class="search-btn" onclick="handleSearch()"><i class="fas fa-search"></i></button>
-            </div>
-        </div>
-        <div class="nav-categories">
-            <button class="cat-btn active" onclick="changeCat('nation', this)">أخبار مصر</button>
-            <button class="cat-btn" onclick="changeCat('world', this)">العالم</button>
-            <button class="cat-btn" onclick="changeCat('sports', this)">رياضة</button>
-            <button class="cat-btn" onclick="changeCat('technology', this)">تكنولوجيا</button>
-            <button class="cat-btn" onclick="changeCat('business', this)">اقتصاد</button>
-        </div>
-    </header>
+    <div class="warning-box">
+        <h3>⚠️ تنبيه عالي الخطورة ⚠️</h3>
+        <p>هذا السكريبت يحاكي خوارزمية احتمالات اللعبة الحقيقية (Provably Fair) لتوضيح كيف تعمل المنظومة برمجياً. <strong>لا يوجد شيء اسمه سكريبت يضمن لك الفوز في 1xbet.</strong> الموقع مصمم رياضياً ليربح على المدى الطويل. استخدم هذه الأداة لفهم المخاطرة ومعرفة متى تنسحب فقط، ولا تخاطر بأموال لا تتحمل خسارتها.</p>
+    </div>
 
-    <main>
-        <h2 id="section-title" style="margin-bottom:30px; border-right:5px solid var(--primary-gold); padding-right:15px;">آخر التحديثات</h2>
-        <div id="news-grid" class="news-grid"></div>
-    </main>
-
-    <div id="newsModal" class="modal-overlay">
-        <div class="modal-content">
-            <button class="close-btn" onclick="closeModal()">X</button>
-            <div id="modal-data"></div>
+    <div class="game-container">
+        <div class="board" id="board"></div>
+        
+        <div class="controls">
+            <button id="startBtn" onclick="startGame()">ابدا دور جديد</button>
+            <button id="cashoutBtn" class="cashout-btn" onclick="cashOut()">اسحب الأرباح الآن!</button>
         </div>
+        
+        <div class="multiplier" id="multiplierDisplay">المعامل الحالي: x1.00</div>
+        <div class="status" id="statusMessage">دوس ابدأ عشان السيرفر يولد الاحتمالات!</div>
     </div>
 
     <script>
-        const G_KEY = 'b5c79c2634b3d676e7fac67a10fa51d0';
-        let articles = [];
+        // إعدادات اللعبة زي السيرفر الحقيقي بالظبط
+        // كل مستوى فيه كام تفاحة خربانة والمعامل بتاعها
+        const gameConfig = [
+            { level: 1, badApples: 1, multiplier: 1.23 },
+            { level: 2, badApples: 1, multiplier: 1.54 },
+            { level: 3, badApples: 1, multiplier: 1.93 },
+            { level: 4, badApples: 1, multiplier: 2.41 },
+            { level: 5, badApples: 2, multiplier: 4.02 }, // الصعوبة بتبدأ تزيد هنا
+            { level: 6, badApples: 2, multiplier: 6.71 },
+            { level: 7, badApples: 2, multiplier: 11.18 },
+            { level: 8, badApples: 3, multiplier: 27.96 }, // خطورة عالية جداً
+            { level: 9, badApples: 3, multiplier: 69.91 },
+            { level: 10, badApples: 4, multiplier: 349.58 } // شبه مستحيلة
+        ];
 
-        async function fetchNews(category = 'nation', query = '') {
-            const grid = document.getElementById('news-grid');
-            grid.innerHTML = '<div class="loader">نيش يحلل البيانات...</div>';
+        let currentLevel = 0;
+        let gameGrid = [];
+        let isGameActive = false;
+
+        const boardEl = document.getElementById('board');
+        const startBtn = document.getElementById('startBtn');
+        const cashoutBtn = document.getElementById('cashoutBtn');
+        const statusMsg = document.getElementById('statusMessage');
+        const multiplierDisplay = document.getElementById('multiplierDisplay');
+
+        // دالة بتبني اللوحة وتولد أماكن التفاح (بتشتغل مرة واحدة في بداية الدور)
+        function generateGrid() {
+            gameGrid = [];
+            boardEl.innerHTML = '';
+
+            for (let i = 0; i < 10; i++) {
+                const config = gameConfig[i];
+                let rowValues = new Array(5).fill('🍎'); // 🍎 = سليم
+                
+                // توزيع التفاح الخربان عشوائياً في الصف
+                let badCount = 0;
+                while (badCount < config.badApples) {
+                    let randomPos = Math.floor(Math.random() * 5);
+                    if (rowValues[randomPos] !== '🍏') {
+                        rowValues[randomPos] = '🍏'; // 🍏 = خربان
+                        badCount++;
+                    }
+                }
+                gameGrid.push(rowValues);
+
+                // رسم الـ HTML للصف
+                const rowEl = document.createElement('div');
+                rowEl.className = 'row';
+                rowEl.id = `row-${i}`;
+
+                for (let j = 0; j < 5; j++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.onclick = () => handleCellClick(i, j);
+                    rowEl.appendChild(cell);
+                }
+                boardEl.appendChild(rowEl);
+            }
+        }
+
+        function startGame() {
+            currentLevel = 0;
+            isGameActive = true;
+            generateGrid();
             
-            // رابط GNews يختلف (نستخدم country=eg لأخبار مصر)
-            let url = `https://gnews.io/api/v4/top-headlines?category=${category}&lang=ar&country=eg&apikey=${G_KEY}`;
-            if(query) url = `https://gnews.io/api/v4/search?q=${query}&lang=ar&apikey=${G_KEY}`;
-
-            try {
-                const res = await fetch(url);
-                const data = await res.json();
-                articles = data.articles;
-                renderNews(articles);
-                updateTicker(articles);
-            } catch (e) { grid.innerHTML = "فشل التحميل. تأكد من المفتاح."; }
+            startBtn.style.display = 'none';
+            cashoutBtn.style.display = 'inline-block';
+            cashoutBtn.disabled = true; // مينفعش تسحب قبل ما تلعب أول صف
+            
+            multiplierDisplay.innerText = `المعامل الحالي: x1.00`;
+            statusMsg.innerText = "السيرفر ولّد اللوحة. اختار صندوق من الصف الأول المتاح تحت.";
+            statusMsg.style.color = "#ecf0f1";
+            
+            updateBoardUI();
         }
 
-        function renderNews(arts) {
-            const grid = document.getElementById('news-grid');
-            grid.innerHTML = arts.length ? '' : 'لا توجد نتائج.';
-            arts.forEach((art, i) => {
-                grid.innerHTML += `
-                    <div class="news-card" onclick="openModal(${i})">
-                        <div class="img-wrapper">
-                            <span class="source-badge">${art.source.name}</span>
-                            <img src="${art.image}" class="news-img">
-                        </div>
-                        <div class="news-info">
-                            <h3 class="news-title">${art.title}</h3>
-                            <div style="color:var(--primary-gold); font-weight:bold;">اقرأ المزيد داخل نيش ←</div>
-                        </div>
-                    </div>`;
-            });
+        function updateBoardUI() {
+            if (!isGameActive) return;
+            // تفعيل الصف الحالي فقط وتعطيل الباقي
+            for (let i = 0; i < 10; i++) {
+                const rowEl = document.getElementById(`row-${i}`);
+                if (i === currentLevel) {
+                    rowEl.classList.add('active');
+                } else {
+                    rowEl.classList.remove('active');
+                }
+            }
+
+            // نظام النصيحة الذكي من HOMOS
+            provideAdvice();
         }
 
-        function updateTicker(arts) {
-            const ticker = document.getElementById('ticker-content');
-            ticker.innerHTML = arts.map(a => `<span class="ticker-item">🔥🔥 ${a.title}</span>`).join('');
+        function provideAdvice() {
+            if (currentLevel === 0) {
+                statusMsg.innerText = "نسبة الأمان 80%.. اختار أي صندوق وتوكل على الله.";
+            } else if (currentLevel === 3) {
+                statusMsg.innerText = "💡 نصيحة HOMOS: إنت كسبت معامل 2.41x.. الخوارزمية هتبدأ تصعّبها من الصف الجاي (تفاحتين خربانين). الأفضل تسحب دلوقتي!";
+                statusMsg.style.color = "#f1c40f";
+            } else if (currentLevel >= 4 && currentLevel <= 6) {
+                statusMsg.innerText = "⚠️ الخطر عالي! نسبة الخسارة زادت لـ 40%. لو قلبك مطاوعك كمل، بس السحب هو القرار العاقل.";
+                statusMsg.style.color = "#e67e22";
+            } else if (currentLevel >= 7) {
+                statusMsg.innerText = "🚨 نسبة الخسارة 60% لـ 80%!! السيرفر مستنيك تغلط.. اسحب فوراً!";
+                statusMsg.style.color = "#e74c3c";
+            }
         }
 
-        function openModal(i) {
-            const art = articles[i];
-            const modalData = document.getElementById('modal-data');
-            modalData.innerHTML = `
-                <img src="${art.image}" class="modal-img">
-                <div class="modal-body">
-                    <h1 style="margin-bottom:20px; line-height:1.4;">${art.title}</h1>
-                    <p style="font-size:1.2rem; color:#d1d5db; margin-bottom:20px; line-height:1.8;">${art.description}</p>
-                    <p style="color:#888; margin-bottom:30px;">المصدر الأصلي: ${art.source.name}</p>
-                    <a href="${art.url}" target="_blank" style="background:var(--primary-red); color:white; padding:12px 25px; border-radius:30px; text-decoration:none; font-weight:bold;">زيارة المصدر الأصلي</a>
-                </div>`;
-            document.getElementById('newsModal').style.display = 'flex';
+        function handleCellClick(rowIndex, cellIndex) {
+            if (!isGameActive || rowIndex !== currentLevel) return;
+
+            const rowEl = document.getElementById(`row-${rowIndex}`);
+            const cellEl = rowEl.children[cellIndex];
+            const result = gameGrid[rowIndex][cellIndex];
+
+            // إظهار النتيجة
+            cellEl.innerText = result;
+            
+            if (result === '🍎') {
+                // فوز
+                cellEl.classList.add('revealed-good');
+                multiplierDisplay.innerText = `المعامل الحالي: x${gameConfig[currentLevel].multiplier}`;
+                cashoutBtn.disabled = false; // يقدر يسحب دلوقتي
+                
+                currentLevel++;
+                if (currentLevel === 10) {
+                    // كسب اللعبة كلها
+                    endGame(true, `أسطورة! قفلت اللعبة بمعامل x349.58 🤑`);
+                } else {
+                    updateBoardUI();
+                }
+            } else {
+                // خسارة
+                cellEl.classList.add('revealed-bad');
+                endGame(false, "أكلت التفاحة الخربانة 💀.. الخوارزمية كسبت كالعادة. جرب تاني بتركيز.");
+            }
         }
 
-        function closeModal() { document.getElementById('newsModal').style.display = 'none'; }
-        function handleSearch() { fetchNews('', document.getElementById('search-input').value); }
-        function changeCat(cat, btn) {
-            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            fetchNews(cat);
+        function cashOut() {
+            if (!isGameActive) return;
+            const currentMulti = gameConfig[currentLevel - 1].multiplier;
+            endGame(true, `عاش! قرار سليم جداً. سحبت أرباحك على معامل x${currentMulti} 💰`);
         }
 
-        window.onload = () => fetchNews();
+        function endGame(isWin, message) {
+            isGameActive = false;
+            statusMsg.innerText = message;
+            statusMsg.style.color = isWin ? "#27ae60" : "#c0392b";
+            
+            startBtn.style.display = 'inline-block';
+            startBtn.innerText = "العب دور كمان";
+            cashoutBtn.style.display = 'none';
+
+            // إظهار كل اللوحة عشان نثبت إنها كانت متولدة من البداية (Provably Fair)
+            for (let i = 0; i < 10; i++) {
+                const rowEl = document.getElementById(`row-${i}`);
+                rowEl.classList.add('active'); // نظهر الشفافية
+                for (let j = 0; j < 5; j++) {
+                    const cellEl = rowEl.children[j];
+                    if (cellEl.innerText === '') {
+                        cellEl.innerText = gameGrid[i][j];
+                        cellEl.style.opacity = '0.4'; // نخليهم باهتين عشان يفرقهم عن اختياراته
+                    }
+                }
+            }
+        }
     </script>
 </body>
 </html>
