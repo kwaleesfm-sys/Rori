@@ -3,289 +3,326 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HOMOS Apple Simulator 🍎</title>
+    <title>HOMOS BET - الاحتراف في التوقعات</title>
+    <!-- استدعاء خطوط جوجل لتصميم عصري -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- أيقونات -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-color: #121212;
-            --box-bg: #2a2a2a;
-            --primary: #e67e22;
-            --success: #27ae60;
-            --danger: #c0392b;
-            --text-light: #ecf0f1;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --primary: #f59e0b;
+            --primary-hover: #d97706;
+            --success: #10b981;
+            --danger: #ef4444;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
         }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-light);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .header { text-align: center; margin-bottom: 20px; }
-        .header h1 { color: var(--primary); font-size: 2.5rem; margin: 0; text-transform: uppercase; letter-spacing: 2px; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
         
-        /* رسالة التحذير - مهمة جداً لشفافية النظام */
-        .warning-box {
-            background-color: rgba(192, 57, 43, 0.1);
-            border: 1px solid var(--danger);
-            padding: 15px;
-            border-radius: 8px;
-            max-width: 600px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .warning-box h3 { color: var(--danger); margin-top: 0; }
-        .warning-box p { font-size: 0.9rem; line-height: 1.5; margin-bottom: 0; }
+        body { background-color: var(--bg-dark); color: var(--text-main); }
 
-        .game-container {
-            background-color: var(--box-bg);
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            width: 100%;
-            max-width: 500px;
-        }
+        /* Header & Navbar */
+        header { background: var(--bg-card); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .logo { font-size: 1.8rem; font-weight: 900; color: var(--primary); letter-spacing: 1px; }
+        .logo span { color: var(--text-main); }
+        .admin-gear { font-size: 1.5rem; color: var(--text-muted); cursor: pointer; transition: 0.3s; }
+        .admin-gear:hover { color: var(--primary); transform: rotate(90deg); }
 
-        /* اللوحة معكوسة عشان تبدأ من تحت لفوق زي اللعبة الأصلية */
-        .board {
-            display: flex;
-            flex-direction: column-reverse;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-        .row { display: flex; justify-content: space-between; gap: 8px; opacity: 0.5; transition: 0.3s; pointer-events: none; }
-        .row.active { opacity: 1; pointer-events: auto; }
-        .cell {
-            background-color: #3b3b3b;
-            flex: 1;
-            aspect-ratio: 1;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: 0.2s;
-            border: 2px solid transparent;
-        }
-        .row.active .cell:hover { border-color: var(--primary); transform: scale(1.05); }
-        .cell.revealed-good { background-color: rgba(39, 174, 96, 0.2); }
-        .cell.revealed-bad { background-color: rgba(192, 57, 43, 0.2); }
+        /* Tabs */
+        .tabs { display: flex; justify-content: center; gap: 10px; padding: 20px; }
+        .tab-btn { background: var(--bg-card); color: var(--text-main); border: 1px solid #334155; padding: 10px 25px; border-radius: 8px; cursor: pointer; font-size: 1.1rem; font-weight: bold; transition: 0.3s; }
+        .tab-btn.active { background: var(--primary); color: #000; border-color: var(--primary); }
+        
+        .tab-content { display: none; padding: 20px; max-width: 600px; margin: 0 auto; }
+        .tab-content.active { display: block; }
 
-        .controls { text-align: center; }
-        button {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            font-size: 1.1rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.3s;
-            margin: 5px;
-        }
-        button:hover { background-color: #d35400; }
-        button:disabled { background-color: #555; cursor: not-allowed; }
-        .cashout-btn { background-color: var(--success); display: none; }
-        .cashout-btn:hover { background-color: #219653; }
+        /* Apple Screen Section */
+        .generator-box { text-align: center; }
+        .generate-btn { background: var(--success); color: white; border: none; padding: 15px 30px; font-size: 1.2rem; font-weight: bold; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4); transition: 0.3s; margin-bottom: 20px; width: 100%; }
+        .generate-btn:hover { background: #059669; }
+        
+        .board { display: flex; flex-direction: column-reverse; gap: 8px; background: var(--bg-card); padding: 15px; border-radius: 12px; margin-bottom: 20px; }
+        .row { display: flex; justify-content: space-between; gap: 8px; }
+        .row-label { width: 30px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--text-muted); font-size: 0.9rem; }
+        .cell { background-color: #334155; flex: 1; aspect-ratio: 1; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; position: relative; }
+        .cell.suggested { background-color: rgba(16, 185, 129, 0.2); border: 2px solid var(--success); box-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
+        .cell.bad { opacity: 0.5; }
+        
+        .advice-box { background: rgba(245, 158, 11, 0.1); border: 1px solid var(--primary); padding: 15px; border-radius: 8px; text-align: center; font-weight: bold; font-size: 1.1rem; color: var(--primary); }
 
-        .status { margin-top: 15px; font-size: 1.2rem; font-weight: bold; min-height: 30px; color: #f1c40f; }
-        .multiplier { color: var(--success); font-size: 1.5rem; margin-top: 10px; }
+        /* Slips Section */
+        .slips-container { display: flex; flex-direction: column; gap: 15px; }
+        .slip-card { background: var(--bg-card); padding: 15px; border-radius: 10px; border-right: 4px solid var(--primary); display: flex; justify-content: space-between; align-items: center; }
+        .slip-info h3 { margin-bottom: 5px; font-size: 1.2rem; }
+        .slip-info p { color: var(--text-muted); font-size: 0.9rem; }
+        .copy-btn { background: #334155; border: none; color: var(--text-main); padding: 10px 15px; border-radius: 6px; cursor: pointer; transition: 0.2s; font-weight: bold; display: flex; gap: 8px; align-items: center; }
+        .copy-btn:hover { background: var(--primary); color: #000; }
+
+        /* Modal (Admin Form) */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; z-index: 1000; }
+        .modal.active { display: flex; }
+        .modal-content { background: var(--bg-card); padding: 30px; border-radius: 12px; width: 90%; max-width: 400px; text-align: center; }
+        .modal-content h2 { margin-bottom: 20px; color: var(--primary); }
+        .input-group { margin-bottom: 15px; text-align: right; }
+        .input-group label { display: block; margin-bottom: 5px; color: var(--text-muted); }
+        .input-group input { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #334155; background: #0f172a; color: white; font-size: 1rem; outline: none; }
+        .input-group input:focus { border-color: var(--primary); }
+        .submit-btn { width: 100%; background: var(--primary); border: none; padding: 12px; border-radius: 6px; color: #000; font-size: 1.1rem; font-weight: bold; cursor: pointer; }
+        .close-modal { margin-top: 15px; background: none; border: none; color: var(--danger); cursor: pointer; font-size: 1rem; text-decoration: underline; }
+
+        .disclaimer { font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-top: 20px; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>HOMOS Simulator</h1>
-        <p>محاكي خوارزميات التفاحة الدقيق</p>
+    <!-- Header -->
+    <header>
+        <div class="logo">HOMOS <span>BET</span></div>
+        <i class="fas fa-cog admin-gear" id="adminGearBtn"></i>
+    </header>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab-btn active" data-target="apple-screen">🍎 سكرين التفاحة</button>
+        <button class="tab-btn" data-target="slips-screen">🎟️ قسائم اليوم</button>
     </div>
 
-    <div class="warning-box">
-        <h3>⚠️ تنبيه عالي الخطورة ⚠️</h3>
-        <p>هذا السكريبت يحاكي خوارزمية احتمالات اللعبة الحقيقية (Provably Fair) لتوضيح كيف تعمل المنظومة برمجياً. <strong>لا يوجد شيء اسمه سكريبت يضمن لك الفوز في 1xbet.</strong> الموقع مصمم رياضياً ليربح على المدى الطويل. استخدم هذه الأداة لفهم المخاطرة ومعرفة متى تنسحب فقط، ولا تخاطر بأموال لا تتحمل خسارتها.</p>
-    </div>
+    <!-- Apple Screen Tab -->
+    <div class="tab-content active" id="apple-screen">
+        <div class="generator-box">
+            <button class="generate-btn" id="generateBtn">توليد مسار احترافي <i class="fas fa-bolt"></i></button>
+            
+            <div class="board" id="gameBoard">
+                <!-- Grid will be injected here -->
+            </div>
 
-    <div class="game-container">
-        <div class="board" id="board"></div>
-        
-        <div class="controls">
-            <button id="startBtn" onclick="startGame()">ابدا دور جديد</button>
-            <button id="cashoutBtn" class="cashout-btn" onclick="cashOut()">اسحب الأرباح الآن!</button>
+            <div class="advice-box" id="adviceBox" style="display: none;">
+                <!-- Advice will appear here -->
+            </div>
+            
+            <p class="disclaimer">تنويه: هذا المسار مبني على خوارزميات محاكاة لتقليل نسبة المخاطرة. إدارة رأس مالك هي مسؤوليتك.</p>
         </div>
-        
-        <div class="multiplier" id="multiplierDisplay">المعامل الحالي: x1.00</div>
-        <div class="status" id="statusMessage">دوس ابدأ عشان السيرفر يولد الاحتمالات!</div>
     </div>
 
-    <script>
-        // إعدادات اللعبة زي السيرفر الحقيقي بالظبط
-        // كل مستوى فيه كام تفاحة خربانة والمعامل بتاعها
-        const gameConfig = [
-            { level: 1, badApples: 1, multiplier: 1.23 },
-            { level: 2, badApples: 1, multiplier: 1.54 },
-            { level: 3, badApples: 1, multiplier: 1.93 },
-            { level: 4, badApples: 1, multiplier: 2.41 },
-            { level: 5, badApples: 2, multiplier: 4.02 }, // الصعوبة بتبدأ تزيد هنا
-            { level: 6, badApples: 2, multiplier: 6.71 },
-            { level: 7, badApples: 2, multiplier: 11.18 },
-            { level: 8, badApples: 3, multiplier: 27.96 }, // خطورة عالية جداً
-            { level: 9, badApples: 3, multiplier: 69.91 },
-            { level: 10, badApples: 4, multiplier: 349.58 } // شبه مستحيلة
+    <!-- Slips Screen Tab -->
+    <div class="tab-content" id="slips-screen">
+        <h2 style="margin-bottom: 15px; text-align: center;">🔥 أجدد القسائم والأكواد</h2>
+        <div class="slips-container" id="slipsContainer">
+            <p style="text-align: center; color: var(--text-muted);">جاري تحميل البيانات من السيرفر...</p>
+        </div>
+    </div>
+
+    <!-- Admin Modal -->
+    <div class="modal" id="adminModal">
+        <div class="modal-content">
+            <h2>إضافة قسيمة جديدة</h2>
+            <div class="input-group">
+                <label>اسم التطبيق (مثل: 1xbet)</label>
+                <input type="text" id="appNameInput" placeholder="ادخل اسم التطبيق">
+            </div>
+            <div class="input-group">
+                <label>كود القسيمة</label>
+                <input type="text" id="slipCodeInput" placeholder="مثال: X7B9M">
+            </div>
+            <button class="submit-btn" id="addSlipBtn">إضافة للقاعدة</button>
+            <button class="close-modal" id="closeModalBtn">إغلاق</button>
+        </div>
+    </div>
+
+    <!-- Firebase SDK & Logic (Type Module) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB5fbIJ3rbV5Ud1mnQgZGTcjYZSrnQqNbA",
+            authDomain: "fir-cb754.firebaseapp.com",
+            databaseURL: "https://fir-cb754-default-rtdb.firebaseio.com",
+            projectId: "fir-cb754",
+            storageBucket: "fir-cb754.firebasestorage.app",
+            messagingSenderId: "14696382194",
+            appId: "1:14696382194:web:c3879f894094d67eae1a6b",
+            measurementId: "G-QBRPLL0465"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const slipsRef = ref(db, 'daily_slips');
+
+        // ==========================================
+        // 1. UI & Tabs Logic
+        // ==========================================
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                tabBtns.forEach(b => b.classList.remove('active'));
+                tabContents.forEach(c => c.classList.remove('active'));
+                
+                btn.classList.add('active');
+                document.getElementById(btn.getAttribute('data-target')).classList.add('active');
+            });
+        });
+
+        // ==========================================
+        // 2. Apple Path Generator Logic
+        // ==========================================
+        const generateBtn = document.getElementById('generateBtn');
+        const gameBoard = document.getElementById('gameBoard');
+        const adviceBox = document.getElementById('adviceBox');
+
+        // نفس احتمالات 1xbet
+        const oddsConfig = [
+            { level: 1, badCount: 1 }, { level: 2, badCount: 1 }, { level: 3, badCount: 1 },
+            { level: 4, badCount: 1 }, { level: 5, badCount: 2 }, { level: 6, badCount: 2 },
+            { level: 7, badCount: 2 }, { level: 8, badCount: 3 }, { level: 9, badCount: 3 }, { level: 10, badCount: 4 }
         ];
 
-        let currentLevel = 0;
-        let gameGrid = [];
-        let isGameActive = false;
-
-        const boardEl = document.getElementById('board');
-        const startBtn = document.getElementById('startBtn');
-        const cashoutBtn = document.getElementById('cashoutBtn');
-        const statusMsg = document.getElementById('statusMessage');
-        const multiplierDisplay = document.getElementById('multiplierDisplay');
-
-        // دالة بتبني اللوحة وتولد أماكن التفاح (بتشتغل مرة واحدة في بداية الدور)
-        function generateGrid() {
-            gameGrid = [];
-            boardEl.innerHTML = '';
-
+        generateBtn.addEventListener('click', () => {
+            gameBoard.innerHTML = '';
+            
             for (let i = 0; i < 10; i++) {
-                const config = gameConfig[i];
-                let rowValues = new Array(5).fill('🍎'); // 🍎 = سليم
+                const config = oddsConfig[i];
+                let rowValues = new Array(5).fill('🍎');
                 
-                // توزيع التفاح الخربان عشوائياً في الصف
-                let badCount = 0;
-                while (badCount < config.badApples) {
-                    let randomPos = Math.floor(Math.random() * 5);
-                    if (rowValues[randomPos] !== '🍏') {
-                        rowValues[randomPos] = '🍏'; // 🍏 = خربان
-                        badCount++;
+                // توزيع التفاح الخربان
+                let badApplesPlaced = 0;
+                while (badApplesPlaced < config.badCount) {
+                    let randPos = Math.floor(Math.random() * 5);
+                    if (rowValues[randPos] !== '🍏') {
+                        rowValues[randPos] = '🍏';
+                        badApplesPlaced++;
                     }
                 }
-                gameGrid.push(rowValues);
 
-                // رسم الـ HTML للصف
+                // اختيار تفاحة واحدة سليمة لتكون هي "المسار المقترح"
+                let safeIndexes = [];
+                rowValues.forEach((val, index) => { if(val === '🍎') safeIndexes.push(index); });
+                let suggestedPathIndex = safeIndexes[Math.floor(Math.random() * safeIndexes.length)];
+
+                // بناء واجهة الصف
                 const rowEl = document.createElement('div');
                 rowEl.className = 'row';
-                rowEl.id = `row-${i}`;
+                
+                const label = document.createElement('div');
+                label.className = 'row-label';
+                label.innerText = `x${i+1}`;
+                rowEl.appendChild(label);
 
                 for (let j = 0; j < 5; j++) {
                     const cell = document.createElement('div');
                     cell.className = 'cell';
-                    cell.onclick = () => handleCellClick(i, j);
+                    cell.innerText = rowValues[j];
+                    
+                    if (rowValues[j] === '🍏') {
+                        cell.classList.add('bad');
+                    }
+                    if (j === suggestedPathIndex) {
+                        cell.classList.add('suggested'); // تلوين المسار المقترح
+                    }
+                    
                     rowEl.appendChild(cell);
                 }
-                boardEl.appendChild(rowEl);
-            }
-        }
-
-        function startGame() {
-            currentLevel = 0;
-            isGameActive = true;
-            generateGrid();
-            
-            startBtn.style.display = 'none';
-            cashoutBtn.style.display = 'inline-block';
-            cashoutBtn.disabled = true; // مينفعش تسحب قبل ما تلعب أول صف
-            
-            multiplierDisplay.innerText = `المعامل الحالي: x1.00`;
-            statusMsg.innerText = "السيرفر ولّد اللوحة. اختار صندوق من الصف الأول المتاح تحت.";
-            statusMsg.style.color = "#ecf0f1";
-            
-            updateBoardUI();
-        }
-
-        function updateBoardUI() {
-            if (!isGameActive) return;
-            // تفعيل الصف الحالي فقط وتعطيل الباقي
-            for (let i = 0; i < 10; i++) {
-                const rowEl = document.getElementById(`row-${i}`);
-                if (i === currentLevel) {
-                    rowEl.classList.add('active');
-                } else {
-                    rowEl.classList.remove('active');
-                }
+                gameBoard.appendChild(rowEl);
             }
 
-            // نظام النصيحة الذكي من HOMOS
-            provideAdvice();
-        }
+            // إظهار النصيحة
+            adviceBox.style.display = 'block';
+            adviceBox.innerHTML = `💡 <strong>نصيحة HOMOS:</strong><br> اتبع المربعات المضيئة باللون الأخضر. <strong>اسحب أرباحك عند الصف الرابع (x4)</strong> لضمان المكسب وتجنب الخسارة المبرمجة في المستويات العليا!`;
+        });
 
-        function provideAdvice() {
-            if (currentLevel === 0) {
-                statusMsg.innerText = "نسبة الأمان 80%.. اختار أي صندوق وتوكل على الله.";
-            } else if (currentLevel === 3) {
-                statusMsg.innerText = "💡 نصيحة HOMOS: إنت كسبت معامل 2.41x.. الخوارزمية هتبدأ تصعّبها من الصف الجاي (تفاحتين خربانين). الأفضل تسحب دلوقتي!";
-                statusMsg.style.color = "#f1c40f";
-            } else if (currentLevel >= 4 && currentLevel <= 6) {
-                statusMsg.innerText = "⚠️ الخطر عالي! نسبة الخسارة زادت لـ 40%. لو قلبك مطاوعك كمل، بس السحب هو القرار العاقل.";
-                statusMsg.style.color = "#e67e22";
-            } else if (currentLevel >= 7) {
-                statusMsg.innerText = "🚨 نسبة الخسارة 60% لـ 80%!! السيرفر مستنيك تغلط.. اسحب فوراً!";
-                statusMsg.style.color = "#e74c3c";
-            }
-        }
-
-        function handleCellClick(rowIndex, cellIndex) {
-            if (!isGameActive || rowIndex !== currentLevel) return;
-
-            const rowEl = document.getElementById(`row-${rowIndex}`);
-            const cellEl = rowEl.children[cellIndex];
-            const result = gameGrid[rowIndex][cellIndex];
-
-            // إظهار النتيجة
-            cellEl.innerText = result;
+        // ==========================================
+        // 3. Firebase Slips Logic & Admin Panel
+        // ==========================================
+        const slipsContainer = document.getElementById('slipsContainer');
+        const adminGearBtn = document.getElementById('adminGearBtn');
+        const adminModal = document.getElementById('adminModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const addSlipBtn = document.getElementById('addSlipBtn');
+        
+        // جلب البيانات لحظياً من Firebase
+        onValue(slipsRef, (snapshot) => {
+            slipsContainer.innerHTML = ''; // مسح المحتوى القديم
+            const data = snapshot.val();
             
-            if (result === '🍎') {
-                // فوز
-                cellEl.classList.add('revealed-good');
-                multiplierDisplay.innerText = `المعامل الحالي: x${gameConfig[currentLevel].multiplier}`;
-                cashoutBtn.disabled = false; // يقدر يسحب دلوقتي
+            if (data) {
+                // تحويل الكائن إلى مصفوفة وعكسها لعرض الأحدث أولاً
+                const slipsArray = Object.values(data).reverse(); 
                 
-                currentLevel++;
-                if (currentLevel === 10) {
-                    // كسب اللعبة كلها
-                    endGame(true, `أسطورة! قفلت اللعبة بمعامل x349.58 🤑`);
-                } else {
-                    updateBoardUI();
-                }
+                slipsArray.forEach(slip => {
+                    const card = document.createElement('div');
+                    card.className = 'slip-card';
+                    card.innerHTML = `
+                        <div class="slip-info">
+                            <h3>${slip.appName}</h3>
+                            <p>تم الإضافة اليوم</p>
+                        </div>
+                        <button class="copy-btn" onclick="copyToClipboard('${slip.code}')">
+                            <i class="far fa-copy"></i> ${slip.code}
+                        </button>
+                    `;
+                    slipsContainer.appendChild(card);
+                });
             } else {
-                // خسارة
-                cellEl.classList.add('revealed-bad');
-                endGame(false, "أكلت التفاحة الخربانة 💀.. الخوارزمية كسبت كالعادة. جرب تاني بتركيز.");
+                slipsContainer.innerHTML = '<p style="text-align: center; color: var(--text-muted);">لا توجد قسائم اليوم حتى الآن.</p>';
             }
-        }
+        });
 
-        function cashOut() {
-            if (!isGameActive) return;
-            const currentMulti = gameConfig[currentLevel - 1].multiplier;
-            endGame(true, `عاش! قرار سليم جداً. سحبت أرباحك على معامل x${currentMulti} 💰`);
-        }
-
-        function endGame(isWin, message) {
-            isGameActive = false;
-            statusMsg.innerText = message;
-            statusMsg.style.color = isWin ? "#27ae60" : "#c0392b";
-            
-            startBtn.style.display = 'inline-block';
-            startBtn.innerText = "العب دور كمان";
-            cashoutBtn.style.display = 'none';
-
-            // إظهار كل اللوحة عشان نثبت إنها كانت متولدة من البداية (Provably Fair)
-            for (let i = 0; i < 10; i++) {
-                const rowEl = document.getElementById(`row-${i}`);
-                rowEl.classList.add('active'); // نظهر الشفافية
-                for (let j = 0; j < 5; j++) {
-                    const cellEl = rowEl.children[j];
-                    if (cellEl.innerText === '') {
-                        cellEl.innerText = gameGrid[i][j];
-                        cellEl.style.opacity = '0.4'; // نخليهم باهتين عشان يفرقهم عن اختياراته
-                    }
-                }
+        // نظام المشرف (إضافة قسيمة)
+        adminGearBtn.addEventListener('click', () => {
+            const pwd = prompt("أدخل كلمة مرور المشرف:");
+            if (pwd === "homos123") { // الباسورد المطلوب
+                adminModal.classList.add('active');
+            } else if (pwd !== null) {
+                alert("كلمة المرور خاطئة!");
             }
-        }
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            adminModal.classList.remove('active');
+        });
+
+        addSlipBtn.addEventListener('click', async () => {
+            const appName = document.getElementById('appNameInput').value;
+            const code = document.getElementById('slipCodeInput').value;
+
+            if (!appName || !code) {
+                alert("الرجاء ملء جميع الحقول!");
+                return;
+            }
+
+            try {
+                // رفع البيانات للفايربيز
+                await push(slipsRef, {
+                    appName: appName,
+                    code: code,
+                    timestamp: Date.now()
+                });
+                
+                document.getElementById('appNameInput').value = '';
+                document.getElementById('slipCodeInput').value = '';
+                adminModal.classList.remove('active');
+                alert("تم إضافة القسيمة بنجاح للحظياً للجميع!");
+            } catch (error) {
+                console.error("Error adding document: ", error);
+                alert("حدث خطأ أثناء الإضافة.");
+            }
+        });
+
+        // دالة النسخ العامة
+        window.copyToClipboard = function(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert(`تم نسخ الكود: ${text}`);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+        };
     </script>
 </body>
 </html>
