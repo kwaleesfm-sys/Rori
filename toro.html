@@ -3,126 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HOMOS BET - منظومة التحكم الذكي</title>
+    <title>HOMOS BET PRO - المنظومة الذكية v3.0</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --glass: rgba(15, 23, 42, 0.7);
+            --glass: rgba(15, 23, 42, 0.8);
             --glass-border: rgba(255, 255, 255, 0.1);
             --primary: #f59e0b;
             --success: #10b981;
             --danger: #ef4444;
-            --text: #f8fafc;
+            --text-main: #ffffff;
+            --neon-red: 0 0 15px rgba(239, 68, 68, 0.5);
+            --neon-green: 0 0 15px rgba(16, 185, 129, 0.5);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
         
         body { 
             background: #020617;
-            color: var(--text);
-            min-height: 100vh;
             background-image: radial-gradient(circle at top right, #1e293b, transparent), radial-gradient(circle at bottom left, #0f172a, transparent);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
         }
 
+        /* Header & Auth */
         header { 
             background: var(--glass); backdrop-filter: blur(20px);
-            padding: 15px 25px; display: flex; justify-content: space-between; align-items: center;
+            padding: 20px; display: flex; justify-content: space-between; align-items: center;
             border-bottom: 1px solid var(--glass-border); position: sticky; top: 0; z-index: 1000;
         }
-        .logo { font-size: 1.5rem; font-weight: 900; color: var(--primary); text-transform: uppercase; }
-        .logo span { color: #fff; font-size: 0.9rem; margin-right: 5px; opacity: 0.7; }
+        .logo-box h1 { font-size: 1.6rem; font-weight: 900; color: var(--primary); letter-spacing: 1px; }
+        .logo-box span { font-size: 0.8rem; color: #fff; opacity: 0.6; }
+        #authTrigger { cursor: pointer; transition: 0.3s; padding: 10px; border-radius: 50%; background: rgba(255,255,255,0.05); }
+        #authTrigger:hover { color: var(--primary); transform: scale(1.1); }
 
-        /* Dashboard Stats */
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 15px; }
-        .stat-card { background: var(--glass); padding: 15px; border-radius: 15px; border: 1px solid var(--glass-border); text-align: center; }
-        .stat-card i { font-size: 1.2rem; color: var(--primary); margin-bottom: 5px; }
-        .stat-val { display: block; font-weight: 900; font-size: 1.2rem; }
+        /* Global Status Gauge */
+        .status-container { background: var(--glass); margin: 20px; padding: 20px; border-radius: 24px; border: 1px solid var(--glass-border); }
+        .gauge-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .progress-bar { width: 100%; height: 12px; background: #1e293b; border-radius: 10px; overflow: hidden; position: relative; }
+        #globalFill { height: 100%; width: 50%; background: linear-gradient(90deg, var(--danger), var(--success)); transition: 2s cubic-bezier(0.4, 0, 0.2, 1); }
 
-        /* Success Gauge */
-        .gauge-box { background: var(--glass); margin: 0 15px 20px; padding: 20px; border-radius: 20px; border: 1px solid var(--glass-border); position: relative; }
-        .progress-bg { width: 100%; height: 8px; background: #334155; border-radius: 10px; margin: 10px 0; }
-        #mainGauge { height: 100%; width: 50%; border-radius: 10px; background: linear-gradient(90deg, var(--danger), var(--success)); transition: 1.5s ease-in-out; }
+        /* Navigation Tabs */
+        .nav-tabs { display: flex; background: var(--glass); margin: 0 20px 20px; padding: 6px; border-radius: 50px; border: 1px solid var(--glass-border); }
+        .tab-item { flex: 1; text-align: center; padding: 12px; border-radius: 50px; cursor: pointer; font-weight: bold; transition: 0.3s; color: rgba(255,255,255,0.5); }
+        .tab-item.active { background: var(--primary); color: #000; }
 
-        /* Tabs Navigation */
-        .nav-bar { display: flex; background: var(--glass); margin: 15px; border-radius: 50px; padding: 5px; border: 1px solid var(--glass-border); }
-        .nav-item { flex: 1; text-align: center; padding: 10px; border-radius: 50px; cursor: pointer; transition: 0.3s; font-weight: bold; font-size: 0.9rem; }
-        .nav-item.active { background: var(--primary); color: #000; }
+        /* Content Sections */
+        .content-sec { display: none; padding: 0 20px 100px; animation: fadeIn 0.5s ease; }
+        .content-sec.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .content-section { display: none; padding: 0 15px 100px; animation: slideUp 0.4s ease; }
-        .content-section.active { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        /* Apple Board (Advanced Logic UI) */
+        .apple-board { display: flex; flex-direction: column; gap: 8px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 20px; border: 1px solid var(--glass-border); }
+        .apple-row { display: grid; grid-template-columns: 40px repeat(5, 1fr); gap: 8px; align-items: center; }
+        .multiplier-tag { font-size: 0.75rem; font-weight: bold; color: var(--primary); text-align: center; }
+        .apple-cell { aspect-ratio: 1; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; transition: 0.3s; }
+        .apple-cell.highlight { background: rgba(16, 185, 129, 0.1); border: 2px solid var(--success); box-shadow: var(--neon-green); transform: scale(1.05); }
 
-        /* Smart Apple Logic UI */
-        .board { background: #000; padding: 10px; border-radius: 15px; display: grid; gap: 5px; }
-        .row { display: grid; grid-template-columns: 30px repeat(5, 1fr); gap: 5px; align-items: center; }
-        .cell { aspect-ratio: 1; background: #1e293b; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
-        .cell.win { border: 2px solid var(--success); box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.1); }
+        /* Slips Style */
+        .slip-card { background: var(--glass); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; }
+        .slip-card.red-glow { border-color: var(--danger); box-shadow: var(--neon-red); }
+        .slip-card.green-glow { border-color: var(--success); box-shadow: var(--neon-green); }
+        .slip-info h3 { font-size: 1.1rem; margin-bottom: 4px; }
+        .slip-info p { font-size: 0.75rem; opacity: 0.5; }
+        .copy-btn { background: #334155; border: none; color: white; padding: 10px 18px; border-radius: 12px; font-weight: 900; cursor: pointer; transition: 0.2s; }
+        .delete-btn { color: var(--danger); margin-left: 15px; cursor: pointer; display: none; font-size: 1.2rem; }
 
-        /* Slips & Management */
-        .slip-item { 
-            background: var(--glass); padding: 15px; border-radius: 15px; margin-bottom: 10px;
-            border: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center;
-        }
-        .slip-meta h4 { color: var(--primary); }
-        .slip-actions { display: flex; gap: 10px; align-items: center; }
-        .del-btn { color: var(--danger); background: none; border: none; cursor: pointer; font-size: 1.2rem; display: none; }
-        .copy-btn { background: #334155; color: #fff; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; }
+        /* Admin Controls */
+        #adminPanel { display: none; background: rgba(245, 158, 11, 0.1); border: 1px dashed var(--primary); padding: 20px; border-radius: 20px; margin-bottom: 20px; }
+        .admin-input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 10px; border: none; background: #0f172a; color: #fff; border: 1px solid var(--glass-border); }
 
-        /* Neon Indicators */
-        .neon-1xbet { border-right: 4px solid var(--danger); box-shadow: -5px 0 10px rgba(239, 68, 68, 0.2); }
-        .neon-linebet { border-right: 4px solid var(--success); box-shadow: -5px 0 10px rgba(16, 185, 129, 0.2); }
+        /* Live Console Feed */
+        #consoleFeed { background: #000; color: var(--success); font-family: monospace; font-size: 0.8rem; padding: 15px; border-radius: 15px; margin-top: 15px; display: none; border: 1px solid #1e293b; }
 
-        /* Admin Badge */
-        #adminBadge { display: none; background: var(--success); color: #000; font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; margin-left: 10px; font-weight: bold; }
+        /* Interaction Buttons */
+        .action-btn { width: 100%; padding: 18px; border-radius: 20px; border: none; font-weight: 900; font-size: 1.1rem; cursor: pointer; margin-bottom: 20px; transition: 0.3s; }
+        #genBtn { background: var(--primary); color: #000; box-shadow: 0 10px 20px rgba(245, 158, 11, 0.3); }
+        #genBtn:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(245, 158, 11, 0.4); }
+
+        .feedback-box { display: none; gap: 10px; margin-top: 10px; }
+        .feed-btn { flex: 1; padding: 12px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo">HOMOS <span>PRO SYSTEM</span> <span id="adminBadge">مدير النظام</span></div>
-        <i class="fas fa-fingerprint" id="authBtn" style="font-size: 1.4rem; cursor: pointer; color: var(--primary);"></i>
+        <div class="logo-box">
+            <h1>HOMOS BET <span>PRO SYSTEM</span></h1>
+            <span id="adminStatus">نسخة المستخدم العام</span>
+        </div>
+        <div id="authTrigger"><i class="fas fa-fingerprint"></i></div>
     </header>
 
-    <div class="stats-grid">
-        <div class="stat-card"><i class="fas fa-users"></i><span class="stat-val" id="userCount">...</span><small>نشط الآن</small></div>
-        <div class="stat-card"><i class="fas fa-trophy"></i><span class="stat-val" id="winCount">...</span><small>إجمالي الأرباح</small></div>
-    </div>
-
-    <div class="gauge-box">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <h4 id="statusText">جاري فحص التشفير...</h4>
-            <span id="percentText" style="font-weight: 900; color: var(--success);">0%</span>
+    <div class="status-container">
+        <div class="gauge-header">
+            <h4 id="statusMsg">جاري مزامنة السيرفرات...</h4>
+            <span id="gaugePercent" style="color: var(--success); font-weight: 900;">0%</span>
         </div>
-        <div class="progress-bg"><div id="mainGauge"></div></div>
-        <p style="font-size: 0.7rem; opacity: 0.6; margin-top: 5px;">* الخوارزمية يتم تحديثها كل 30 ثانية بناءً على سحب المستخدمين.</p>
+        <div class="progress-bar"><div id="globalFill"></div></div>
     </div>
 
-    <div class="nav-bar">
-        <div class="nav-item active" data-sec="logic-sec">🧠 الذكاء الإصطناعي</div>
-        <div class="nav-item" data-sec="slips-sec">🔓 القسائم السرية</div>
+    <div class="nav-tabs">
+        <div class="tab-item active" data-sec="apple-logic">🎯 إسكربت التفاحة</div>
+        <div class="tab-item" data-sec="slips-vault">🗝️ خزنة القسائم</div>
     </div>
 
     <!-- Apple Logic Section -->
-    <section class="content-section active" id="logic-sec">
-        <button id="startAi" style="width: 100%; padding: 15px; border-radius: 15px; background: var(--primary); border: none; font-weight: 900; cursor: pointer; margin-bottom: 15px;">
-            <i class="fas fa-microchip"></i> استخراج مسار التفاحة المضمون
-        </button>
-        <div class="board" id="appleBoard"></div>
-        <div id="aiConsole" style="margin-top: 15px; padding: 10px; background: #000; border-radius: 10px; font-family: monospace; font-size: 0.8rem; color: #10b981; display: none;"></div>
+    <section class="content-sec active" id="apple-logic">
+        <button class="action-btn" id="genBtn"><i class="fas fa-robot"></i> تحليل مسار الثغرة الحالية</button>
+        
+        <div id="consoleFeed"></div>
+
+        <div class="apple-board" id="boardUI">
+            <!-- سيتم توليد الصفوف من x10 إلى x1 برمجياً -->
+        </div>
+
+        <div class="feedback-box" id="feedbackArea">
+            <button class="feed-btn" style="background: var(--success); color: white;" onclick="submitGlobalStats(true)">ربحت ✅</button>
+            <button class="feed-btn" style="background: var(--danger); color: white;" onclick="submitGlobalStats(false)">خسرت ❌</button>
+        </div>
     </section>
 
     <!-- Slips Section -->
-    <section class="content-section" id="slips-sec">
-        <div id="adminControls" style="display: none; margin-bottom: 20px; background: var(--glass); padding: 15px; border-radius: 15px; border: 1px dashed var(--primary);">
-            <h5 style="margin-bottom: 10px;">إضافة قسيمة جديدة (أدمن)</h5>
-            <input type="text" id="appInput" placeholder="اسم التطبيق" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 8px; border: none; background: #1e293b; color: #fff;">
-            <input type="text" id="codeInput" placeholder="الكود" style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 8px; border: none; background: #1e293b; color: #fff;">
-            <button id="pushSlip" style="width: 100%; padding: 10px; background: var(--success); border: none; border-radius: 8px; font-weight: bold;">نشر القسيمة فوراً</button>
+    <section class="content-sec" id="slips-vault">
+        <div id="adminPanel">
+            <h3 style="margin-bottom:15px; font-size:1rem;">إضافة قسيمة جديدة (مدير النظام)</h3>
+            <input type="text" id="newApp" class="admin-input" placeholder="اسم التطبيق (مثال: 1xbet)">
+            <input type="text" id="newCode" class="admin-input" placeholder="كود القسيمة">
+            <button id="saveSlip" class="action-btn" style="background: var(--success); color: #fff; padding:10px;">نشر الآن</button>
         </div>
         <div id="slipsList"></div>
     </section>
 
+    <!-- Scripts -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getDatabase, ref, push, onValue, remove, update, get } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
@@ -141,147 +156,155 @@
         const db = getDatabase(app);
         let isAdmin = false;
 
-        // --- Auth System (The New Password) ---
-        document.getElementById('authBtn').onclick = () => {
-            const pass = prompt("أدخل كود الوصول للمنظومة:");
+        // --- AUTH SYSTEM ---
+        document.getElementById('authTrigger').onclick = () => {
+            const pass = prompt("أدخل كود الوصول السري:");
             if (pass === "Homos77#") {
                 isAdmin = true;
-                document.getElementById('adminBadge').style.display = 'inline-block';
-                document.getElementById('adminControls').style.display = 'block';
-                alert("أهلاً يا أحمد! تم تفعيل صلاحيات الأدمن والحذف.");
+                document.getElementById('adminPanel').style.display = 'block';
+                document.getElementById('adminStatus').innerText = "وضع مدير النظام نشط";
+                document.getElementById('adminStatus').style.color = "#10b981";
+                alert("أهلاً بك يا أحمد في لوحة التحكم الكاملة.");
                 renderSlips(); // Refresh to show delete buttons
-            } else {
-                alert("كود خاطئ! مسموح لك فقط بمشاهدة القسائم العامة.");
             }
         };
 
-        // --- Navigation ---
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.onclick = () => {
-                document.querySelectorAll('.nav-item, .content-section').forEach(el => el.classList.remove('active'));
-                item.classList.add('active');
-                document.getElementById(item.dataset.sec).classList.add('active');
-            }
+        // --- NAVIGATION ---
+        document.querySelectorAll('.tab-item').forEach(tab => {
+            tab.onclick = () => {
+                document.querySelectorAll('.tab-item, .content-sec').forEach(el => el.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.sec).classList.add('active');
+            };
         });
 
-        // --- Logic: Fake Live Stats ---
-        function updateStats() {
-            document.getElementById('userCount').innerText = Math.floor(Math.random() * (150 - 80) + 80);
-            document.getElementById('winCount').innerText = (Math.random() * (50000 - 45000) + 45000).toLocaleString('ar-EG') + "ج";
-        }
-        setInterval(updateStats, 5000); updateStats();
+        // --- APPLE LOGIC (The Core) ---
+        const multipliers = ["x1.23", "x1.54", "x1.93", "x2.41", "x4.02", "x6.71", "x11.18", "x27.9", "x69.8", "x349"];
 
-        // --- Logic: AI Apple Board ---
-        document.getElementById('startAi').onclick = () => {
-            const console = document.getElementById('aiConsole');
-            console.style.display = 'block';
-            console.innerHTML = "> جاري الاتصال بخوادم البروفايدر...<br>";
-            
-            let steps = [
-                "> تم فحص الثغرة رقم #441",
-                "> استلام بيانات الاحتمالات العكسية",
-                "> رسم المسار الأكثر أماناً..."
-            ];
-
-            steps.forEach((text, i) => {
-                setTimeout(() => { console.innerHTML += text + "<br>"; }, i * 500);
-            });
-
-            setTimeout(generateApplePath, 2000);
-        };
-
-        function generateApplePath() {
-            const board = document.getElementById('appleBoard');
+        function initBoard() {
+            const board = document.getElementById('boardUI');
             board.innerHTML = '';
-            for (let i = 0; i < 10; i++) {
+            // إنشاء الصفوف من 9 (الأعلى) إلى 0 (الأسفل)
+            for (let i = 9; i >= 0; i--) {
                 const row = document.createElement('div');
-                row.className = 'row';
-                const label = document.createElement('div');
-                label.innerText = `x${i+1}`; label.style.fontSize = '0.7rem'; row.appendChild(label);
-
-                let safeIdx = Math.floor(Math.random() * 5);
+                row.className = 'apple-row';
+                row.innerHTML = `<div class="multiplier-tag">${multipliers[i]}</div>`;
                 for (let j = 0; j < 5; j++) {
                     const cell = document.createElement('div');
-                    cell.className = 'cell' + (j === safeIdx ? ' win' : '');
-                    cell.innerHTML = j === safeIdx ? '🍎' : ' ';
+                    cell.className = 'apple-cell';
+                    cell.id = `cell-${i}-${j}`;
                     row.appendChild(cell);
                 }
                 board.appendChild(row);
             }
         }
+        initBoard();
 
-        // --- Slips Management (The Core Change) ---
-        const slipsRef = ref(db, 'daily_slips');
+        document.getElementById('genBtn').onclick = () => {
+            const consoleBox = document.getElementById('consoleFeed');
+            consoleBox.style.display = 'block';
+            consoleBox.innerHTML = "> جاري تهيئة الاتصال المشفر...<br>";
+            
+            const logs = [
+                "> تم اختراق جدار الحماية للملف #8892",
+                "> تحليل احتمالات الصفوف x1 - x10",
+                "> استخراج المسار الذهبي الآمن..."
+            ];
+
+            logs.forEach((txt, i) => {
+                setTimeout(() => { consoleBox.innerHTML += `${txt}<br>`; }, (i+1) * 400);
+            });
+
+            setTimeout(() => {
+                applyAiLogic();
+                document.getElementById('feedbackArea').style.display = 'flex';
+                consoleBox.innerHTML += "> <span style='color:#f59e0b'>تم التوليد بنجاح! اتبع التفاح المضيء.</span>";
+            }, 1800);
+        };
+
+        function applyAiLogic() {
+            initBoard(); // Reset board
+            for (let i = 0; i < 10; i++) {
+                // ذكاء اصطناعي بسيط: اختيار خانة آمنة لكل لفل
+                const safeCol = Math.floor(Math.random() * 5);
+                const targetCell = document.getElementById(`cell-${i}-${safeCol}`);
+                targetCell.classList.add('highlight');
+                targetCell.innerHTML = '🍎';
+            }
+        }
+
+        // --- GLOBAL STATS (GAUGE) ---
+        const statsRef = ref(db, 'system_performance');
+        window.submitGlobalStats = async (isWin) => {
+            const snap = await get(statsRef);
+            let current = snap.val() || { wins: 85, total: 100 };
+            update(statsRef, {
+                wins: isWin ? current.wins + 1 : current.wins,
+                total: current.total + 1
+            });
+            alert(isWin ? "عاش يا بطل! تم تحديث نجاح المنظومة." : "حظ موفق المرة القادمة، الخوارزمية تتحسن.");
+            document.getElementById('feedbackArea').style.display = 'none';
+        };
+
+        onValue(statsRef, (snap) => {
+            const data = snap.val() || { wins: 85, total: 100 };
+            const percent = Math.round((data.wins / data.total) * 100);
+            document.getElementById('globalFill').style.width = percent + '%';
+            document.getElementById('gaugePercent').innerText = percent + '%';
+            document.getElementById('statusMsg').innerText = percent > 80 ? "السيرفر في حالة اختراق مثالية 🔥" : "السيرفر متقلب.. التزم بالصف الرابع ⚠️";
+        });
+
+        // --- SLIPS MANAGEMENT ---
+        const slipsRef = ref(db, 'pro_slips');
         
+        document.getElementById('saveSlip').onclick = async () => {
+            const appName = document.getElementById('newApp').value;
+            const code = document.getElementById('newCode').value;
+            if(appName && code) {
+                await push(slipsRef, { appName, code, time: Date.now() });
+                document.getElementById('newApp').value = '';
+                document.getElementById('newCode').value = '';
+            }
+        };
+
         function renderSlips() {
             onValue(slipsRef, (snap) => {
                 const list = document.getElementById('slipsList');
                 list.innerHTML = '';
                 const data = snap.val();
-                if (data) {
+                if(data) {
                     Object.keys(data).reverse().forEach(key => {
-                        const slip = data[key];
-                        const appName = slip.appName.toLowerCase();
-                        let neon = appName.includes('1xbet') ? 'neon-1xbet' : (appName.includes('linebet') ? 'neon-linebet' : '');
+                        const s = data[key];
+                        const app = s.appName.toLowerCase();
+                        let glowClass = app.includes('1xbet') ? 'red-glow' : (app.includes('linebet') ? 'green-glow' : '');
                         
-                        const div = document.createElement('div');
-                        div.className = `slip-item ${neon}`;
-                        div.innerHTML = `
-                            <div class="slip-meta">
-                                <h4>${slip.appName}</h4>
-                                <small>محدث منذ دقائق</small>
+                        const card = document.createElement('div');
+                        card.className = `slip-card ${glowClass}`;
+                        card.innerHTML = `
+                            <div class="slip-info">
+                                <h3>${s.appName.toUpperCase()}</h3>
+                                <p>تم التحقق بواسطة HOMOS SYSTEM</p>
                             </div>
-                            <div class="slip-actions">
-                                <button class="copy-btn" onclick="copySlip('${slip.code}')">${slip.code}</button>
-                                <button class="del-btn" style="display: ${isAdmin ? 'block' : 'none'}" onclick="deleteSlip('${key}')">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>
+                            <div style="display:flex; align-items:center;">
+                                <button class="copy-btn" onclick="copySlip('${s.code}')">${s.code}</button>
+                                <i class="fas fa-trash-alt delete-btn" style="display:${isAdmin?'block':'none'}" onclick="removeSlip('${key}')"></i>
                             </div>
                         `;
-                        list.appendChild(div);
+                        list.appendChild(card);
                     });
-                } else {
-                    list.innerHTML = '<p style="text-align:center; opacity:0.5;">لا توجد قسائم حالية.</p>';
                 }
             });
         }
         renderSlips();
 
-        // Admin: Add Slip
-        document.getElementById('pushSlip').onclick = async () => {
-            const appName = document.getElementById('appInput').value;
-            const code = document.getElementById('codeInput').value;
-            if (appName && code) {
-                await push(slipsRef, { appName, code, timestamp: Date.now() });
-                document.getElementById('appInput').value = '';
-                document.getElementById('codeInput').value = '';
-                alert("تم النشر في المنظومة بنجاح!");
-            }
+        window.removeSlip = (id) => {
+            if(confirm("حذف هذه القسيمة؟")) remove(ref(db, `pro_slips/${id}`));
         };
 
-        // Admin: Delete Slip (New Function)
-        window.deleteSlip = async (id) => {
-            if (confirm("هل أنت متأكد من حذف هذه القسيمة نهائياً؟")) {
-                await remove(ref(db, `daily_slips/${id}`));
-                alert("تم الحذف بنجاح.");
-            }
+        window.copySlip = (txt) => {
+            navigator.clipboard.writeText(txt);
+            alert("تم نسخ الكود: " + txt);
         };
-
-        window.copySlip = (text) => {
-            navigator.clipboard.writeText(text);
-            alert("تم نسخ الكود بنجاح!");
-        };
-
-        // Success Gauge Simulation Logic
-        const statsRef = ref(db, 'global_stats');
-        onValue(statsRef, (snap) => {
-            const data = snap.val() || { wins: 75, total: 100 };
-            const percent = Math.round((data.wins / data.total) * 100);
-            document.getElementById('mainGauge').style.width = percent + '%';
-            document.getElementById('percentText').innerText = percent + '%';
-            document.getElementById('statusText').innerText = percent > 80 ? "🔥 السيرفر مخترق ومضمون" : "⚖️ السيرفر متقلب.. العب بحذر";
-        });
-
     </script>
 </body>
 </html>
