@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HOMOS BET PRO - المنظومة الذكية v3.0</title>
+    <title>HOMOS BET PRO - المنظومة الذكية v4.0</title>
+    <!-- مكتبات الخطوط، الأيقونات، وتصوير الشاشة -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
     <style>
         :root {
             --glass: rgba(15, 23, 42, 0.8);
@@ -14,8 +17,6 @@
             --success: #10b981;
             --danger: #ef4444;
             --text-main: #ffffff;
-            --neon-red: 0 0 15px rgba(239, 68, 68, 0.5);
-            --neon-green: 0 0 15px rgba(16, 185, 129, 0.5);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
@@ -28,119 +29,107 @@
             overflow-x: hidden;
         }
 
-        /* Header & Auth */
+        /* Ticker Bar (شريط الأخبار) */
+        .ticker-wrap { background: #000; width: 100%; overflow: hidden; border-bottom: 1px solid var(--glass-border); padding: 8px 0; color: var(--success); font-weight: bold; font-size: 0.85rem; }
+        .ticker-move { display: inline-block; white-space: nowrap; padding-right: 100%; animation: scroll-rtl 25s linear infinite; }
+        @keyframes scroll-rtl { 0% { transform: translateX(0); } 100% { transform: translateX(100%); } }
+
+        /* Header */
         header { 
             background: var(--glass); backdrop-filter: blur(20px);
-            padding: 20px; display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;
             border-bottom: 1px solid var(--glass-border); position: sticky; top: 0; z-index: 1000;
         }
-        .logo-box h1 { font-size: 1.6rem; font-weight: 900; color: var(--primary); letter-spacing: 1px; }
-        .logo-box span { font-size: 0.8rem; color: #fff; opacity: 0.6; }
-        #authTrigger { cursor: pointer; transition: 0.3s; padding: 10px; border-radius: 50%; background: rgba(255,255,255,0.05); }
-        #authTrigger:hover { color: var(--primary); transform: scale(1.1); }
+        .logo-box h1 { font-size: 1.6rem; font-weight: 900; color: var(--primary); text-shadow: 0 0 10px rgba(245, 158, 11, 0.3); }
+        .logo-box span { font-size: 0.8rem; color: var(--success); display: none; } /* Admin Badge */
 
-        /* Global Status Gauge */
-        .status-container { background: var(--glass); margin: 20px; padding: 20px; border-radius: 24px; border: 1px solid var(--glass-border); }
-        .gauge-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .progress-bar { width: 100%; height: 12px; background: #1e293b; border-radius: 10px; overflow: hidden; position: relative; }
-        #globalFill { height: 100%; width: 50%; background: linear-gradient(90deg, var(--danger), var(--success)); transition: 2s cubic-bezier(0.4, 0, 0.2, 1); }
-
-        /* Navigation Tabs */
-        .nav-tabs { display: flex; background: var(--glass); margin: 0 20px 20px; padding: 6px; border-radius: 50px; border: 1px solid var(--glass-border); }
+        /* Tabs */
+        .nav-tabs { display: flex; background: var(--glass); margin: 15px 20px; padding: 6px; border-radius: 50px; border: 1px solid var(--glass-border); }
         .tab-item { flex: 1; text-align: center; padding: 12px; border-radius: 50px; cursor: pointer; font-weight: bold; transition: 0.3s; color: rgba(255,255,255,0.5); }
         .tab-item.active { background: var(--primary); color: #000; }
 
-        /* Content Sections */
-        .content-sec { display: none; padding: 0 20px 100px; animation: fadeIn 0.5s ease; }
+        .content-sec { display: none; padding: 0 20px 100px; animation: fadeIn 0.4s ease; }
         .content-sec.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Apple Board (Advanced Logic UI) */
-        .apple-board { display: flex; flex-direction: column; gap: 8px; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 20px; border: 1px solid var(--glass-border); }
-        .apple-row { display: grid; grid-template-columns: 40px repeat(5, 1fr); gap: 8px; align-items: center; }
-        .multiplier-tag { font-size: 0.75rem; font-weight: bold; color: var(--primary); text-align: center; }
-        .apple-cell { aspect-ratio: 1; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; transition: 0.3s; }
-        .apple-cell.highlight { background: rgba(16, 185, 129, 0.1); border: 2px solid var(--success); box-shadow: var(--neon-green); transform: scale(1.05); }
+        /* Apple Board */
+        .apple-board { display: flex; flex-direction: column; gap: 8px; background: rgba(0,0,0,0.4); padding: 20px; border-radius: 20px; border: 1px solid var(--glass-border); position: relative; }
+        .apple-row { display: grid; grid-template-columns: 45px repeat(5, 1fr); gap: 8px; align-items: center; }
+        .multiplier-tag { font-size: 0.75rem; font-weight: 900; color: var(--primary); text-align: center; }
+        .apple-cell { aspect-ratio: 1; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; transition: all 0.4s ease; }
+        
+        /* تأثير الذكاء الاصطناعي أثناء التسلق */
+        .apple-cell.highlight { background: rgba(16, 185, 129, 0.15); border: 2px solid var(--success); box-shadow: 0 0 15px rgba(16, 185, 129, 0.6); transform: scale(1.08); }
+        .apple-cell.scanning { background: rgba(245, 158, 11, 0.2); box-shadow: 0 0 10px var(--primary); border: 1px dashed var(--primary); }
 
-        /* Slips Style */
-        .slip-card { background: var(--glass); border-radius: 20px; padding: 20px; margin-bottom: 15px; border: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; }
-        .slip-card.red-glow { border-color: var(--danger); box-shadow: var(--neon-red); }
-        .slip-card.green-glow { border-color: var(--success); box-shadow: var(--neon-green); }
-        .slip-info h3 { font-size: 1.1rem; margin-bottom: 4px; }
-        .slip-info p { font-size: 0.75rem; opacity: 0.5; }
-        .copy-btn { background: #334155; border: none; color: white; padding: 10px 18px; border-radius: 12px; font-weight: 900; cursor: pointer; transition: 0.2s; }
-        .delete-btn { color: var(--danger); margin-left: 15px; cursor: pointer; display: none; font-size: 1.2rem; }
+        /* Console Feed */
+        #consoleFeed { background: #000; color: #10b981; font-family: monospace; font-size: 0.8rem; padding: 15px; border-radius: 15px; margin-bottom: 15px; display: none; border: 1px solid #1e293b; text-align: left; direction: ltr; }
+
+        /* Buttons */
+        .action-btn { width: 100%; padding: 16px; border-radius: 15px; border: none; font-weight: 900; font-size: 1.1rem; cursor: pointer; margin-bottom: 15px; transition: 0.3s; }
+        #genBtn { background: var(--primary); color: #000; }
+        #exportBtn { background: #fff; color: #000; display: none; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
 
         /* Admin Controls */
-        #adminPanel { display: none; background: rgba(245, 158, 11, 0.1); border: 1px dashed var(--primary); padding: 20px; border-radius: 20px; margin-bottom: 20px; }
-        .admin-input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 10px; border: none; background: #0f172a; color: #fff; border: 1px solid var(--glass-border); }
-
-        /* Live Console Feed */
-        #consoleFeed { background: #000; color: var(--success); font-family: monospace; font-size: 0.8rem; padding: 15px; border-radius: 15px; margin-top: 15px; display: none; border: 1px solid #1e293b; }
-
-        /* Interaction Buttons */
-        .action-btn { width: 100%; padding: 18px; border-radius: 20px; border: none; font-weight: 900; font-size: 1.1rem; cursor: pointer; margin-bottom: 20px; transition: 0.3s; }
-        #genBtn { background: var(--primary); color: #000; box-shadow: 0 10px 20px rgba(245, 158, 11, 0.3); }
-        #genBtn:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(245, 158, 11, 0.4); }
-
-        .feedback-box { display: none; gap: 10px; margin-top: 10px; }
-        .feed-btn { flex: 1; padding: 12px; border-radius: 15px; border: none; font-weight: bold; cursor: pointer; }
+        .admin-panel { display: none; background: rgba(239, 68, 68, 0.05); border: 1px dashed var(--danger); padding: 20px; border-radius: 20px; margin-bottom: 20px; }
+        .admin-input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 10px; border: none; background: #0f172a; color: #fff; border: 1px solid var(--glass-border); outline: none; }
+        .admin-input:focus { border-color: var(--primary); }
     </style>
 </head>
 <body>
 
+    <!-- 3. شريط الأخبار الذكي -->
+    <div class="ticker-wrap">
+        <div class="ticker-move" id="tickerUI">
+            <!-- سيتم جلب الأخبار من القاعدة هنا -->
+            ⚡ جاري الاتصال بخوادم HOMOS BET...
+        </div>
+    </div>
+
     <header>
         <div class="logo-box">
-            <h1>HOMOS BET <span>PRO SYSTEM</span></h1>
-            <span id="adminStatus">نسخة المستخدم العام</span>
+            <h1>HOMOS <span>PRO</span></h1>
+            <span id="adminBadge"><i class="fas fa-shield-alt"></i> أدمن</span>
         </div>
-        <div id="authTrigger"><i class="fas fa-fingerprint"></i></div>
+        <i class="fas fa-fingerprint" id="authBtn" style="font-size: 1.4rem; color: var(--primary); cursor: pointer;"></i>
     </header>
-
-    <div class="status-container">
-        <div class="gauge-header">
-            <h4 id="statusMsg">جاري مزامنة السيرفرات...</h4>
-            <span id="gaugePercent" style="color: var(--success); font-weight: 900;">0%</span>
-        </div>
-        <div class="progress-bar"><div id="globalFill"></div></div>
-    </div>
 
     <div class="nav-tabs">
         <div class="tab-item active" data-sec="apple-logic">🎯 إسكربت التفاحة</div>
-        <div class="tab-item" data-sec="slips-vault">🗝️ خزنة القسائم</div>
+        <div class="tab-item" data-sec="admin-vault">⚙️ لوحة التحكم</div>
     </div>
 
     <!-- Apple Logic Section -->
     <section class="content-sec active" id="apple-logic">
-        <button class="action-btn" id="genBtn"><i class="fas fa-robot"></i> تحليل مسار الثغرة الحالية</button>
+        <button class="action-btn" id="genBtn"><i class="fas fa-microchip"></i> تشغيل خوارزمية الاختراق</button>
         
         <div id="consoleFeed"></div>
 
         <div class="apple-board" id="boardUI">
-            <!-- سيتم توليد الصفوف من x10 إلى x1 برمجياً -->
+            <!-- المربعات سيتم توليدها برمجيا -->
         </div>
 
-        <div class="feedback-box" id="feedbackArea">
-            <button class="feed-btn" style="background: var(--success); color: white;" onclick="submitGlobalStats(true)">ربحت ✅</button>
-            <button class="feed-btn" style="background: var(--danger); color: white;" onclick="submitGlobalStats(false)">خسرت ❌</button>
+        <!-- 2. زر محرك التيك توك -->
+        <button class="action-btn" id="exportBtn" style="margin-top: 15px;">
+            <i class="fab fa-tiktok"></i> مشاركة الأرباح للإثبات
+        </button>
+    </section>
+
+    <!-- Admin & Slips Section -->
+    <section class="content-sec" id="admin-vault">
+        <div id="adminControls" class="admin-panel">
+            <h3 style="color: var(--danger); margin-bottom: 15px;"><i class="fas fa-broadcast-tower"></i> بث خبر عاجل بالشريط</h3>
+            <input type="text" id="newsInput" class="admin-input" placeholder="مثال: مستخدم من المحلة الكبرى سحب ٤٠٠٠ جنيه الآن">
+            <button id="pushNewsBtn" class="action-btn" style="background: var(--danger); color: #fff; padding: 10px;">بث الخبر فوراً</button>
+        </div>
+        <div id="slipsList">
+            <p style="text-align:center; opacity:0.5;">يرجى تسجيل الدخول لعرض وتعديل القسائم.</p>
         </div>
     </section>
 
-    <!-- Slips Section -->
-    <section class="content-sec" id="slips-vault">
-        <div id="adminPanel">
-            <h3 style="margin-bottom:15px; font-size:1rem;">إضافة قسيمة جديدة (مدير النظام)</h3>
-            <input type="text" id="newApp" class="admin-input" placeholder="اسم التطبيق (مثال: 1xbet)">
-            <input type="text" id="newCode" class="admin-input" placeholder="كود القسيمة">
-            <button id="saveSlip" class="action-btn" style="background: var(--success); color: #fff; padding:10px;">نشر الآن</button>
-        </div>
-        <div id="slipsList"></div>
-    </section>
-
-    <!-- Scripts -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getDatabase, ref, push, onValue, remove, update, get } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getDatabase, ref, push, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyB5fbIJ3rbV5Ud1mnQgZGTcjYZSrnQqNbA",
@@ -156,20 +145,17 @@
         const db = getDatabase(app);
         let isAdmin = false;
 
-        // --- AUTH SYSTEM ---
-        document.getElementById('authTrigger').onclick = () => {
-            const pass = prompt("أدخل كود الوصول السري:");
-            if (pass === "Homos77#") {
+        // --- نظام الأدمن السري ---
+        document.getElementById('authBtn').onclick = () => {
+            if(prompt("كود الدخول:") === "Homos77#") {
                 isAdmin = true;
-                document.getElementById('adminPanel').style.display = 'block';
-                document.getElementById('adminStatus').innerText = "وضع مدير النظام نشط";
-                document.getElementById('adminStatus').style.color = "#10b981";
-                alert("أهلاً بك يا أحمد في لوحة التحكم الكاملة.");
-                renderSlips(); // Refresh to show delete buttons
+                document.getElementById('adminBadge').style.display = 'block';
+                document.getElementById('adminControls').style.display = 'block';
+                alert("تم تفعيل صلاحيات التحكم بالمنظومة وشريط الأخبار.");
             }
         };
 
-        // --- NAVIGATION ---
+        // --- تبويبات التنقل ---
         document.querySelectorAll('.tab-item').forEach(tab => {
             tab.onclick = () => {
                 document.querySelectorAll('.tab-item, .content-sec').forEach(el => el.classList.remove('active'));
@@ -178,16 +164,43 @@
             };
         });
 
-        // --- APPLE LOGIC (The Core) ---
+        // --- شريط الأخبار (Live Ticker) ---
+        const tickerRef = ref(db, 'live_ticker');
+        
+        // قراءة الأخبار من القاعدة
+        onValue(tickerRef, (snap) => {
+            const data = snap.val();
+            if(data) {
+                let newsString = "";
+                // تجميع كل الأخبار في نص واحد للشريط
+                Object.values(data).reverse().slice(0, 5).forEach(item => {
+                    newsString += `&nbsp;&nbsp;&nbsp;&nbsp; 🔥 ${item.text} &nbsp;&nbsp;&nbsp;&nbsp; | `;
+                });
+                document.getElementById('tickerUI').innerHTML = newsString;
+            }
+        });
+
+        // الأدمن يرسل خبر جديد
+        document.getElementById('pushNewsBtn').onclick = async () => {
+            const text = document.getElementById('newsInput').value;
+            if(text) {
+                await push(tickerRef, { text: text, time: Date.now() });
+                document.getElementById('newsInput').value = '';
+                alert("تم بث الخبر لجميع المستخدمين!");
+            }
+        };
+
+        // --- ذكاء الإسكربت (Apple Logic) ---
         const multipliers = ["x1.23", "x1.54", "x1.93", "x2.41", "x4.02", "x6.71", "x11.18", "x27.9", "x69.8", "x349"];
 
-        function initBoard() {
+        function buildBoard() {
             const board = document.getElementById('boardUI');
             board.innerHTML = '';
-            // إنشاء الصفوف من 9 (الأعلى) إلى 0 (الأسفل)
+            // من فوق لتحت (9 لـ 0)
             for (let i = 9; i >= 0; i--) {
                 const row = document.createElement('div');
                 row.className = 'apple-row';
+                row.id = `row-${i}`;
                 row.innerHTML = `<div class="multiplier-tag">${multipliers[i]}</div>`;
                 for (let j = 0; j < 5; j++) {
                     const cell = document.createElement('div');
@@ -198,112 +211,82 @@
                 board.appendChild(row);
             }
         }
-        initBoard();
+        buildBoard();
 
         document.getElementById('genBtn').onclick = () => {
+            const btn = document.getElementById('genBtn');
             const consoleBox = document.getElementById('consoleFeed');
-            consoleBox.style.display = 'block';
-            consoleBox.innerHTML = "> جاري تهيئة الاتصال المشفر...<br>";
+            const exportBtn = document.getElementById('exportBtn');
             
-            const logs = [
-                "> تم اختراق جدار الحماية للملف #8892",
-                "> تحليل احتمالات الصفوف x1 - x10",
-                "> استخراج المسار الذهبي الآمن..."
-            ];
+            btn.disabled = true;
+            exportBtn.style.display = 'none';
+            buildBoard(); // تصفير البوردة
+            
+            consoleBox.style.display = 'block';
+            consoleBox.innerHTML = "init() >> Bypass RNG Seed...<br>";
 
-            logs.forEach((txt, i) => {
-                setTimeout(() => { consoleBox.innerHTML += `${txt}<br>`; }, (i+1) * 400);
-            });
-
-            setTimeout(() => {
-                applyAiLogic();
-                document.getElementById('feedbackArea').style.display = 'flex';
-                consoleBox.innerHTML += "> <span style='color:#f59e0b'>تم التوليد بنجاح! اتبع التفاح المضيء.</span>";
-            }, 1800);
-        };
-
-        function applyAiLogic() {
-            initBoard(); // Reset board
-            for (let i = 0; i < 10; i++) {
-                // ذكاء اصطناعي بسيط: اختيار خانة آمنة لكل لفل
-                const safeCol = Math.floor(Math.random() * 5);
-                const targetCell = document.getElementById(`cell-${i}-${safeCol}`);
-                targetCell.classList.add('highlight');
-                targetCell.innerHTML = '🍎';
-            }
-        }
-
-        // --- GLOBAL STATS (GAUGE) ---
-        const statsRef = ref(db, 'system_performance');
-        window.submitGlobalStats = async (isWin) => {
-            const snap = await get(statsRef);
-            let current = snap.val() || { wins: 85, total: 100 };
-            update(statsRef, {
-                wins: isWin ? current.wins + 1 : current.wins,
-                total: current.total + 1
-            });
-            alert(isWin ? "عاش يا بطل! تم تحديث نجاح المنظومة." : "حظ موفق المرة القادمة، الخوارزمية تتحسن.");
-            document.getElementById('feedbackArea').style.display = 'none';
-        };
-
-        onValue(statsRef, (snap) => {
-            const data = snap.val() || { wins: 85, total: 100 };
-            const percent = Math.round((data.wins / data.total) * 100);
-            document.getElementById('globalFill').style.width = percent + '%';
-            document.getElementById('gaugePercent').innerText = percent + '%';
-            document.getElementById('statusMsg').innerText = percent > 80 ? "السيرفر في حالة اختراق مثالية 🔥" : "السيرفر متقلب.. التزم بالصف الرابع ⚠️";
-        });
-
-        // --- SLIPS MANAGEMENT ---
-        const slipsRef = ref(db, 'pro_slips');
-        
-        document.getElementById('saveSlip').onclick = async () => {
-            const appName = document.getElementById('newApp').value;
-            const code = document.getElementById('newCode').value;
-            if(appName && code) {
-                await push(slipsRef, { appName, code, time: Date.now() });
-                document.getElementById('newApp').value = '';
-                document.getElementById('newCode').value = '';
-            }
-        };
-
-        function renderSlips() {
-            onValue(slipsRef, (snap) => {
-                const list = document.getElementById('slipsList');
-                list.innerHTML = '';
-                const data = snap.val();
-                if(data) {
-                    Object.keys(data).reverse().forEach(key => {
-                        const s = data[key];
-                        const app = s.appName.toLowerCase();
-                        let glowClass = app.includes('1xbet') ? 'red-glow' : (app.includes('linebet') ? 'green-glow' : '');
-                        
-                        const card = document.createElement('div');
-                        card.className = `slip-card ${glowClass}`;
-                        card.innerHTML = `
-                            <div class="slip-info">
-                                <h3>${s.appName.toUpperCase()}</h3>
-                                <p>تم التحقق بواسطة HOMOS SYSTEM</p>
-                            </div>
-                            <div style="display:flex; align-items:center;">
-                                <button class="copy-btn" onclick="copySlip('${s.code}')">${s.code}</button>
-                                <i class="fas fa-trash-alt delete-btn" style="display:${isAdmin?'block':'none'}" onclick="removeSlip('${key}')"></i>
-                            </div>
-                        `;
-                        list.appendChild(card);
-                    });
+            // محاكاة تسلق الذكاء الاصطناعي للأدوار من الأسفل (0) للأعلى (9)
+            let currentLevel = 0;
+            const climbInterval = setInterval(() => {
+                if(currentLevel > 9) {
+                    clearInterval(climbInterval);
+                    consoleBox.innerHTML += "> <span style='color:var(--success)'>[Success] Path Extracted!</span>";
+                    btn.disabled = false;
+                    exportBtn.style.display = 'block'; // إظهار زر التيك توك
+                    return;
                 }
-            });
-        }
-        renderSlips();
 
-        window.removeSlip = (id) => {
-            if(confirm("حذف هذه القسيمة؟")) remove(ref(db, `pro_slips/${id}`));
+                consoleBox.innerHTML += `> Analyzing MD5 Hash for Level ${currentLevel + 1}...<br>`;
+                
+                // اختيار مسار آمن
+                const safeCol = Math.floor(Math.random() * 5);
+                const targetCell = document.getElementById(`cell-${currentLevel}-${safeCol}`);
+                
+                // تأثير بصري
+                targetCell.classList.add('highlight');
+                targetCell.innerHTML = '🍏'; // يبدأ بتفاحة خضراء
+                
+                // بعد لحظة يحولها لتفاحة حمراء عشان يحسس المستخدم بالاختراق
+                setTimeout(() => {
+                    targetCell.innerHTML = '🍎';
+                    targetCell.style.boxShadow = "0 0 20px var(--success)";
+                }, 200);
+
+                currentLevel++;
+            }, 600); // بين كل دور والتاني 600 جزء من الثانية
         };
 
-        window.copySlip = (txt) => {
-            navigator.clipboard.writeText(txt);
-            alert("تم نسخ الكود: " + txt);
+        // --- محرك مشاركة التيك توك (TikTok Exporter) ---
+        document.getElementById('exportBtn').onclick = () => {
+            const btn = document.getElementById('exportBtn');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري تجهيز الصورة...';
+            
+            const boardToCapture = document.getElementById('boardUI');
+            
+            // إضافة علامة مائية للموقع مؤقتا قبل التصوير
+            const watermark = document.createElement('div');
+            watermark.innerHTML = "<b>HOMOS BET SYSTEM</b><br>@2026 الاختراق الناجح";
+            watermark.style.cssText = "text-align:center; color:var(--primary); margin-top:10px; font-size:1.2rem; font-weight:900;";
+            boardToCapture.appendChild(watermark);
+
+            // استخدام مكتبة التصوير
+            html2canvas(boardToCapture, {
+                backgroundColor: '#020617',
+                scale: 2 // لرفع جودة الصورة
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `HOMOS_WIN_${Date.now()}.png`; // اسم الصورة
+                link.href = canvas.toDataURL("image/png");
+                link.click(); // تحميل مباشر
+                
+                // إزالة العلامة المائية بعد التصوير
+                boardToCapture.removeChild(watermark);
+                btn.innerHTML = '<i class="fab fa-tiktok"></i> تم التحميل! شاركها الآن';
+                
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="fab fa-tiktok"></i> مشاركة الأرباح للإثبات';
+                }, 3000);
+            });
         };
     </script>
 </body>
