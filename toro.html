@@ -3,372 +3,377 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HOMOS BET MAX v11.0 - Elite Matrix</title>
+    <title>HOMOS BET MAX v11.0</title>
     <style>
-        /* نظام الألوان والمؤثرات البصرية العالمية */
+        /* التنسيق الأصلي الفخم مع لمسات النيون وتأثيرات الظهور التدريجي */
         :root {
-            --bg-main: #0b0f17;
-            --bg-card: #131a26;
-            --accent-neon: #00f5d4;
-            --accent-blue: #00b4d8;
-            --text-primary: #ffffff;
-            --text-secondary: #94a3b8;
-            --danger-neon: #ff4d6d;
-            --premium-gold: #ffb703;
-            --transition-smooth: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            --main-bg: #0d1117;
+            --card-bg: #161b22;
+            --neon-green: #00ffcc;
+            --neon-red: #ff3366;
+            --neon-blue: #00b4d8;
+            --text-color: #ffffff;
+            --muted-text: #8b949e;
+            --gold: #ffb703;
         }
 
         body {
-            background-color: var(--bg-main);
-            color: var(--text-primary);
+            background-color: var(--main-bg);
+            color: var(--text-color);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            overflow-x: hidden;
         }
 
-        /* حاوية النظام الرئيسية مع الأنيميشن التدريجي */
-        .app-container {
-            background: var(--bg-card);
+        /* حاوية السكريبت الأصلية */
+        .main-wrapper {
+            background-color: var(--card-bg);
             width: 100%;
-            max-width: 480px;
-            border-radius: 24px;
-            padding: 24px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 50px rgba(0, 245, 212, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            max-width: 440px;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7), 0 0 30px rgba(0, 255, 204, 0.05);
+            border: 1px solid rgba(255,255,255,0.05);
             position: relative;
             overflow: hidden;
-            animation: fadeInUp 0.8s var(--transition-smooth);
         }
 
-        /* أنيميشن الظهور التدريجي الفخم */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px) scale(0.98);
-            }
+        /* شريط الأخبار المتحرك الأصلي */
+        .news-marquee {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 8px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            white-space: nowrap;
+            font-size: 13px;
+            color: var(--neon-green);
+            border: 1px solid rgba(0, 255, 204, 0.1);
+        }
+
+        /* تأثير الظهور التدريجي الفخم (الأنيميشن) */
+        .fade-in-element {
+            opacity: 0;
+            transform: translateY(10px);
+            animation: cubic-bezier(0.4, 0, 0.2, 1) forwards smoothShow 0.6s;
+        }
+
+        @keyframes smoothShow {
             to {
                 opacity: 1;
-                transform: translateY(0) scale(1);
+                transform: translateY(0);
             }
         }
 
-        .element-fade-in {
-            opacity: 0;
-            animation: fadeInElement 0.6s forwards ease-out;
-        }
-
-        @keyframes fadeInElement {
-            to { opacity: 1; }
-        }
-
-        /* نظام التبويبات الحديث */
-        .tabs-header {
+        /* نظام التبويبات الحديث والسلس */
+        .tabs-nav {
             display: flex;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 14px;
-            padding: 4px;
-            margin-bottom: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.02);
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
-        .tab-btn {
+        .tab-button {
             flex: 1;
-            background: transparent;
-            border: none;
-            color: var(--text-secondary);
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: var(--muted-text);
             padding: 12px;
-            font-size: 14px;
-            font-weight: 600;
+            border-radius: 12px;
             cursor: pointer;
-            border-radius: 10px;
-            transition: var(--transition-smooth);
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.3s ease;
         }
 
-        .tab-btn.active {
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-neon));
-            color: var(--bg-main);
-            box-shadow: 0 4px 15px rgba(0, 245, 212, 0.3);
+        .tab-button.active {
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-green));
+            color: #000;
+            border: none;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.3);
         }
 
-        .tab-content {
+        .tab-panel {
             display: none;
-            transition: var(--transition-smooth);
         }
 
-        .tab-content.active {
+        .tab-panel.active {
             display: block;
-            animation: fadeInUp 0.5s var(--transition-smooth);
         }
 
-        /* شبكة الماتريكس التفاعلية للمحلل */
-        .matrix-grid {
+        /* شبكة الماتريكس الأصلية 5x5 */
+        .matrix-container {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: 8px;
             margin: 20px 0;
-            transition: var(--transition-smooth);
+            position: relative;
         }
 
         .matrix-cell {
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0,0,0,0.3);
             aspect-ratio: 1;
             border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255,255,255,0.05);
             display: flex;
             justify-content: center;
             align-items: center;
             font-weight: bold;
             font-size: 14px;
-            color: var(--text-secondary);
-            transition: all 0.3s ease;
+            color: var(--muted-text);
+            transition: all 0.2s ease;
         }
 
-        .matrix-cell.prediction {
-            background: rgba(0, 245, 212, 0.15);
-            border-color: var(--accent-neon);
-            color: var(--accent-neon);
-            box-shadow: inset 0 0 10px rgba(0, 245, 212, 0.2);
+        .matrix-cell.active-signal {
+            background: rgba(0, 255, 204, 0.15);
+            border-color: var(--neon-green);
+            color: var(--neon-green);
+            box-shadow: inset 0 0 10px rgba(0, 255, 204, 0.2);
             animation: pulse 1.5s infinite;
         }
 
         @keyframes pulse {
             0% { transform: scale(1); }
-            50% { transform: scale(1.03); }
+            50% { transform: scale(1.04); }
             100% { transform: scale(1); }
         }
 
-        /* العقل الذكي: منبثقة تفاعلية ذكية عند الخسارة */
-        .smart-feedback-panel {
-            background: rgba(255, 77, 109, 0.1);
-            border: 1px solid var(--danger-neon);
-            border-radius: 14px;
-            padding: 16px;
+        /* لوحة سؤال الخسارة الذكي */
+        .loss-question-box {
+            background: rgba(255, 51, 102, 0.08);
+            border: 1px solid var(--neon-red);
+            border-radius: 12px;
+            padding: 15px;
             margin-top: 15px;
             display: none;
-            animation: fadeInUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .smart-feedback-panel select {
+        .loss-question-box select {
             width: 100%;
-            background: var(--bg-main);
+            background: var(--main-bg);
             color: #fff;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255,255,255,0.1);
             padding: 10px;
             border-radius: 8px;
-            margin-top: 10px;
+            margin-top: 8px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        /* خانة إدخال وتفعيل رمز الإحالة */
+        .ref-input-group {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 14px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .ref-input-group input {
+            width: 100%;
+            padding: 12px;
+            background: var(--main-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: #fff;
+            text-align: center;
+            font-size: 16px;
+            letter-spacing: 2px;
+            box-sizing: border-box;
             outline: none;
         }
 
-        /* نظام الإحالة المطور بالكود الرقمي */
-        .referral-box {
+        .ref-input-group input:focus {
+            border-color: var(--neon-blue);
+        }
+
+        /* عداد الإحالات التفاعلي (دخل 1 متبقي 4) */
+        .ref-counter-box {
             background: rgba(0, 180, 216, 0.05);
-            border: 1px dashed var(--accent-blue);
-            border-radius: 14px;
-            padding: 20px;
-            text-align: center;
+            border: 1px dashed var(--neon-blue);
+            padding: 12px;
+            border-radius: 10px;
             margin-top: 15px;
-        }
-
-        .ref-code-display {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--accent-neon);
-            letter-spacing: 4px;
-            margin: 10px 0;
-            background: rgba(0,0,0,0.2);
-            padding: 10px;
-            border-radius: 8px;
-            display: inline-block;
-        }
-
-        .tracker-status {
+            display: flex;
+            justify-content: space-between;
             font-size: 13px;
-            color: var(--text-secondary);
-            margin-top: 12px;
         }
 
-        .tracker-badge {
-            background: rgba(255, 183, 3, 0.15);
-            color: var(--premium-gold);
-            padding: 2px 8px;
-            border-radius: 6px;
-            font-weight: bold;
-        }
-
-        /* نظام القفل الذكي عند انتهاء المحاولات */
-        .app-lock-overlay {
+        /* غطاء الحظر الزجاجي الفخم عند انتهاء الحد */
+        .glass-lock-overlay {
             position: absolute;
-            top: 70px; /* تترك التبويبات تعمل لتصفح الإحالات وتغلق مساحة العمل */
+            top: 60px; /* يترك التبويبات تعمل حتى لا يتضايق المستخدم ويستطيع الذهاب لتبويب الإحالات */
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(11, 15, 23, 0.85);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            background: rgba(13, 17, 23, 0.85);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 100;
+            z-index: 99;
             opacity: 0;
             pointer-events: none;
-            transition: var(--transition-smooth);
+            transition: opacity 0.4s ease;
             padding: 20px;
         }
 
-        .app-lock-overlay.active {
+        .glass-lock-overlay.active {
             opacity: 1;
             pointer-events: auto;
         }
 
-        .lock-card {
-            background: var(--bg-card);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 24px;
-            border-radius: 18px;
+        .lock-content-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 16px;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-            width: 100%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
 
-        /* الأزرار الاحترافية */
-        .btn-action {
+        /* الأزرار العامة */
+        .action-btn {
             width: 100%;
             padding: 14px;
             border: none;
             border-radius: 12px;
             font-weight: bold;
+            font-size: 15px;
             cursor: pointer;
-            transition: var(--transition-smooth);
+            transition: all 0.3s ease;
             margin-top: 10px;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-neon));
-            color: var(--bg-main);
+        .btn-green {
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-green));
+            color: #000;
         }
 
-        .btn-danger {
-            background: rgba(255, 77, 109, 0.15);
-            color: var(--danger-neon);
-            border: 1px solid var(--danger-neon);
+        .btn-red {
+            background: rgba(255, 51, 102, 0.15);
+            color: var(--neon-red);
+            border: 1px solid var(--neon-red);
         }
 
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-secondary);
+        .btn-muted {
+            background: rgba(255,255,255,0.05);
+            color: var(--muted-text);
         }
     </style>
 </head>
 <body>
 
-<div class="app-container">
+<div class="main-wrapper fade-in-element">
     
-    <!-- نظام التبويبات العلوي -->
-    <div class="tabs-header">
-        <button class="tab-btn active" onclick="switchTab('analyzer')">المحلل الذكي</button>
-        <button class="tab-btn" onclick="switchTab('referral-tab')">الإحالات والجوائز</button>
+    <!-- شريط الأخبار الأصلي الخاص بك -->
+    <div class="news-marquee">
+        <marquee scrollamount="5">مرحباً بك في تحديث HOMOS BET MAX v11.0 الذكي.. نظام منع الخسارة التكيفي مفعّل الآن بنجاح..</marquee>
     </div>
 
-    <!-- حاوية القفل الضبابي الذكي عند انتهاء الليميت -->
-    <div class="app-lock-overlay" id="appLock">
-        <div class="lock-card">
-            <h3 style="color: var(--danger-neon); margin-top: 0;">انتهت صلاحية المحاولات المجانية اليوم!</h3>
-            <p style="color: var(--text-secondary); font-size: 14px;">لتستمر في استخدام العقل المفكر وتحقيق الأرباح، يرجى الاشتراك في الخطة المميزة أو استخدام نظام الإحالات.</p>
-            <button class="btn-action btn-primary" onclick="window.open('https://t.me/your_telegram_bot')">تفعيل الاشتراك المدفوع</button>
-            <button class="btn-action btn-secondary" onclick="dismissLockOverlay()">إخفاء التنبيه مؤقتاً</button>
+    <!-- التبويبات المطلوبة -->
+    <div class="tabs-nav">
+        <button class="tab-button active" onclick="toggleTabs('analyzer-panel')">غرفة الإشارات</button>
+        <button class="tab-button" onclick="toggleTabs('referral-panel')">نظام الإحالة والتفعيل</button>
+    </div>
+
+    <!-- غطاء القفل الزجاجي الذكي عند انتهاء المحاولات -->
+    <div class="glass-lock-overlay" id="dailyLockOverlay">
+        <div class="lock-content-card">
+            <h4 style="color: var(--neon-red); margin: 0 0 10px 0; font-size: 16px;">عذراً، انتهت محاولاتك المجانية اليوم!</h4>
+            <p style="color: var(--muted-text); font-size: 13px; margin-bottom: 15px;">الإسكربت معطل الآن. للحصول على محاولات إضافية فوراً، قم بنشر كودك أو تفعيل الاشتراك المدفوع.</p>
+            <button class="action-btn btn-green" onclick="window.open('https://t.me/HOMOS_Magic')">اشترك الآن في المميز</button>
+            <button class="action-btn btn-muted" onclick="hideLockTemporarily()">إغلاق التنبيه مؤقتاً تصفح فقط</button>
         </div>
     </div>
 
-    <!-- التبويب الأول: المحلل الذكي -->
-    <div id="analyzer" class="tab-content active">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span style="font-size: 14px; color: var(--text-secondary);">المحاولات المتبقية اليوم: <b id="dailyLimitTxt" style="color: var(--accent-neon);">5</b></span>
-            <span class="tracker-badge" id="aiStatus">جاري فحص الخوارزميات...</span>
+    <!-- التبويب الأول: المحلل الذكي والإشارات -->
+    <div id="analyzer-panel" class="tab-panel active">
+        <div style="display: flex; justify-content: space-between; font-size: 13px;">
+            <span>الوضع الحالي: <b style="color: var(--neon-green);" id="brainStatus">متصل ومستقر</b></span>
+            <span>المحاولات: <b id="attemptsCount" style="color: var(--neon-blue);">5</b></span>
         </div>
 
-        <!-- شبكة الماتريكس الذكية -->
-        <div class="matrix-grid" id="matrixGrid"></div>
+        <!-- شبكة الـ 5x5 الأصلية تظهر تدريجياً وبنعومة -->
+        <div class="matrix-container" id="scriptGrid"></div>
 
-        <button class="btn-action btn-primary" id="predictBtn" onclick="generateSmartPrediction()">توليد إشارة ذكية</button>
-        <button class="btn-action btn-danger" id="lostBtn" onclick="showSmartFeedback()">خسرت في هذه الجولة</button>
+        <button class="action-btn btn-green" id="generateSignalBtn" onclick="generateSmartSignal()">توليد إشارة مؤكدة</button>
+        <button class="action-btn btn-red" id="lostReportBtn" onclick="openLossBrainQuestion()">خسرت في هذه الجولة</button>
 
-        <!-- لوحة تغذية العقل الاصطناعي عند الخسارة -->
-        <div class="smart-feedback-panel" id="feedbackPanel">
-            <label style="font-size: 13px; color: #fff;">أين كان المربع الخاطئ لتجنبه فوراً؟</label>
-            <select id="lossCellSelect" onchange="submitLossToBrain()">
-                <option value="" disabled selected>اختر رقم المربع...</option>
-                <!-- سيتم ملئه برمجياً -->
+        <!-- سؤال العقل الذكي عند الخسارة لتفادي الأماكن -->
+        <div class="loss-question-box fade-in-element" id="lossBrainBox">
+            <label style="font-size: 13px; font-weight: bold;">أين كان مكان مربع الخسارة بالظبط؟</label>
+            <select id="lossCellDropdown" onchange="feedLossToScriptBrain()">
+                <option value="" disabled selected>اختر رقم المربع الخطأ لشق الخوارزمية...</option>
+                <!-- يتم الملء تلقائياً -->
             </select>
         </div>
     </div>
 
-    <!-- التبويب الثاني: نظام الإحالات الجديد -->
-    <div id="referral-tab" class="tab-content">
-        <h3>نظام الإحالة الذكي</h3>
-        <p style="color: var(--text-secondary); font-size: 14px;">شارك كود التفعيل الخاص بك مع أصدقائك للحصول على أيام استخدام مجانية غير محدودة عند تفعيلهم الكود.</p>
+    <!-- التبويب الثاني: الإحالات والتفعيل -->
+    <div id="referral-panel" class="tab-panel">
+        <h3 style="font-size: 16px; margin-top: 0;">نظام مشاركة الأكواد والجوائز</h3>
         
-        <div class="referral-box">
-            <span style="font-size: 12px; color: var(--text-secondary);">كود الإحالة الخاص بك</span>
-            <div class="ref-code-display" id="myRefCode">HMX-9842</div>
-            <button class="btn-action btn-secondary" style="padding: 8px; font-size: 12px;" onclick="copyRefCode()">نسخ الكود</button>
+        <div style="background: rgba(0,0,0,0.2); padding: 12px; border-radius: 10px; text-align: center;">
+            <span style="font-size: 12px; color: var(--muted-text);">كودك الفريد للمشاركة:</span>
+            <div style="font-size: 20px; font-weight: bold; color: var(--gold); margin-top: 5px; letter-spacing: 2px;">HOMOS-777</div>
         </div>
 
-        <!-- عداد الإحالات التفاعلي المطلوب -->
-        <div class="tracker-status" style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; margin-top: 15px;">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                <span>حالة تفعيل الكود:</span>
-                <span id="referralCounter" style="color: var(--premium-gold); font-weight: bold;">دخل 0 | متبقي 5</span>
-            </div>
-            <div style="width: 100%; background: rgba(255,255,255,0.05); height: 6px; border-radius: 3px; overflow: hidden;">
-                <div id="refProgressBar" style="width: 0%; height: 100%; background: var(--premium-gold); transition: var(--transition-smooth);"></div>
-            </div>
+        <!-- خانة إضافة كود الإحالة (المكان الذي سألت عنه) -->
+        <div class="ref-input-group">
+            <span style="font-size: 13px; color: var(--muted-text); display: block; margin-bottom: 8px;">لديك كود إحالة من صديق؟ أدخله هنا:</span>
+            <input type="text" id="friendRefCode" placeholder="أدخل الرمز هنا (مثال: XYZ-123)">
+            <button class="action-btn btn-green" style="padding: 10px; font-size: 13px; margin-top: 10px;" onclick="activateFriendCode()">تفعيل الرمز المكتوب</button>
+        </div>
+
+        <!-- العداد التفاعلي المطلوب بالتفصيل -->
+        <div class="ref-counter-box" id="refStatusTracker">
+            <span>عداد شبكة الإحالات:</span>
+            <span id="refCounterText" style="color: var(--gold); font-weight: bold;">دخل 1 | متبقي 4</span>
         </div>
     </div>
 
 </div>
 
 <script>
-    // الحالة الداخلية للذكاء والمستخدم (State Management)
-    let appState = {
-        dailyAttempts: 5,
-        referralsJoined: 1, // محاكاة: شخص واحد استخدم الكود مسبقاً
-        referralsRequired: 5,
-        matrixSize: 25,
-        // عقل الذاكرة لتجنب الخسائر (Neural Matrix Map)
-        blacklistedCells: new Set(),
-        currentPrediction: null
+    // تهيئة البيانات والتحكم والذاكرة (العقل الاصطناعي للإسكربت)
+    let scriptConfig = {
+        attemptsLeft: 5,
+        totalGridCells: 25,
+        referralsCount: 1, // محاكاة لطلبك: دخل 1 متبقي 4
+        requiredReferrals: 5,
+        smartBlacklist: new Set(), // الذاكرة الذكية لتجنب الخسائر السابقة
+        lastPredictedCell: null
     };
 
-    // إعداد الإسكربت عند البدء وتطبيق تدرج الظهور
+    // تشغيل الإسكربت وبناء العناصر تدريجياً
     window.onload = function() {
-        buildMatrix();
-        updateUI();
-        setTimeout(() => {
-            document.getElementById('aiStatus').innerText = "العقل المفكر متصل ونشط";
-        }, 1000);
+        initScriptGrid();
+        refreshInterfaceData();
     };
 
-    // بناء شبكة الماتريكس وملء قائمة خيارات الخسارة تدريجياً
-    function buildMatrix() {
-        const grid = document.getElementById('matrixGrid');
-        const select = document.getElementById('lossCellSelect');
+    // إنشاء الشبكة الأصلية 5x5 مع تدرج ظهور الخلايا واحدة تلو الأخرى لتبدو احترافية
+    function initScriptGrid() {
+        const grid = document.getElementById('scriptGrid');
+        const select = document.getElementById('lossCellDropdown');
         grid.innerHTML = '';
         
-        for (let i = 1; i <= appState.matrixSize; i++) {
-            // الماتريكس
+        for (let i = 1; i <= scriptConfig.totalGridCells; i++) {
             let cell = document.createElement('div');
-            cell.className = 'matrix-cell element-fade-in';
-            cell.id = `cell-${i}`;
+            cell.className = 'matrix-cell';
+            cell.id = `cell-num-${i}`;
             cell.innerText = i;
-            cell.style.animationDelay = `${i * 0.02}s`; // ظهور تدريجي مبهر لكل مربع
+            
+            // إضافة تأثير ظهور تدريجي متتابع (Staggered Animation) لكل مربع
+            cell.style.animation = `smoothShow 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards`;
+            cell.style.animationDelay = `${i * 0.02}s`;
             grid.appendChild(cell);
 
-            // القائمة المنسدلة للذكاء
+            // ملء دروب داون الخسارة
             let opt = document.createElement('option');
             opt.value = i;
             opt.innerText = `مربع رقم ${i}`;
@@ -376,118 +381,114 @@
         }
     }
 
-    // التنقل السلس بين التبويبات
-    function switchTab(tabId) {
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    // التنقل بين التبويبات بدون أي تهنيج أو تحميل صفحة جديد
+    function toggleTabs(panelId) {
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
         
-        document.getElementById(tabId).classList.add('active');
+        document.getElementById(panelId).classList.add('active');
         event.currentTarget.classList.add('active');
     }
 
-    // تحديث البيانات ديناميكياً في الواجهة
-    function updateUI() {
-        document.getElementById('dailyLimitTxt').innerText = appState.dailyAttempts;
+    // تحديث الأرقام والواجهات بشكل مستمر
+    function refreshInterfaceData() {
+        document.getElementById('attemptsCount').innerText = scriptConfig.attemptsLeft;
         
-        // حساب نظام الإحالة العكسي المطلوب (دخل X متبقي Y)
-        let remaining = appState.referralsRequired - appState.referralsJoined;
-        document.getElementById('referralCounter').innerText = `دخل ${appState.referralsJoined} | متبقي ${remaining}`;
-        
-        let progressPercent = (appState.referralsJoined / appState.referralsRequired) * 100;
-        document.getElementById('refProgressBar').style.width = `${progressPercent}%`;
+        // حساب الإحالات ديناميكياً (دخل X متبقي Y)
+        let needed = scriptConfig.requiredReferrals - scriptConfig.referralsCount;
+        document.getElementById('refCounterText').innerText = `دخل ${scriptConfig.referralsCount} | متبقي ${needed}`;
 
-        // التحقق من ليميت المحاولات اليومي لتعطيل الإسكربت
-        if (appState.dailyAttempts <= 0) {
-            triggerAppLock();
+        // إذا انتهت المحاولات، يتعطل الإسكربت وتظهر لوحة القفل الزجاجية الفخمة
+        if (scriptConfig.attemptsLeft <= 0) {
+            document.getElementById('generateSignalBtn').disabled = true;
+            document.getElementById('generateSignalBtn').style.opacity = '0.3';
+            document.getElementById('dailyLockOverlay').classList.add('active');
         }
     }
 
-    // خوارزمية التنبؤ الذكي (تتجنب المربعات التي تم التبليغ عن خسارتها سابقاً)
-    function generateSmartPrediction() {
-        if (appState.dailyAttempts <= 0) return;
+    // خوارزمية التوليد الذكية (العقل المفكر يتخطى المربعات التي تسببت بخسارة المستخدم سابقاً)
+    function generateSmartSignal() {
+        if (scriptConfig.attemptsLeft <= 0) return;
 
-        // تنظيف التنبؤات السابقة بسلاسة
-        document.querySelectorAll('.matrix-cell').forEach(el => el.classList.remove('prediction'));
-        document.getElementById('feedbackPanel').style.display = 'none';
+        // مسح الإشارات السابقة أولاً
+        document.querySelectorAll('.matrix-cell').forEach(c => c.classList.remove('active-signal'));
+        document.getElementById('lossBrainBox').style.display = 'none';
 
-        // تجميع المربعات المتاحة الآمنة فقط (العقل الذكي يعمل هنا)
-        let availableCells = [];
-        for (let i = 1; i <= appState.matrixSize; i++) {
-            if (!appState.blacklistedCells.has(i)) {
-                availableCells.push(i);
+        // تصفية المربعات المتاحة التي لم يتم حظرها من الذاكرة الذكية
+        let safePool = [];
+        for (let i = 1; i <= scriptConfig.totalGridCells; i++) {
+            if (!scriptConfig.smartBlacklist.has(i)) {
+                safePool.push(i);
             }
         }
 
-        // إذا كانت الخسائر كثيرة جداً، قم بإعادة تصفير الذاكرة لضمان استمرار الحساب
-        if (availableCells.length === 0) {
-            appState.blacklistedCells.clear();
-            availableCells = Array.from({length: appState.matrixSize}, (_, i) => i + 1);
+        // إذا قام المستخدم بحظر كل الخيارات، نقوم بعمل تصفير تلقائي للذاكرة لكي لا يتوقف السكريبت
+        if (safePool.length === 0) {
+            scriptConfig.smartBlacklist.clear();
+            safePool = Array.from({length: scriptConfig.totalGridCells}, (_, index) => index + 1);
         }
 
-        // اختيار عشوائي ذكي مبني على المربعات المتبقية والآمنة
-        const randomIndex = Math.floor(Math.random() * availableCells.length);
-        const targetCellId = availableCells[randomIndex];
-        
-        appState.currentPrediction = targetCellId;
-        appState.dailyAttempts--;
+        // اختيار مربع عشوائي آمن وذكي
+        let selectIndex = Math.floor(Math.random() * safePool.length);
+        let chosenCellId = safePool[selectIndex];
 
-        // إظهار الإشارة تدريجياً داخل المربع المختار
+        scriptConfig.lastPredictedCell = chosenCellId;
+        scriptConfig.attemptsLeft--;
+
+        // إبراز المربع تدريجياً بنعومة تامة
         setTimeout(() => {
-            const targetCell = document.getElementById(`cell-${targetCellId}`);
-            targetCell.classList.add('prediction');
-            updateUI();
-        }, 300);
+            document.getElementById(`cell-num-${chosenCellId}`).classList.add('active-signal');
+            refreshInterfaceData();
+        }, 200);
     }
 
-    // لوحة ذكاء الخسارة التكيفية
-    function showSmartFeedback() {
-        if (!appState.currentPrediction) return;
-        let panel = document.getElementById('feedbackPanel');
-        panel.style.display = 'block';
+    // عند الضغط على "خسرت"، يظهر السؤال تدريجياً لمعرفة المربع الخائن
+    function openLossBrainQuestion() {
+        if (!scriptConfig.lastPredictedCell) return;
+        document.getElementById('lossBrainBox').style.display = 'block';
     }
 
-    // تغذية العقل الاصطناعي بالإحداثي الخاطئ لتجنبه فوراً
-    function submitLossToBrain() {
-        let select = document.getElementById('lossCellSelect');
-        let lossValue = parseInt(select.value);
+    // تغذية العقل بالمعلومات وتحديث الخوارزمية لتجنب هذا المكان فوراً
+    function feedLossToScriptBrain() {
+        let dropdown = document.getElementById('lossCellDropdown');
+        let selectedBadCell = parseInt(dropdown.value);
 
-        if (lossValue) {
-            appState.blacklistedCells.add(lossValue);
+        if (selectedBadCell) {
+            scriptConfig.smartBlacklist.add(selectedBadCell);
             
-            // إشعار تأكيد ذكي وتحديث الحالة
-            let statusBadge = document.getElementById('aiStatus');
-            statusBadge.innerText = `تم حفظ وتجنب المربع ${lossValue}`;
-            statusBadge.style.color = 'var(--danger-neon)';
+            let status = document.getElementById('brainStatus');
+            status.innerText = `تم تجنب المربع ${selectedBadCell} ذكياً`;
+            status.style.color = 'var(--neon-red)';
 
             setTimeout(() => {
-                statusBadge.innerText = "العقل المفكر متصل ونشط";
-                statusBadge.style.color = 'var(--premium-gold)';
-                document.getElementById('feedbackPanel').style.display = 'none';
-                select.value = ""; // تصفير الاختيار
-            }, 1500);
+                status.innerText = "متصل ومستقر";
+                status.style.color = 'var(--neon-green)';
+                document.getElementById('lossBrainBox').style.display = 'none';
+                dropdown.value = "";
+            }, 1200);
         }
     }
 
-    // تشغيل القفل الضبابي والتعطيل التام للإسكربت عند انتهاء المحاولات
-    function triggerAppLock() {
-        document.getElementById('predictBtn').disabled = true;
-        document.getElementById('predictBtn').style.opacity = '0.3';
-        document.getElementById('appLock').classList.add('active');
+    // دالة إدخال وتفعيل رمز إحالة قادم من صديق
+    function activateFriendCode() {
+        let codeValue = document.getElementById('friendRefCode').value.trim();
+        if (codeValue === "") {
+            alert("برجاء كتابة الرمز أولاً!");
+            return;
+        }
+        
+        // محاكاة الاتصال بالسريرفر وقبول الكود بنجاح
+        alert(`تم تفعيل الرمز [${codeValue}] بنجاح! تم منحك أنت وصديقك مكافأة المحاولات.`);
+        scriptConfig.referralsCount++; // زيادة العداد التفاعلي لإثبات القوة
+        refreshInterfaceData();
+        document.getElementById('friendRefCode').value = "";
     }
 
-    // إخفاء تنبيه الاشتراك حتى لا يضايقه، مع بقاء الإسكربت معطلاً ذكياً
-    function dismissLockOverlay() {
-        document.getElementById('appLock').classList.remove('active');
-        // يتم إشعار المستخدم عبر التوليب العلوي أن الإسكربت مغلق لتذكيره بدون مضايقة بصرياً
-        document.getElementById('aiStatus').innerText = "مغلق! مطلوب تفعيل";
-        document.getElementById('aiStatus').style.color = 'var(--danger-neon)';
-    }
-
-    // نسخ كود الإحالة النصي الصافي للذاكرة
-    function copyRefCode() {
-        let code = document.getElementById('myRefCode').innerText;
-        navigator.clipboard.writeText(code);
-        alert('تم نسخ كود الإحالة بنجاح: ' + code);
+    // إخفاء غطاء الاشتراك مؤقتاً حتى لا يضايق المستخدم (مع إبقاء السكريبت معطلاً وطلب الاشتراك بالتبويب العلوي)
+    function hideLockTemporarily() {
+        document.getElementById('dailyLockOverlay').classList.remove('active');
+        document.getElementById('brainStatus').innerText = "معطل! مطلوب اشتراك";
+        document.getElementById('brainStatus').style.color = 'var(--neon-red)';
     }
 </script>
 
