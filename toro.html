@@ -3,516 +3,493 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HOMOS BET MAX - v10.0 ULTRA SYSTEM</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    
+    <title>HOMOS BET MAX v11.0 - Elite Matrix</title>
     <style>
+        /* نظام الألوان والمؤثرات البصرية العالمية */
         :root {
-            --glass: rgba(15, 23, 42, 0.9);
-            --glass-border: rgba(255, 255, 255, 0.08);
-            --primary: #f59e0b;
-            --success: #10b981;
-            --danger: #ef4444;
-            --info: #3b82f6;
-            --text-main: #ffffff;
-            --neon-blue: 0 0 15px rgba(59, 130, 246, 0.6);
-            --neon-green: 0 0 15px rgba(16, 185, 129, 0.6);
-            --neon-red: 0 0 15px rgba(239, 68, 68, 0.6);
+            --bg-main: #0b0f17;
+            --bg-card: #131a26;
+            --accent-neon: #00f5d4;
+            --accent-blue: #00b4d8;
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --danger-neon: #ff4d6d;
+            --premium-gold: #ffb703;
+            --transition-smooth: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
-        body { background: #020617; background-image: radial-gradient(circle at top right, #1e293b, transparent), radial-gradient(circle at bottom left, #0f172a, transparent); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-        .ticker-wrap { background: #000; width: 100%; overflow: hidden; border-bottom: 1px solid var(--glass-border); padding: 12px 0; color: var(--success); font-weight: bold; font-size: 0.9rem; white-space: nowrap; }
-        .ticker-move { display: inline-block; padding-right: 100%; animation: scroll-rtl 45s linear infinite; }
-        @keyframes scroll-rtl { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+        /* حاوية النظام الرئيسية مع الأنيميشن التدريجي */
+        .app-container {
+            background: var(--bg-card);
+            width: 100%;
+            max-width: 480px;
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 50px rgba(0, 245, 212, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s var(--transition-smooth);
+        }
 
-        header { background: var(--glass); backdrop-filter: blur(20px); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--glass-border); position: sticky; top: 0; z-index: 1000; }
-        .logo-box { display: flex; align-items: center; gap: 8px; }
-        .logo-icon { color: var(--primary); font-size: 1.6rem; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { text-shadow: 0 0 5px var(--primary); } 50% { text-shadow: 0 0 20px var(--primary); } 100% { text-shadow: 0 0 5px var(--primary); } }
-        .logo-box h1 { font-size: 1.5rem; font-weight: 900; }
-        .logo-box span { color: var(--primary); }
+        /* أنيميشن الظهور التدريجي الفخم */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
 
-        /* شاشة القفل والاشتراك */
-        #lockScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 6, 23, 0.98); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
-        .lock-box { background: var(--glass); border: 1px solid var(--glass-border); padding: 30px; border-radius: 24px; max-width: 450px; width: 100%; box-shadow: var(--neon-blue); }
+        .element-fade-in {
+            opacity: 0;
+            animation: fadeInElement 0.6s forwards ease-out;
+        }
 
-        .status-container { background: var(--glass); margin: 15px 20px; padding: 15px; border-radius: 20px; border: 1px solid var(--glass-border); }
-        .gauge-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 0.85rem; font-weight: bold; }
-        .progress-bar { width: 100%; height: 10px; background: #1e293b; border-radius: 10px; overflow: hidden; }
-        #globalFill { height: 100%; width: 85%; background: linear-gradient(90deg, var(--info), var(--success)); transition: 1.5s ease; }
+        @keyframes fadeInElement {
+            to { opacity: 1; }
+        }
 
-        .signal-box { font-size: 0.75rem; color: var(--success); margin: 0 20px 10px; display: flex; align-items: center; gap: 6px; }
-        .dot { width: 8px; height: 8px; background: var(--success); border-radius: 50%; animation: blink 1s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        /* نظام التبويبات الحديث */
+        .tabs-header {
+            display: flex;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 14px;
+            padding: 4px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.02);
+        }
 
-        .nav-tabs { display: flex; background: var(--glass); margin: 0 20px 15px; padding: 6px; border-radius: 50px; border: 1px solid var(--glass-border); gap: 5px; }
-        .tab-item { flex: 1; text-align: center; padding: 10px; border-radius: 50px; cursor: pointer; font-weight: bold; transition: 0.3s; color: rgba(255,255,255,0.5); font-size: 0.8rem; }
-        .tab-item.active { background: var(--primary); color: #000; }
+        .tab-btn {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: var(--transition-smooth);
+        }
 
-        .content-sec { display: none; padding: 0 20px 100px; animation: fadeIn 0.4s ease; }
-        .content-sec.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-neon));
+            color: var(--bg-main);
+            box-shadow: 0 4px 15px rgba(0, 245, 212, 0.3);
+        }
 
-        .board-container { background: rgba(0,0,0,0.5); padding: 15px; border-radius: 20px; border: 1px solid var(--glass-border); }
-        .apple-row { display: grid; grid-template-columns: 45px repeat(5, 1fr); gap: 6px; align-items: center; margin-bottom: 6px; }
-        .multiplier-tag { font-size: 0.7rem; font-weight: 900; color: var(--primary); text-align: center; }
-        .cell { aspect-ratio: 1; background: rgba(255,255,255,0.03); border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; transition: 0.3s; }
-        
-        .highlight { background: rgba(16, 185, 129, 0.15); border: 2px solid var(--success) !important; box-shadow: 0 0 10px var(--neon-green); transform: scale(1.05); }
-        .safe-highlight { background: rgba(59, 130, 246, 0.2) !important; border: 2px solid var(--info) !important; box-shadow: var(--neon-blue); transform: scale(1.05); }
-        .risk-highlight { background: rgba(239, 68, 68, 0.2) !important; border: 2px solid var(--danger) !important; box-shadow: var(--neon-red); transform: scale(1.05); }
+        .tab-content {
+            display: none;
+            transition: var(--transition-smooth);
+        }
 
-        .console-box { background: #000; color: #10b981; font-family: monospace; font-size: 0.75rem; padding: 10px; border-radius: 10px; margin-bottom: 10px; border: 1px solid #1e293b; display: none; text-align: left; direction: ltr; }
+        .tab-content.active {
+            display: block;
+            animation: fadeInUp 0.5s var(--transition-smooth);
+        }
 
-        .action-btn { width: 100%; padding: 15px; border-radius: 15px; border: none; font-weight: 900; font-size: 1.1rem; cursor: pointer; margin-bottom: 10px; transition: 0.3s; }
-        .primary-btn { background: var(--primary); color: #000; }
-        
-        .safe-msg { color: var(--primary); background: rgba(245, 158, 11, 0.1); padding: 10px; border-radius: 10px; text-align: center; font-size: 0.8rem; margin: 10px 0; border: 1px dashed var(--primary); display: none; }
+        /* شبكة الماتريكس التفاعلية للمحلل */
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin: 20px 0;
+            transition: var(--transition-smooth);
+        }
 
-        .slip-card { background: var(--glass); border-radius: 15px; padding: 15px; margin-bottom: 12px; border: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; position: relative; overflow: hidden; }
-        .blue-glow { border-color: var(--info); box-shadow: var(--neon-blue); }
-        .green-glow { border-color: var(--success); box-shadow: var(--neon-green); }
-        
-        .safety-tag { position: absolute; top: 0; left: 0; padding: 2px 12px; font-size: 0.65rem; font-weight: bold; border-bottom-right-radius: 12px; }
-        .safe-bg { background: var(--success); color: #fff; }
-        .risk-bg { background: var(--danger); color: #fff; }
+        .matrix-cell {
+            background: rgba(0, 0, 0, 0.3);
+            aspect-ratio: 1;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 14px;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
 
-        .copy-btn { background: #334155; border: none; color: white; padding: 8px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        .matrix-cell.prediction {
+            background: rgba(0, 245, 212, 0.15);
+            border-color: var(--accent-neon);
+            color: var(--accent-neon);
+            box-shadow: inset 0 0 10px rgba(0, 245, 212, 0.2);
+            animation: pulse 1.5s infinite;
+        }
 
-        #adminPanel { display: none; background: rgba(239, 68, 68, 0.05); border: 1px dashed var(--danger); padding: 15px; border-radius: 15px; margin-bottom: 20px; }
-        .admin-input { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; background: #0f172a; color: #fff; border: 1px solid var(--glass-border); }
-        
-        .user-badge { background: #1e293b; padding: 4px 12px; border-radius: 10px; font-size: 0.75rem; color: var(--primary); font-weight: bold; }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+
+        /* العقل الذكي: منبثقة تفاعلية ذكية عند الخسارة */
+        .smart-feedback-panel {
+            background: rgba(255, 77, 109, 0.1);
+            border: 1px solid var(--danger-neon);
+            border-radius: 14px;
+            padding: 16px;
+            margin-top: 15px;
+            display: none;
+            animation: fadeInUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .smart-feedback-panel select {
+            width: 100%;
+            background: var(--bg-main);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+            outline: none;
+        }
+
+        /* نظام الإحالة المطور بالكود الرقمي */
+        .referral-box {
+            background: rgba(0, 180, 216, 0.05);
+            border: 1px dashed var(--accent-blue);
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .ref-code-display {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--accent-neon);
+            letter-spacing: 4px;
+            margin: 10px 0;
+            background: rgba(0,0,0,0.2);
+            padding: 10px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .tracker-status {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 12px;
+        }
+
+        .tracker-badge {
+            background: rgba(255, 183, 3, 0.15);
+            color: var(--premium-gold);
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        /* نظام القفل الذكي عند انتهاء المحاولات */
+        .app-lock-overlay {
+            position: absolute;
+            top: 70px; /* تترك التبويبات تعمل لتصفح الإحالات وتغلق مساحة العمل */
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(11, 15, 23, 0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: var(--transition-smooth);
+            padding: 20px;
+        }
+
+        .app-lock-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .lock-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 24px;
+            border-radius: 18px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            width: 100%;
+        }
+
+        /* الأزرار الاحترافية */
+        .btn-action {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-neon));
+            color: var(--bg-main);
+        }
+
+        .btn-danger {
+            background: rgba(255, 77, 109, 0.15);
+            color: var(--danger-neon);
+            border: 1px solid var(--danger-neon);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+        }
     </style>
 </head>
 <body>
 
-    <!-- شاشة الحماية والاشتراكات -->
-    <div id="lockScreen">
-        <div class="lock-box">
-            <i class="fas fa-user-shield" style="font-size: 3rem; color: var(--primary); margin-bottom: 15px;"></i>
-            <h2 style="margin-bottom: 10px;">نظام HOMOS MAX الحصري</h2>
-            <p id="lockStatusMsg" style="font-size: 0.9rem; color: rgba(255,255,255,0.7); margin-bottom: 20px;">جاري فحص صلاحية الـ IP الخاص بك...</p>
-            
-            <input type="text" id="activationKeyInput" class="admin-input" style="text-align: center;" placeholder="أدخل كود التفعيل التلقائي">
-            <button class="action-btn primary-btn" id="activateBtn">تفعيل الاشتراك</button>
-            
-            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--glass-border);">
-                <p style="font-size: 0.8rem; color: var(--info);">نظام الإحالة: شارك رابطك مع 5 من أصدقائك للحصول على أسبوع مجاناً!</p>
-                <input type="text" id="refLinkUI" class="admin-input" style="text-align:center; margin-top:10px; font-size:0.8rem;" readonly>
-                <button class="copy-btn" id="copyRefBtn" style="width:100%;">نسخ رابط الإحالة الخاص بك</button>
+<div class="app-container">
+    
+    <!-- نظام التبويبات العلوي -->
+    <div class="tabs-header">
+        <button class="tab-btn active" onclick="switchTab('analyzer')">المحلل الذكي</button>
+        <button class="tab-btn" onclick="switchTab('referral-tab')">الإحالات والجوائز</button>
+    </div>
+
+    <!-- حاوية القفل الضبابي الذكي عند انتهاء الليميت -->
+    <div class="app-lock-overlay" id="appLock">
+        <div class="lock-card">
+            <h3 style="color: var(--danger-neon); margin-top: 0;">انتهت صلاحية المحاولات المجانية اليوم!</h3>
+            <p style="color: var(--text-secondary); font-size: 14px;">لتستمر في استخدام العقل المفكر وتحقيق الأرباح، يرجى الاشتراك في الخطة المميزة أو استخدام نظام الإحالات.</p>
+            <button class="btn-action btn-primary" onclick="window.open('https://t.me/your_telegram_bot')">تفعيل الاشتراك المدفوع</button>
+            <button class="btn-action btn-secondary" onclick="dismissLockOverlay()">إخفاء التنبيه مؤقتاً</button>
+        </div>
+    </div>
+
+    <!-- التبويب الأول: المحلل الذكي -->
+    <div id="analyzer" class="tab-content active">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 14px; color: var(--text-secondary);">المحاولات المتبقية اليوم: <b id="dailyLimitTxt" style="color: var(--accent-neon);">5</b></span>
+            <span class="tracker-badge" id="aiStatus">جاري فحص الخوارزميات...</span>
+        </div>
+
+        <!-- شبكة الماتريكس الذكية -->
+        <div class="matrix-grid" id="matrixGrid"></div>
+
+        <button class="btn-action btn-primary" id="predictBtn" onclick="generateSmartPrediction()">توليد إشارة ذكية</button>
+        <button class="btn-action btn-danger" id="lostBtn" onclick="showSmartFeedback()">خسرت في هذه الجولة</button>
+
+        <!-- لوحة تغذية العقل الاصطناعي عند الخسارة -->
+        <div class="smart-feedback-panel" id="feedbackPanel">
+            <label style="font-size: 13px; color: #fff;">أين كان المربع الخاطئ لتجنبه فوراً؟</label>
+            <select id="lossCellSelect" onchange="submitLossToBrain()">
+                <option value="" disabled selected>اختر رقم المربع...</option>
+                <!-- سيتم ملئه برمجياً -->
+            </select>
+        </div>
+    </div>
+
+    <!-- التبويب الثاني: نظام الإحالات الجديد -->
+    <div id="referral-tab" class="tab-content">
+        <h3>نظام الإحالة الذكي</h3>
+        <p style="color: var(--text-secondary); font-size: 14px;">شارك كود التفعيل الخاص بك مع أصدقائك للحصول على أيام استخدام مجانية غير محدودة عند تفعيلهم الكود.</p>
+        
+        <div class="referral-box">
+            <span style="font-size: 12px; color: var(--text-secondary);">كود الإحالة الخاص بك</span>
+            <div class="ref-code-display" id="myRefCode">HMX-9842</div>
+            <button class="btn-action btn-secondary" style="padding: 8px; font-size: 12px;" onclick="copyRefCode()">نسخ الكود</button>
+        </div>
+
+        <!-- عداد الإحالات التفاعلي المطلوب -->
+        <div class="tracker-status" style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; margin-top: 15px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <span>حالة تفعيل الكود:</span>
+                <span id="referralCounter" style="color: var(--premium-gold); font-weight: bold;">دخل 0 | متبقي 5</span>
+            </div>
+            <div style="width: 100%; background: rgba(255,255,255,0.05); height: 6px; border-radius: 3px; overflow: hidden;">
+                <div id="refProgressBar" style="width: 0%; height: 100%; background: var(--premium-gold); transition: var(--transition-smooth);"></div>
             </div>
         </div>
     </div>
 
-    <div class="ticker-wrap"><div class="ticker-move" id="tickerUI">⚡ جاري معايرة التشفير الذكي ضد التغييرات السريعة... ⚡</div></div>
+</div>
 
-    <header>
-        <div class="logo-box">
-            <i class="fas fa-crosshairs logo-icon"></i>
-            <h1>HOMOS <span>MAX</span></h1>
-        </div>
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <span class="user-badge" id="userStatusBadge">نسخة مجانية</span>
-            <i class="fas fa-fingerprint" id="authBtn" style="font-size: 1.5rem; color: var(--glass-border); cursor: pointer;"></i>
-        </div>
-    </header>
+<script>
+    // الحالة الداخلية للذكاء والمستخدم (State Management)
+    let appState = {
+        dailyAttempts: 5,
+        referralsJoined: 1, // محاكاة: شخص واحد استخدم الكود مسبقاً
+        referralsRequired: 5,
+        matrixSize: 25,
+        // عقل الذاكرة لتجنب الخسائر (Neural Matrix Map)
+        blacklistedCells: new Set(),
+        currentPrediction: null
+    };
 
-    <div class="status-container">
-        <div class="gauge-header">
-            <span>دقة التوقع الذكي (AI Calibrator)</span>
-            <span id="gaugePercent" style="color: var(--success);">94%</span>
-        </div>
-        <div class="progress-bar"><div id="globalFill"></div></div>
-    </div>
+    // إعداد الإسكربت عند البدء وتطبيق تدرج الظهور
+    window.onload = function() {
+        buildMatrix();
+        updateUI();
+        setTimeout(() => {
+            document.getElementById('aiStatus').innerText = "العقل المفكر متصل ونشط";
+        }, 1000);
+    };
 
-    <div class="signal-box"><div class="dot"></div> المحاولات المجانية المتبقية اليوم: <span id="freeTrialsCount" style="color:var(--primary)">5 / 5</span></div>
-
-    <div class="nav-tabs">
-        <div class="tab-item active" data-sec="apple-sec">🎯 Apple</div>
-        <div class="tab-item" data-sec="mines-sec">💎 Mines</div>
-        <div class="tab-item" data-sec="slips-sec">🗝️ Slips</div>
-    </div>
-
-    <!-- Apple Section -->
-    <section class="content-sec active" id="apple-sec">
-        <button class="action-btn primary-btn" id="runApple"><i class="fas fa-robot"></i> تحليل مصفوفة التفاحة الذكية</button>
-        <div class="console-box" id="conApple"></div>
-        <div class="board-container" id="appleBoard"></div>
-        <div class="safe-msg" id="msgApple">⚠️ <b>تحديث الخوارزمية التلقائي:</b> المسار يتغير فوراً عند الضغط على النتيجة لضمان عدم التكرار الصارم.</div>
+    // بناء شبكة الماتريكس وملء قائمة خيارات الخسارة تدريجياً
+    function buildMatrix() {
+        const grid = document.getElementById('matrixGrid');
+        const select = document.getElementById('lossCellSelect');
+        grid.innerHTML = '';
         
-        <div id="feedApple" style="display:none; gap:10px; margin-top:10px;">
-            <button class="action-btn" style="background:var(--success); color:#fff; flex:1;" id="appleWinBtn">ربحت ✅ (تثبيت النمط)</button>
-            <button class="action-btn" style="background:var(--danger); color:#fff; flex:1;" id="appleLoseBtn">خسرت ❌ (إعادة هندسة المسار فوراً)</button>
-        </div>
-        <button class="action-btn" id="expApple" style="display:none; background:#fff; color:#000;"><i class="fab fa-tiktok"></i> تصوير الأرباح للتريند</button>
-    </section>
+        for (let i = 1; i <= appState.matrixSize; i++) {
+            // الماتريكس
+            let cell = document.createElement('div');
+            cell.className = 'matrix-cell element-fade-in';
+            cell.id = `cell-${i}`;
+            cell.innerText = i;
+            cell.style.animationDelay = `${i * 0.02}s`; // ظهور تدريجي مبهر لكل مربع
+            grid.appendChild(cell);
 
-    <!-- Mines Section -->
-    <section class="content-sec" id="mines-sec">
-        <button class="action-btn primary-btn" id="runMines"><i class="fas fa-gem"></i> كشف خريطة المناجم التكيفية</button>
-        <div class="console-box" id="conMines"></div>
-        <div class="board-container" style="display:grid; grid-template-columns: repeat(5, 1fr); gap:8px;" id="minesBoard"></div>
-        <div class="safe-msg" id="msgMines">⚠️ الأزرق (مسار فائق الأمان بنسبة 98.4%) | الأحمر (نسبة حذر عالية).</div>
+            // القائمة المنسدلة للذكاء
+            let opt = document.createElement('option');
+            opt.value = i;
+            opt.innerText = `مربع رقم ${i}`;
+            select.appendChild(opt);
+        }
+    }
 
-        <div id="feedMines" style="display:none; gap:10px; margin-top:10px;">
-            <button class="action-btn" style="background:var(--success); color:#fff; flex:1;" id="minesWinBtn">ربحت ✅ (تحديث ذكي)</button>
-            <button class="action-btn" style="background:var(--danger); color:#fff; flex:1;" id="minesLoseBtn">خسرت ❌ (تغيير مصفوفة التشفير)</button>
-        </div>
-        <button class="action-btn" id="expMines" style="display:none; background:#fff; color:#000;"><i class="fab fa-tiktok"></i> تصوير الأرباح</button>
-    </section>
+    // التنقل السلس بين التبويبات
+    function switchTab(tabId) {
+        document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+        
+        document.getElementById(tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
 
-    <!-- Slips & Admin Section -->
-    <section class="content-sec" id="slips-sec">
-        <div id="adminPanel">
-            <h3 style="color: var(--danger); margin-bottom: 10px;"><i class="fas fa-user-cog"></i> لوحة التحكم الكاملة للأدمين (HOMOS)</h3>
-            <input type="text" id="newsInput" class="admin-input" placeholder="خبر الشريط الجديد...">
-            <button id="addNews" class="action-btn" style="background:var(--info); color:#fff; padding:8px;">بث الخبر في الشريط</button>
-            <hr style="border-color:var(--glass-border); margin:15px 0;">
-            
-            <h4 style="color:var(--primary); margin-bottom:5px;">إنشاء كود تفعيل جديد:</h4>
-            <input type="text" id="newGeneratedKey" class="admin-input" placeholder="كود التفعيل (أو سيبه فاضي لإنشاء تلقائي)">
-            <input type="number" id="keyDurationInput" class="admin-input" placeholder="عدد الأيام للاشتراك (مثال: 30)">
-            <button id="generateKeyBtn" class="action-btn" style="background:var(--primary); color:#000; padding:8px;">حفظ وتوليد الكود بالسيرفر</button>
-            <hr style="border-color:var(--glass-border); margin:15px 0;">
+    // تحديث البيانات ديناميكياً في الواجهة
+    function updateUI() {
+        document.getElementById('dailyLimitTxt').innerText = appState.dailyAttempts;
+        
+        // حساب نظام الإحالة العكسي المطلوب (دخل X متبقي Y)
+        let remaining = appState.referralsRequired - appState.referralsJoined;
+        document.getElementById('referralCounter').innerText = `دخل ${appState.referralsJoined} | متبقي ${remaining}`;
+        
+        let progressPercent = (appState.referralsJoined / appState.referralsRequired) * 100;
+        document.getElementById('refProgressBar').style.width = `${progressPercent}%`;
 
-            <input type="text" id="appInp" class="admin-input" placeholder="التطبيق (1xbet / linebet)">
-            <input type="text" id="codeInp" class="admin-input" placeholder="كود القسيمة">
-            <select id="safeSelect" class="admin-input">
-                <option value="safe">آمنة ✅</option>
-                <option value="risk">مخاطرة ⚠️</option>
-            </select>
-            <button id="addSlip" class="action-btn" style="background:var(--success); color:#fff; padding:8px;">نشر القسيمة للمشتركين</button>
-        </div>
-        <div id="slipsList"></div>
-    </section>
+        // التحقق من ليميت المحاولات اليومي لتعطيل الإسكربت
+        if (appState.dailyAttempts <= 0) {
+            triggerAppLock();
+        }
+    }
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getDatabase, ref, push, onValue, get, update, remove, set } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+    // خوارزمية التنبؤ الذكي (تتجنب المربعات التي تم التبليغ عن خسارتها سابقاً)
+    function generateSmartPrediction() {
+        if (appState.dailyAttempts <= 0) return;
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyB5fbIJ3rbV5Ud1mnQgZGTcjYZSrnQqNbA",
-            authDomain: "fir-cb754.firebaseapp.com",
-            databaseURL: "https://fir-cb754-default-rtdb.firebaseio.com",
-            projectId: "fir-cb754",
-            storageBucket: "fir-cb754.firebasestorage.app",
-            messagingSenderId: "14696382194",
-            appId: "1:14696382194:web:c3879f894094d67eae1a6b"
-        };
+        // تنظيف التنبؤات السابقة بسلاسة
+        document.querySelectorAll('.matrix-cell').forEach(el => el.classList.remove('prediction'));
+        document.getElementById('feedbackPanel').style.display = 'none';
 
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-
-        // متغيرات الحساب والمستخدم
-        let userIP = "";
-        let cleanIPKey = ""; 
-        let isPremium = false;
-        let trialsToday = 0;
-        let myReferralCode = "";
-
-        // الحصول على الـ IP ونظام الاشتراكات التكيفي
-        async function getIPAndCheckStatus() {
-            try {
-                let res = await fetch('https://api.ipify.org?format=json');
-                let data = await res.json();
-                userIP = data.ip;
-                cleanIPKey = userIP.replace(/\./g, '_');
-                myReferralCode = "REF_" + cleanIPKey.substring(0, 8);
-                
-                // تحديث رابط الإحالة في الواجهة
-                const currentUrl = window.location.href.split('?')[0];
-                document.getElementById('refLinkUI').value = `${currentUrl}?ref=${myReferralCode}`;
-
-                // فحص إذا كان هناك إحالة في الرابط
-                const urlParams = new URLSearchParams(window.location.search);
-                const refCode = urlParams.get('ref');
-                if(refCode && refCode !== myReferralCode) {
-                    handleReferral(refCode);
-                }
-
-                checkUserAccess();
-            } catch (err) {
-                document.getElementById('lockStatusMsg').innerText = "فشل الاتصال بسيرفر فحص الـ IP. تأكد من إنترنت جهازك.";
+        // تجميع المربعات المتاحة الآمنة فقط (العقل الذكي يعمل هنا)
+        let availableCells = [];
+        for (let i = 1; i <= appState.matrixSize; i++) {
+            if (!appState.blacklistedCells.has(i)) {
+                availableCells.push(i);
             }
         }
 
-        // التعامل مع الإحالات
-        async function handleReferral(code) {
-            const joinedRef = ref(db, `users_referred_list/${code}/${cleanIPKey}`);
-            const checkJoined = await get(joinedRef);
-            if(!checkJoined.exists()) {
-                await set(joinedRef, true);
-                const countRef = ref(db, `referrals_count/${code}`);
-                const snap = await get(countRef);
-                let currentCount = snap.val() || 0;
-                let newCount = currentCount + 1;
-                await set(countRef, newCount);
-
-                // مكافأة الـ 5 إحالات: إضافة أسبوع مجاني لمنشئ الكود
-                if(newCount >= 5) {
-                    const userRef = ref(db, `premium_ips/${code}`);
-                    let expiry = Date.now() + (7 * 24 * 60 * 60 * 1000);
-                    await set(userRef, { expiry: expiry });
-                    await set(countRef, 0); // تصفير العداد للمكافأة القادمة
-                }
-            }
+        // إذا كانت الخسائر كثيرة جداً، قم بإعادة تصفير الذاكرة لضمان استمرار الحساب
+        if (availableCells.length === 0) {
+            appState.blacklistedCells.clear();
+            availableCells = Array.from({length: appState.matrixSize}, (_, i) => i + 1);
         }
 
-        // التحقق من صلاحيات الدخول والحد اليومي
-        function checkUserAccess() {
-            // 1. فحص الاشتراك البريميوم أولاً
-            onValue(ref(db, `premium_ips/${cleanIPKey}`), async (snapshot) => {
-                let data = snapshot.val();
-                if(data && data.expiry > Date.now()) {
-                    isPremium = true;
-                    document.getElementById('lockScreen').style.display = 'none';
-                    document.getElementById('userStatusBadge').innerText = "عضوية PRO ✨";
-                    document.getElementById('userStatusBadge').style.color = "var(--success)";
-                    document.getElementById('freeTrialsCount').innerText = "لا نهائي (PRO)";
-                } else {
-                    // 2. إذا لم يكن بريميوم، يفحص المحاولات المجانية لليوم
-                    isPremium = false;
-                    const dateStr = new Date().toISOString().split('T')[0];
-                    onValue(ref(db, `free_trials/${dateStr}/${cleanIPKey}`), (trialSnap) => {
-                        trialsToday = trialSnap.val() || 0;
-                        let remaining = 5 - trialsToday;
-                        if(remaining < 0) remaining = 0;
-                        document.getElementById('freeTrialsCount').innerText = `${remaining} / 5`;
+        // اختيار عشوائي ذكي مبني على المربعات المتبقية والآمنة
+        const randomIndex = Math.floor(Math.random() * availableCells.length);
+        const targetCellId = availableCells[randomIndex];
+        
+        appState.currentPrediction = targetCellId;
+        appState.dailyAttempts--;
 
-                        if(remaining > 0) {
-                            document.getElementById('lockScreen').style.display = 'none';
-                            document.getElementById('lockStatusMsg').innerText = `لديك ${remaining} محاولات مجانية متبقية اليوم.`;
-                        } else {
-                            document.getElementById('lockScreen').style.display = 'flex';
-                            document.getElementById('lockStatusMsg').innerHTML = `<span style="color:var(--danger); font-weight:bold;">انتهت محاولاتك المجانية الـ 5 اليوم!</span><br>لتخطي الحظر الذكي وافتح الاستخدام اللانهائي، اشترك الآن وفعل الكود الخاص بك.`;
-                        }
-                    });
-                }
-            });
+        // إظهار الإشارة تدريجياً داخل المربع المختار
+        setTimeout(() => {
+            const targetCell = document.getElementById(`cell-${targetCellId}`);
+            targetCell.classList.add('prediction');
+            updateUI();
+        }, 300);
+    }
+
+    // لوحة ذكاء الخسارة التكيفية
+    function showSmartFeedback() {
+        if (!appState.currentPrediction) return;
+        let panel = document.getElementById('feedbackPanel');
+        panel.style.display = 'block';
+    }
+
+    // تغذية العقل الاصطناعي بالإحداثي الخاطئ لتجنبه فوراً
+    function submitLossToBrain() {
+        let select = document.getElementById('lossCellSelect');
+        let lossValue = parseInt(select.value);
+
+        if (lossValue) {
+            appState.blacklistedCells.add(lossValue);
+            
+            // إشعار تأكيد ذكي وتحديث الحالة
+            let statusBadge = document.getElementById('aiStatus');
+            statusBadge.innerText = `تم حفظ وتجنب المربع ${lossValue}`;
+            statusBadge.style.color = 'var(--danger-neon)';
+
+            setTimeout(() => {
+                statusBadge.innerText = "العقل المفكر متصل ونشط";
+                statusBadge.style.color = 'var(--premium-gold)';
+                document.getElementById('feedbackPanel').style.display = 'none';
+                select.value = ""; // تصفير الاختيار
+            }, 1500);
         }
+    }
 
-        // استهلاك محاولة مجانية
-        async function consumeTrial() {
-            if(isPremium) return true;
-            const dateStr = new Date().toISOString().split('T')[0];
-            if(trialsToday >= 5) return false;
-            
-            let newTrials = trialsToday + 1;
-            await set(ref(db, `free_trials/${dateStr}/${cleanIPKey}`), newTrials);
-            return true;
-        }
+    // تشغيل القفل الضبابي والتعطيل التام للإسكربت عند انتهاء المحاولات
+    function triggerAppLock() {
+        document.getElementById('predictBtn').disabled = true;
+        document.getElementById('predictBtn').style.opacity = '0.3';
+        document.getElementById('appLock').classList.add('active');
+    }
 
-        // تفعيل الكود من الشاشة الرئيسية
-        document.getElementById('activateBtn').onclick = async () => {
-            let key = document.getElementById('activationKeyInput').value.trim();
-            if(!key) return alert("من فضلك أدخل الكود أولاً");
-            
-            const keyRef = ref(db, `activation_keys/${key}`);
-            const snap = await get(keyRef);
-            if(snap.exists()) {
-                let durationDays = snap.val().days || 30;
-                let expiryTime = Date.now() + (durationDays * 24 * 60 * 60 * 1000);
-                
-                // تفعيل العضوية للـ IP
-                await set(ref(db, `premium_ips/${cleanIPKey}`), { expiry: expiryTime, activatedWith: key });
-                // حذف كود التفعيل لضمان استخدامه مرة واحدة فقط
-                await remove(keyRef);
-                
-                alert("تم تفعيل اشتراك PRO بنجاح! استمتع بأقوى إسكربت بدون حدود.");
-                location.reload();
-            } else {
-                alert("كود التفعيل غير صحيح أو انتهت صلاحية استخدامه.");
-            }
-        };
+    // إخفاء تنبيه الاشتراك حتى لا يضايقه، مع بقاء الإسكربت معطلاً ذكياً
+    function dismissLockOverlay() {
+        document.getElementById('appLock').classList.remove('active');
+        // يتم إشعار المستخدم عبر التوليب العلوي أن الإسكربت مغلق لتذكيره بدون مضايقة بصرياً
+        document.getElementById('aiStatus').innerText = "مغلق! مطلوب تفعيل";
+        document.getElementById('aiStatus').style.color = 'var(--danger-neon)';
+    }
 
-        // نسخ رابط الإحالة للانتشار
-        document.getElementById('copyRefBtn').onclick = () => {
-            let linkEl = document.getElementById('refLinkUI');
-            linkEl.select();
-            navigator.clipboard.writeText(linkEl.value);
-            alert("تم نسخ رابط إحالتك بنجاح! أرسله لـ 5 من أصدقائك للحصول على أسبوع مجاناً عند استخدامه.");
-        };
+    // نسخ كود الإحالة النصي الصافي للذاكرة
+    function copyRefCode() {
+        let code = document.getElementById('myRefCode').innerText;
+        navigator.clipboard.writeText(code);
+        alert('تم نسخ كود الإحالة بنجاح: ' + code);
+    }
+</script>
 
-        // أدمن الأداة
-        let isAdmin = localStorage.getItem('homosAdmin') === 'true';
-        if(isAdmin) { document.getElementById('adminPanel').style.display = 'block'; document.getElementById('authBtn').style.color = 'var(--info)'; }
-        document.getElementById('authBtn').onclick = () => {
-            if(!isAdmin && prompt("ادخل كلمة السر المطلقة:") === "Homos77#") { localStorage.setItem('homosAdmin', 'true'); location.reload(); }
-            else if(isAdmin && confirm("هل تريد تسجيل الخروج من لوحة الأدمين؟")) { localStorage.removeItem('homosAdmin'); location.reload(); }
-        };
-
-        // توليد أكواد تفعيل جديدة من لوحة الأدمين
-        document.getElementById('generateKeyBtn').onclick = async () => {
-            let customKey = document.getElementById('newGeneratedKey').value.trim();
-            let days = parseInt(document.getElementById('keyDurationInput').value) || 30;
-            let finalKey = customKey || "HOMOS_" + Math.random().toString(36).substring(2, 10).toUpperCase();
-            
-            await set(ref(db, `activation_keys/${finalKey}`), { days: days });
-            alert(`تم حفظ كود التفعيل بالسيرفر بنجاح:\n${finalKey}\nصالح لمدة: ${days} يوم.`);
-            document.getElementById('newGeneratedKey').value = finalKey;
-        };
-
-        // الذاكرة التكيفية لحماية المستخدم من تغيير الخوارزميات
-        let appleMemory = { 0:[], 1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[], 8:[], 9:[] };
-        let minesMemory = [];
-        let lastPathA = [], lastPathM = [];
-        let currentAppleLevel = 0;
-
-        // تنقل التابات
-        document.querySelectorAll('.tab-item').forEach(t => {
-            t.onclick = () => {
-                document.querySelectorAll('.tab-item, .content-sec').forEach(el => el.classList.remove('active'));
-                t.classList.add('active'); document.getElementById(t.dataset.sec).classList.add('active');
-            };
-        });
-
-        // شريط الأخبار التلقائي
-        onValue(ref(db, 'live_ticker'), (snap) => {
-            let d = snap.val(), s = "";
-            if(d) { Object.values(d).reverse().slice(0, 5).forEach(i => s += ` &nbsp;&nbsp;&nbsp;&nbsp; 🔥 ${i.text} &nbsp;&nbsp;&nbsp;&nbsp; | `); document.getElementById('tickerUI').innerHTML = s + s; }
-        });
-
-        // مصفوفة التفاحة الذكية
-        const mults = ["x1.23", "x1.54", "x1.93", "x2.41", "x4.02", "x6.71", "x11.18", "x27.9", "x69.8", "x349"];
-        function initA() {
-            const b = document.getElementById('appleBoard'); b.innerHTML = '';
-            for(let i=9; i>=0; i--) {
-                let r = document.createElement('div'); r.className='apple-row';
-                r.innerHTML = `<div class="multiplier-tag">${mults[i]}</div>`;
-                for(let j=0; j<5; j++) r.innerHTML += `<div class="cell" id="a-${i}-${j}"></div>`;
-                b.appendChild(r);
-            }
-        }
-        initA();
-
-        document.getElementById('runApple').onclick = async () => {
-            let canRun = await consumeTrial();
-            if(!canRun) return;
-
-            const btn = document.getElementById('runApple'); btn.disabled = true;
-            initA(); lastPathA = []; currentAppleLevel = 0;
-            const con = document.getElementById('conApple'); con.style.display='block'; con.innerHTML = "> يتم سحب التحديث اللحظي للمصفوفة...<br>";
-            
-            // حساب المسار بناءً على الخوارزمية التي تم تنظيفها من الأنماط الخاسرة
-            for(let l=0; l<10; l++) {
-                let c; do { c = Math.floor(Math.random()*5); } while(appleMemory[l].includes(c));
-                lastPathA[l] = c;
-                document.getElementById(`a-${l}-${c}`).classList.add('highlight');
-                document.getElementById(`a-${l}-${c}`).innerHTML = '🍎';
-            }
-            btn.disabled = false;
-            document.getElementById('feedApple').style.display = 'flex';
-            document.getElementById('expApple').style.display = 'block';
-            document.getElementById('conApple').innerHTML += "> تم حساب المسار بنجاح. اتبع التفاح بالترتيب.<br>";
-        };
-
-        // الرد الذكي الفوري عند الضغط على أزرار الربح/الخسارة للتفاحة
-        document.getElementById('appleWinBtn').onclick = () => {
-            // تثبيت الذكاء في السيرفر وزيادة دقة المعايرة العامة في الواجهة لمزيد من الحماس للتريندات
-            document.getElementById('gaugePercent').innerText = "96%";
-            document.getElementById('globalFill').style.width = "96%";
-            // إعادة توجيه الإسكربت لتغيير المسار تلقائياً في الدور القادم لمنع كشف الـ Pattern
-            document.getElementById('feedApple').style.display = 'none';
-            document.getElementById('conApple').innerHTML = "> خوارزمية ناجحة! تم تأمين المسار القادم تلقائياً وضد التتبع.";
-        };
-
-        document.getElementById('appleLoseBtn').onclick = () => {
-            // الإسكربت يتعلم فوراً دون الحاجة لسؤال المستخدم في أي دور خسر! 
-            // يقوم بحظر الخانات التي تم اختيارها في الأدوار الثلاثة الأولى لمنع الخسارة المتتالية
-            for(let i=0; i<3; i++) {
-                appleMemory[i].push(lastPathA[i]);
-            }
-            document.getElementById('gaugePercent').innerText = "92%";
-            document.getElementById('globalFill').style.width = "92%";
-            document.getElementById('feedApple').style.display = 'none';
-            document.getElementById('conApple').innerHTML = "> تم رصد تلاعب الخوارزمية! تم تصفير وحظر الخانات الخاسرة هندسياً للدور القادم.";
-        };
-
-        // مصفوفة الألغام والمناجم
-        function initM() {
-            const b = document.getElementById('minesBoard'); b.innerHTML = '';
-            for(let i=0; i<25; i++) b.innerHTML += `<div class="cell" id="m-${i}"></div>`;
-        }
-        initM();
-
-        document.getElementById('runMines').onclick = async () => {
-            let canRun = await consumeTrial();
-            if(!canRun) return;
-
-            const btn = document.getElementById('runMines'); btn.disabled = true;
-            initM(); lastPathM = [];
-            const con = document.getElementById('conMines'); con.style.display='block'; con.innerHTML = "> جاري فحص الشبكة الأمنية 5x5...<br>";
-            
-            let found = 0;
-            let timer = setInterval(() => {
-                if(found >= 9) { clearInterval(timer); btn.disabled=false; document.getElementById('feedMines').style.display='flex'; document.getElementById('expMines').style.display='block'; return; }
-                let idx; do { idx = Math.floor(Math.random()*25); } while(minesMemory.includes(idx) || lastPathM.includes(idx));
-                lastPathM.push(idx);
-                
-                const cell = document.getElementById(`m-${idx}`);
-                if(found < 5) {
-                    cell.classList.add('safe-highlight'); // مسار فائق الأمان
-                } else {
-                    cell.classList.add('risk-highlight'); // مسار حذر احتياطي
-                }
-                cell.innerHTML = '💎';
-                found++;
-            }, 200);
-        };
-
-        document.getElementById('minesWinBtn').onclick = () => {
-            document.getElementById('feedMines').style.display = 'none';
-            document.getElementById('conMines').innerHTML = "> رائع! تم إدخال الإشارة الناجحة لقاعدة البيانات الحية.";
-        };
-
-        document.getElementById('minesLoseBtn').onclick = () => {
-            // حظر أول خانتين تم إظهارهم لمنع الخسارة وتكرار النمط الفاشل
-            if(lastPathM.length > 0) {
-                minesMemory.push(lastPathM[0]);
-                if(lastPathM[1]) minesMemory.push(lastPathM[1]);
-            }
-            document.getElementById('feedMines').style.display = 'none';
-            document.getElementById('conMines').innerHTML = "> تم الفلترة الذكية! تم نقل إحداثيات اللغم المكتشف لحظرها فوراً.";
-        };
-
-        // تصوير الفيديوهات للأرباح والتريندات
-        window.snap = (id) => {
-            html2canvas(document.getElementById(id), {backgroundColor:'#020617'}).then(c => {
-                let a=document.createElement('a'); a.download='HOMOS_MAX_PRO.png'; a.href=c.toDataURL(); a.click();
-            });
-        };
-        document.getElementById('expApple').onclick = () => snap('appleBoard');
-        document.getElementById('expMines').onclick = () => snap('minesBoard');
-
-        // جلب القسائم والمزامنة
-        onValue(ref(db, 'pro_slips'), (snap) => {
-            const list = document.getElementById('slipsList'); list.innerHTML = '';
-            let d = snap.val();
-            if(d) {
-                Object.keys(d).reverse().forEach(k => {
-                    let s = d[k], appL = s.appName.toLowerCase();
-                    let glow = appL.includes('1x') ? 'blue-glow' : 'green-glow';
-                    let tag = s.safety === 'safe' ? 'safe-bg' : 'risk-bg';
-                    let tagT = s.safety === 'safe' ? 'آمنة ✅' : 'مخاطرة ⚠️';
-                    let del = isAdmin ? `<button style="color:red; background:none; border:none; margin-right:10px;" onclick="window.delSlip('${k}')"><i class="fas fa-trash"></i></button>` : '';
-                    list.innerHTML += `<div class="slip-card ${glow}"><div class="safety-tag ${tag}">${tagT}</div><h3 style="margin-top:10px;">${s.appName.toUpperCase()}</h3><div>${del}<button class="copy-btn" onclick="navigator.clipboard.writeText('${s.code}'); alert('تم نسخ كود القسيمة بنجاح!')">${s.code}</button></div></div>`;
-                });
-            }
-        });
-        window.delSlip = (k) => { if(confirm("حذف القسيمة نهائياً؟")) remove(ref(db, `pro_slips/${k}`)); };
-        document.getElementById('addSlip').onclick = () => {
-            let a=document.getElementById('appInp').value, c=document.getElementById('codeInp').value, s=document.getElementById('safeSelect').value;
-            if(a && c) push(ref(db, 'pro_slips'), {appName:a, code:c, safety:s});
-        };
-        document.getElementById('addNews').onclick = () => { let t=document.getElementById('newsInput').value; if(t) push(ref(db, 'live_ticker'), {text:t}); };
-
-        // تشغيل فحص الـ IP والاشتراكات فور تحميل الصفحة
-        getIPAndCheckStatus();
-    </script>
 </body>
 </html>
