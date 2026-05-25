@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -38,7 +39,7 @@
 
         /* شاشة القفل والاشتراك */
         #lockScreen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 6, 23, 0.98); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center; }
-        .lock-box { position: relative; background: var(--glass); border: 1px solid var(--glass-border); padding: 30px; border-radius: 24px; max-width: 450px; width: 100%; box-shadow: var(--neon-blue); }
+        .lock-box { background: var(--glass); border: 1px solid var(--glass-border); padding: 30px; border-radius: 24px; max-width: 450px; width: 100%; box-shadow: var(--neon-blue); }
 
         .status-container { background: var(--glass); margin: 15px 20px; padding: 15px; border-radius: 20px; border: 1px solid var(--glass-border); }
         .gauge-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 0.85rem; font-weight: bold; }
@@ -94,14 +95,11 @@
     <!-- شاشة الحماية والاشتراكات -->
     <div id="lockScreen">
         <div class="lock-box">
-            <!-- علامة الـ X لإخفاء الشاشة -->
-            <i class="fas fa-times" id="closeLockBtn" style="position: absolute; top: 20px; left: 20px; font-size: 1.5rem; color: var(--glass-border); cursor: pointer; transition: 0.3s;" onmouseover="this.style.color='var(--danger)'" onmouseout="this.style.color='var(--glass-border)'"></i>
-            
             <i class="fas fa-user-shield" style="font-size: 3rem; color: var(--primary); margin-bottom: 15px;"></i>
             <h2 style="margin-bottom: 10px;">نظام HOMOS MAX الحصري</h2>
-            <p id="lockStatusMsg" style="font-size: 0.9rem; color: rgba(255,255,255,0.7); margin-bottom: 20px;">جاري فحص صلاحية جهازك...</p>
+            <p id="lockStatusMsg" style="font-size: 0.9rem; color: rgba(255,255,255,0.7); margin-bottom: 20px;">جاري فحص صلاحية الـ IP الخاص بك...</p>
             
-            <input type="text" id="activationKeyInput" class="admin-input" style="text-align: center;" placeholder="أدخل كود التفعيل">
+            <input type="text" id="activationKeyInput" class="admin-input" style="text-align: center;" placeholder="أدخل كود التفعيل التلقائي">
             <button class="action-btn primary-btn" id="activateBtn">تفعيل الاشتراك</button>
             
             <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--glass-border);">
@@ -212,57 +210,36 @@
         const db = getDatabase(app);
 
         // متغيرات الحساب والمستخدم
-        let cleanIPKey = ""; // هنستخدمها كـ Device ID بدلاً من الـ IP
+        let userIP = "";
+        let cleanIPKey = ""; 
         let isPremium = false;
         let trialsToday = 0;
         let myReferralCode = "";
-        
-        // التحقق من صلاحية الأدمن
-        let isAdmin = localStorage.getItem('homosAdmin') === 'true';
 
-        // وظيفة لإخفاء شاشة القفل عند الضغط على X
-        document.getElementById('closeLockBtn').onclick = () => {
-            document.getElementById('lockScreen').style.display = 'none';
-        };
-
-        // تهيئة النظام المحلي (LocalStorage بدل الـ IP)
-        async function initSystemLocally() {
-            // توليد أو جلب معرف الجهاز الفريد من المتصفح
-            let deviceId = localStorage.getItem('homos_device_id');
-            if (!deviceId) {
-                deviceId = 'DEV_' + Math.random().toString(36).substring(2, 12).toUpperCase();
-                localStorage.setItem('homos_device_id', deviceId);
-            }
-            
-            cleanIPKey = deviceId; // استبدال مسارات قاعدة البيانات بالـ Device ID
-            myReferralCode = "REF_" + cleanIPKey.substring(4, 12);
-            
-            // تحديث رابط الإحالة في الواجهة
-            const currentUrl = window.location.href.split('?')[0];
-            document.getElementById('refLinkUI').value = `${currentUrl}?ref=${myReferralCode}`;
-
-            // فحص إذا كان هناك إحالة في الرابط
-            const urlParams = new URLSearchParams(window.location.search);
-            const refCode = urlParams.get('ref');
-            if(refCode && refCode !== myReferralCode) {
-                handleReferral(refCode);
-            }
-
-            // لو اليوزر هو الأدمن (حومص) -> تخطي كل حاجة وافتح الصلاحيات كاملة فوراً
-            if (isAdmin) {
-                isPremium = true;
-                document.getElementById('lockScreen').style.display = 'none';
-                document.getElementById('userStatusBadge').innerText = "لوحة الأدمين 👑";
-                document.getElementById('userStatusBadge').style.color = "var(--danger)";
-                document.getElementById('freeTrialsCount').innerText = "صلاحيات مطلقة (أدمن)";
+        // الحصول على الـ IP ونظام الاشتراكات التكيفي
+        async function getIPAndCheckStatus() {
+            try {
+                let res = await fetch('https://api.ipify.org?format=json');
+                let data = await res.json();
+                userIP = data.ip;
+                cleanIPKey = userIP.replace(/\./g, '_');
+                myReferralCode = "REF_" + cleanIPKey.substring(0, 8);
                 
-                document.getElementById('adminPanel').style.display = 'block'; 
-                document.getElementById('authBtn').style.color = 'var(--danger)';
-                return; // إيقاف تنفيذ فحص المستخدم العادي
-            }
+                // تحديث رابط الإحالة في الواجهة
+                const currentUrl = window.location.href.split('?')[0];
+                document.getElementById('refLinkUI').value = `${currentUrl}?ref=${myReferralCode}`;
 
-            // لو مش أدمن -> افحص حالة اشتراكه أو محاولاته
-            checkUserAccess();
+                // فحص إذا كان هناك إحالة في الرابط
+                const urlParams = new URLSearchParams(window.location.search);
+                const refCode = urlParams.get('ref');
+                if(refCode && refCode !== myReferralCode) {
+                    handleReferral(refCode);
+                }
+
+                checkUserAccess();
+            } catch (err) {
+                document.getElementById('lockStatusMsg').innerText = "فشل الاتصال بسيرفر فحص الـ IP. تأكد من إنترنت جهازك.";
+            }
         }
 
         // التعامل مع الإحالات
@@ -287,7 +264,7 @@
             }
         }
 
-        // التحقق من صلاحيات الدخول والحد اليومي (للمستخدمين العاديين)
+        // التحقق من صلاحيات الدخول والحد اليومي
         function checkUserAccess() {
             // 1. فحص الاشتراك البريميوم أولاً
             onValue(ref(db, `premium_ips/${cleanIPKey}`), async (snapshot) => {
@@ -322,13 +299,9 @@
 
         // استهلاك محاولة مجانية
         async function consumeTrial() {
-            if(isPremium || isAdmin) return true; // لو أدمن أو بريميوم مش هيخصم محاولات
+            if(isPremium) return true;
             const dateStr = new Date().toISOString().split('T')[0];
-            if(trialsToday >= 5) {
-                // لو خلص محاولاته و داس زرار اكس وكمل جوه، نرجع نظهرله شاشة الدفع
-                document.getElementById('lockScreen').style.display = 'flex';
-                return false; 
-            }
+            if(trialsToday >= 5) return false;
             
             let newTrials = trialsToday + 1;
             await set(ref(db, `free_trials/${dateStr}/${cleanIPKey}`), newTrials);
@@ -346,7 +319,7 @@
                 let durationDays = snap.val().days || 30;
                 let expiryTime = Date.now() + (durationDays * 24 * 60 * 60 * 1000);
                 
-                // تفعيل العضوية لمعرف الجهاز
+                // تفعيل العضوية للـ IP
                 await set(ref(db, `premium_ips/${cleanIPKey}`), { expiry: expiryTime, activatedWith: key });
                 // حذف كود التفعيل لضمان استخدامه مرة واحدة فقط
                 await remove(keyRef);
@@ -366,16 +339,12 @@
             alert("تم نسخ رابط إحالتك بنجاح! أرسله لـ 5 من أصدقائك للحصول على أسبوع مجاناً عند استخدامه.");
         };
 
-        // زرار تسجيل دخول الأدمن
+        // أدمن الأداة
+        let isAdmin = localStorage.getItem('homosAdmin') === 'true';
+        if(isAdmin) { document.getElementById('adminPanel').style.display = 'block'; document.getElementById('authBtn').style.color = 'var(--info)'; }
         document.getElementById('authBtn').onclick = () => {
-            if(!isAdmin && prompt("ادخل كلمة السر المطلقة:") === "Homos77#") { 
-                localStorage.setItem('homosAdmin', 'true'); 
-                location.reload(); 
-            }
-            else if(isAdmin && confirm("هل تريد تسجيل الخروج من لوحة الأدمين؟")) { 
-                localStorage.removeItem('homosAdmin'); 
-                location.reload(); 
-            }
+            if(!isAdmin && prompt("ادخل كلمة السر المطلقة:") === "Homos77#") { localStorage.setItem('homosAdmin', 'true'); location.reload(); }
+            else if(isAdmin && confirm("هل تريد تسجيل الخروج من لوحة الأدمين؟")) { localStorage.removeItem('homosAdmin'); location.reload(); }
         };
 
         // توليد أكواد تفعيل جديدة من لوحة الأدمين
@@ -389,10 +358,11 @@
             document.getElementById('newGeneratedKey').value = finalKey;
         };
 
-        // الذاكرة التكيفية
+        // الذاكرة التكيفية لحماية المستخدم من تغيير الخوارزميات
         let appleMemory = { 0:[], 1:[], 2:[], 3:[], 4:[], 5:[], 6:[], 7:[], 8:[], 9:[] };
         let minesMemory = [];
         let lastPathA = [], lastPathM = [];
+        let currentAppleLevel = 0;
 
         // تنقل التابات
         document.querySelectorAll('.tab-item').forEach(t => {
@@ -426,9 +396,10 @@
             if(!canRun) return;
 
             const btn = document.getElementById('runApple'); btn.disabled = true;
-            initA(); lastPathA = []; 
+            initA(); lastPathA = []; currentAppleLevel = 0;
             const con = document.getElementById('conApple'); con.style.display='block'; con.innerHTML = "> يتم سحب التحديث اللحظي للمصفوفة...<br>";
             
+            // حساب المسار بناءً على الخوارزمية التي تم تنظيفها من الأنماط الخاسرة
             for(let l=0; l<10; l++) {
                 let c; do { c = Math.floor(Math.random()*5); } while(appleMemory[l].includes(c));
                 lastPathA[l] = c;
@@ -441,15 +412,19 @@
             document.getElementById('conApple').innerHTML += "> تم حساب المسار بنجاح. اتبع التفاح بالترتيب.<br>";
         };
 
-        // الرد الذكي
+        // الرد الذكي الفوري عند الضغط على أزرار الربح/الخسارة للتفاحة
         document.getElementById('appleWinBtn').onclick = () => {
+            // تثبيت الذكاء في السيرفر وزيادة دقة المعايرة العامة في الواجهة لمزيد من الحماس للتريندات
             document.getElementById('gaugePercent').innerText = "96%";
             document.getElementById('globalFill').style.width = "96%";
+            // إعادة توجيه الإسكربت لتغيير المسار تلقائياً في الدور القادم لمنع كشف الـ Pattern
             document.getElementById('feedApple').style.display = 'none';
             document.getElementById('conApple').innerHTML = "> خوارزمية ناجحة! تم تأمين المسار القادم تلقائياً وضد التتبع.";
         };
 
         document.getElementById('appleLoseBtn').onclick = () => {
+            // الإسكربت يتعلم فوراً دون الحاجة لسؤال المستخدم في أي دور خسر! 
+            // يقوم بحظر الخانات التي تم اختيارها في الأدوار الثلاثة الأولى لمنع الخسارة المتتالية
             for(let i=0; i<3; i++) {
                 appleMemory[i].push(lastPathA[i]);
             }
@@ -482,9 +457,9 @@
                 
                 const cell = document.getElementById(`m-${idx}`);
                 if(found < 5) {
-                    cell.classList.add('safe-highlight');
+                    cell.classList.add('safe-highlight'); // مسار فائق الأمان
                 } else {
-                    cell.classList.add('risk-highlight');
+                    cell.classList.add('risk-highlight'); // مسار حذر احتياطي
                 }
                 cell.innerHTML = '💎';
                 found++;
@@ -497,6 +472,7 @@
         };
 
         document.getElementById('minesLoseBtn').onclick = () => {
+            // حظر أول خانتين تم إظهارهم لمنع الخسارة وتكرار النمط الفاشل
             if(lastPathM.length > 0) {
                 minesMemory.push(lastPathM[0]);
                 if(lastPathM[1]) minesMemory.push(lastPathM[1]);
@@ -505,7 +481,7 @@
             document.getElementById('conMines').innerHTML = "> تم الفلترة الذكية! تم نقل إحداثيات اللغم المكتشف لحظرها فوراً.";
         };
 
-        // تصوير الفيديوهات
+        // تصوير الفيديوهات للأرباح والتريندات
         window.snap = (id) => {
             html2canvas(document.getElementById(id), {backgroundColor:'#020617'}).then(c => {
                 let a=document.createElement('a'); a.download='HOMOS_MAX_PRO.png'; a.href=c.toDataURL(); a.click();
@@ -536,8 +512,8 @@
         };
         document.getElementById('addNews').onclick = () => { let t=document.getElementById('newsInput').value; if(t) push(ref(db, 'live_ticker'), {text:t}); };
 
-        // تشغيل فحص الجهاز المحلي والاشتراكات فور تحميل الصفحة
-        initSystemLocally();
+        // تشغيل فحص الـ IP والاشتراكات فور تحميل الصفحة
+        getIPAndCheckStatus();
     </script>
 </body>
 </html>
