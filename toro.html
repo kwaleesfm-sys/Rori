@@ -16,8 +16,6 @@
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .dice-spin { animation: spin 0.3s linear infinite; }
         .view-hidden { display: none !important; }
-        
-        /* Custom Scrollbar for Admin Panel */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
         ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
@@ -28,17 +26,26 @@
     <!-- Auth System -->
     <div id="authView" class="fixed inset-0 z-[100] bg-slate-950 flex flex-col items-center justify-center p-6">
         <h1 class="text-6xl font-black text-blue-500 italic mb-8">WINNIX</h1>
-        <div class="w-full max-w-sm space-y-4">
-            <input type="email" id="emailInput" class="w-full bg-slate-900 p-4 rounded-xl text-center outline-none border border-slate-800 focus:border-blue-500" placeholder="البريد الإلكتروني">
-            <input type="password" id="passInput" class="w-full bg-slate-900 p-4 rounded-xl text-center outline-none border border-slate-800 focus:border-blue-500" placeholder="كلمة المرور">
-            <button id="loginBtn" class="w-full bg-blue-600 py-4 rounded-xl font-black text-lg shadow-lg">تسجيل الدخول / إنشاء حساب</button>
+        <div class="w-full max-w-sm">
+            <!-- Tabs -->
+            <div class="flex bg-slate-900 rounded-xl mb-4 overflow-hidden border border-slate-800">
+                <button id="tabLogin" class="flex-1 p-3 bg-blue-600 text-white font-bold transition" onclick="toggleAuth('login')">تسجيل دخول</button>
+                <button id="tabReg" class="flex-1 p-3 text-slate-400 font-bold transition" onclick="toggleAuth('reg')">حساب جديد</button>
+            </div>
+            <!-- Form -->
+            <div class="space-y-4">
+                <input type="text" id="nameInput" class="hidden w-full bg-slate-900 p-4 rounded-xl text-center outline-none border border-slate-800 focus:border-blue-500" placeholder="الاسم كامل">
+                <input type="email" id="emailInput" class="w-full bg-slate-900 p-4 rounded-xl text-center outline-none border border-slate-800 focus:border-blue-500" placeholder="البريد الإلكتروني">
+                <input type="password" id="passInput" class="w-full bg-slate-900 p-4 rounded-xl text-center outline-none border border-slate-800 focus:border-blue-500" placeholder="كلمة المرور">
+                <button id="authActionBtn" class="w-full bg-blue-600 py-4 rounded-xl font-black text-lg shadow-lg">تسجيل الدخول</button>
+            </div>
         </div>
     </div>
 
     <!-- Header & Balance -->
     <header id="appHeader" class="fixed top-0 w-full glass z-50 p-4 flex justify-between items-center view-hidden border-b border-white/5">
         <div class="flex flex-col">
-            <span id="userEmailDisplay" class="text-[10px] text-slate-400 font-bold"></span>
+            <span id="userNameDisplay" class="text-sm font-black text-white"></span>
             <button id="navAdminBtn" onclick="ui.route('admin')" class="view-hidden text-xs text-amber-500 font-bold mt-1 text-right"><i class="fa-solid fa-crown"></i> لوحة الإدارة</button>
         </div>
         <div class="flex items-center gap-2 bg-slate-900 p-2 rounded-xl border border-slate-800">
@@ -145,14 +152,14 @@
             
             <div class="bg-slate-900 p-4 rounded-2xl border border-slate-700 mb-6">
                 <h3 class="font-bold text-green-500 mb-4 border-b border-slate-700 pb-2">طلبات الإيداع المعلقة</h3>
-                <div id="adminDeposits" class="space-y-4 max-h-60 overflow-y-auto">
+                <div id="adminDeposits" class="space-y-4 max-h-96 overflow-y-auto">
                     <p class="text-xs text-slate-500 text-center">لا توجد طلبات</p>
                 </div>
             </div>
 
             <div class="bg-slate-900 p-4 rounded-2xl border border-slate-700 mb-20">
                 <h3 class="font-bold text-red-500 mb-4 border-b border-slate-700 pb-2">طلبات السحب المعلقة</h3>
-                <div id="adminWithdrawals" class="space-y-4 max-h-60 overflow-y-auto">
+                <div id="adminWithdrawals" class="space-y-4 max-h-96 overflow-y-auto">
                     <p class="text-xs text-slate-500 text-center">لا توجد طلبات</p>
                 </div>
             </div>
@@ -227,10 +234,11 @@
 
         const ADMIN_EMAIL = "ahmedfouad01278837444@gmail.com";
         let currentUser = null;
-        let userBalance = 0;
+        let currentUserData = { name: '', balance: 0 };
         let base64Image = null;
+        let authMode = 'login';
 
-        // --- UI ROUTER ---
+        // --- UI ROUTER & TOGGLES ---
         window.ui = {
             route: (viewId) => {
                 document.querySelectorAll('.view-section').forEach(el => el.classList.add('view-hidden'));
@@ -247,23 +255,53 @@
             }
         };
 
+        window.toggleAuth = (mode) => {
+            authMode = mode;
+            if(mode === 'login') {
+                document.getElementById('nameInput').classList.add('hidden');
+                document.getElementById('tabLogin').classList.replace('text-slate-400', 'bg-blue-600');
+                document.getElementById('tabLogin').classList.add('text-white');
+                document.getElementById('tabReg').classList.remove('bg-blue-600', 'text-white');
+                document.getElementById('tabReg').classList.add('text-slate-400');
+                document.getElementById('authActionBtn').innerText = "تسجيل الدخول";
+            } else {
+                document.getElementById('nameInput').classList.remove('hidden');
+                document.getElementById('tabReg').classList.replace('text-slate-400', 'bg-blue-600');
+                document.getElementById('tabReg').classList.add('text-white');
+                document.getElementById('tabLogin').classList.remove('bg-blue-600', 'text-white');
+                document.getElementById('tabLogin').classList.add('text-slate-400');
+                document.getElementById('authActionBtn').innerText = "إنشاء حساب";
+            }
+        };
+
         // --- AUTH ---
-        document.getElementById('loginBtn').addEventListener('click', async () => {
+        document.getElementById('authActionBtn').addEventListener('click', async () => {
+            const name = document.getElementById('nameInput').value.trim();
             const email = document.getElementById('emailInput').value.trim();
             const pass = document.getElementById('passInput').value;
-            const btn = document.getElementById('loginBtn');
-            btn.innerText = "جاري التحميل...";
-            btn.disabled = true;
+            const btn = document.getElementById('authActionBtn');
+
+            if(!email || !pass) return alert("يرجى إدخال الإيميل والباسورد");
+            
+            btn.innerText = "جاري التحميل..."; btn.disabled = true;
 
             try {
-                await signInWithEmailAndPassword(auth, email, pass);
+                if(authMode === 'login') {
+                    await signInWithEmailAndPassword(auth, email, pass);
+                } else {
+                    if(!name) { alert("يرجى إدخال اسمك أولاً"); throw new Error("no_name"); }
+                    const userCred = await createUserWithEmailAndPassword(auth, email, pass);
+                    // حفظ بيانات المستخدم مع اسمه في قاعدة البيانات
+                    await set(ref(db, 'users/' + userCred.user.uid), { balance: 0, email: email, name: name });
+                }
             } catch (error) {
-                if(error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
-                    try {
-                        const userCred = await createUserWithEmailAndPassword(auth, email, pass);
-                        await set(ref(db, 'users/' + userCred.user.uid), { balance: 0, email: email });
-                    } catch(e) { alert(e.message); btn.innerText = "تسجيل الدخول / إنشاء حساب"; btn.disabled = false; }
-                } else { alert("خطأ في البيانات"); btn.innerText = "تسجيل الدخول / إنشاء حساب"; btn.disabled = false; }
+                if(error.message !== "no_name") {
+                    if(error.code === 'auth/email-already-in-use') alert("هذا الإيميل مسجل بالفعل، يرجى تسجيل الدخول.");
+                    else if(error.code === 'auth/invalid-credential') alert("الإيميل أو الباسورد غلط.");
+                    else alert(error.message);
+                }
+                btn.innerText = authMode === 'login' ? "تسجيل الدخول" : "إنشاء حساب"; 
+                btn.disabled = false;
             }
         });
 
@@ -274,19 +312,24 @@
                 document.getElementById('appHeader').classList.remove('view-hidden');
                 document.getElementById('mainApp').classList.remove('view-hidden');
                 document.getElementById('appNav').classList.remove('view-hidden');
-                document.getElementById('userEmailDisplay').innerText = user.email;
 
                 if(user.email === ADMIN_EMAIL) {
                     document.getElementById('navAdminBtn').classList.remove('view-hidden');
                 }
 
-                onValue(ref(db, 'users/' + user.uid + '/balance'), (snapshot) => {
-                    userBalance = parseFloat(snapshot.val()) || 0;
-                    document.getElementById('balanceDisplay').innerText = userBalance.toFixed(2);
+                // جلب اسم ورصيد المستخدم
+                onValue(ref(db, 'users/' + user.uid), (snapshot) => {
+                    const data = snapshot.val();
+                    if(data) {
+                        currentUserData.name = data.name || user.email.split('@')[0];
+                        currentUserData.balance = parseFloat(data.balance) || 0;
+                        document.getElementById('userNameDisplay').innerText = currentUserData.name;
+                        document.getElementById('balanceDisplay').innerText = currentUserData.balance.toFixed(2);
+                    }
                 });
                 
                 ui.route('home');
-                games.crash.initSys(); // start global crash loop
+                games.crash.initSys();
                 games.apples.build();
             }
         });
@@ -303,8 +346,7 @@
                     const ctx = canvas.getContext('2d');
                     const MAX_WIDTH = 400;
                     const scaleSize = MAX_WIDTH / img.width;
-                    canvas.width = MAX_WIDTH;
-                    canvas.height = img.height * scaleSize;
+                    canvas.width = MAX_WIDTH; canvas.height = img.height * scaleSize;
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
                     base64Image = canvas.toDataURL('image/jpeg', 0.6);
                     document.getElementById('uploadStatus').classList.remove('hidden');
@@ -321,17 +363,16 @@
             if(amount < 15) return alert("أقل مبلغ للإيداع هو 15 جنيه");
             if(!phone || !base64Image) return alert("يرجى إدخال الرقم ورفع الإيصال");
 
+            // بنبعت اسم اليوزر مع الطلب عشان يظهر للآدمن
             await set(push(ref(db, 'deposits')), {
-                uid: currentUser.uid, email: currentUser.email, amount: amount, phone: phone,
-                receiptBase64: base64Image, status: 'pending', timestamp: Date.now()
+                uid: currentUser.uid, name: currentUserData.name, email: currentUser.email, 
+                amount: amount, phone: phone, receiptBase64: base64Image, status: 'pending', timestamp: Date.now()
             });
 
             alert("تم إرسال طلب الإيداع للآدمن!");
             ui.hideModal('depositModal');
-            document.getElementById('depAmount').value = '';
-            document.getElementById('depPhone').value = '';
-            document.getElementById('uploadStatus').classList.add('hidden');
-            base64Image = null;
+            document.getElementById('depAmount').value = ''; document.getElementById('depPhone').value = '';
+            document.getElementById('uploadStatus').classList.add('hidden'); base64Image = null;
         });
 
         document.getElementById('submitWithdrawBtn').addEventListener('click', async () => {
@@ -339,76 +380,74 @@
             const phone = document.getElementById('withPhone').value;
             
             if(amount < 50) return alert("أقل مبلغ للسحب هو 50 جنيه");
-            if(amount > userBalance) return alert("الرصيد غير كافي");
+            if(amount > currentUserData.balance) return alert("الرصيد غير كافي");
             if(!phone) return alert("يرجى إدخال رقم كاش");
 
-            // Deduct immediately
-            await update(ref(db, 'users/' + currentUser.uid), { balance: userBalance - amount });
+            await update(ref(db, 'users/' + currentUser.uid), { balance: currentUserData.balance - amount });
             
             await set(push(ref(db, 'withdrawals')), {
-                uid: currentUser.uid, email: currentUser.email, amount: amount, phone: phone,
-                status: 'pending', timestamp: Date.now()
+                uid: currentUser.uid, name: currentUserData.name, email: currentUser.email, 
+                amount: amount, phone: phone, status: 'pending', timestamp: Date.now()
             });
 
             alert("تم إرسال طلب السحب للآدمن، وتم خصم المبلغ مؤقتاً.");
-            ui.hideModal('withdrawModal');
-            document.getElementById('withAmount').value = '';
+            ui.hideModal('withdrawModal'); document.getElementById('withAmount').value = '';
         });
 
         // --- ADMIN SYSTEM ---
         window.admin = {
             loadRequests() {
-                // Load Deposits
                 onValue(ref(db, 'deposits'), (snapshot) => {
-                    const cont = document.getElementById('adminDeposits');
-                    cont.innerHTML = '';
-                    let hasDep = false;
+                    const cont = document.getElementById('adminDeposits'); cont.innerHTML = ''; let hasDep = false;
                     snapshot.forEach(child => {
                         const data = child.val();
                         if(data.status === 'pending') {
                             hasDep = true;
                             cont.innerHTML += `
-                                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-sm">
-                                    <div class="flex justify-between mb-2"><span>${data.email}</span><span class="text-green-500 font-black">+${data.amount}</span></div>
-                                    <div class="text-slate-400 text-xs mb-2">رقم: ${data.phone}</div>
-                                    <img src="${data.receiptBase64}" class="w-full h-24 object-cover rounded mb-2 border border-slate-700">
+                                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-sm mb-3">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <span class="font-black text-white text-lg">${data.name || 'بدون اسم'}</span>
+                                        <span class="text-green-500 font-black text-lg">+${data.amount} ج</span>
+                                    </div>
+                                    <div class="text-slate-400 text-xs mb-3">رقم المحول: <span class="font-bold text-white tracking-widest">${data.phone}</span></div>
+                                    <img src="${data.receiptBase64}" class="w-full h-32 object-contain bg-black rounded mb-3 border border-slate-700">
                                     <div class="flex gap-2">
-                                        <button onclick="admin.actionDep('${child.key}', '${data.uid}', ${data.amount}, 'approve')" class="flex-1 bg-green-600 py-2 rounded font-bold">قبول</button>
-                                        <button onclick="admin.actionDep('${child.key}', '${data.uid}', ${data.amount}, 'reject')" class="flex-1 bg-red-600 py-2 rounded font-bold">رفض</button>
+                                        <button onclick="admin.actionDep('${child.key}', '${data.uid}', ${data.amount}, 'approve')" class="flex-1 bg-green-600 py-2 rounded font-bold">إضافة الرصيد</button>
+                                        <button onclick="admin.actionDep('${child.key}', '${data.uid}', ${data.amount}, 'reject')" class="flex-1 bg-red-600 py-2 rounded font-bold">رفض الطلب</button>
                                     </div>
                                 </div>
                             `;
                         }
                     });
-                    if(!hasDep) cont.innerHTML = '<p class="text-xs text-slate-500 text-center">لا توجد طلبات</p>';
+                    if(!hasDep) cont.innerHTML = '<p class="text-xs text-slate-500 text-center py-4">لا توجد طلبات إيداع</p>';
                 });
 
-                // Load Withdrawals
                 onValue(ref(db, 'withdrawals'), (snapshot) => {
-                    const cont = document.getElementById('adminWithdrawals');
-                    cont.innerHTML = '';
-                    let hasWith = false;
+                    const cont = document.getElementById('adminWithdrawals'); cont.innerHTML = ''; let hasWith = false;
                     snapshot.forEach(child => {
                         const data = child.val();
                         if(data.status === 'pending') {
                             hasWith = true;
                             cont.innerHTML += `
-                                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-sm">
-                                    <div class="flex justify-between mb-2"><span>${data.email}</span><span class="text-red-500 font-black">-${data.amount}</span></div>
-                                    <div class="text-slate-400 text-xs mb-2">يحول إلى: <span class="text-white font-bold tracking-widest">${data.phone}</span></div>
+                                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-sm mb-3">
+                                    <div class="flex justify-between items-center mb-1">
+                                        <span class="font-black text-white text-lg">${data.name || 'بدون اسم'}</span>
+                                        <span class="text-red-500 font-black text-lg">-${data.amount} ج</span>
+                                    </div>
+                                    <div class="text-slate-400 text-xs mb-3">حول الفلوس للرقم ده: <br><span class="text-amber-500 text-lg font-black tracking-widest block mt-1">${data.phone}</span></div>
                                     <div class="flex gap-2">
-                                        <button onclick="admin.actionWith('${child.key}', '${data.uid}', ${data.amount}, 'approve')" class="flex-1 bg-green-600 py-2 rounded font-bold">تم التحويل</button>
-                                        <button onclick="admin.actionWith('${child.key}', '${data.uid}', ${data.amount}, 'reject')" class="flex-1 bg-red-600 py-2 rounded font-bold">رفض (إرجاع)</button>
+                                        <button onclick="admin.actionWith('${child.key}', '${data.uid}', ${data.amount}, 'approve')" class="flex-1 bg-green-600 py-2 rounded font-bold">تم التحويل (تأكيد)</button>
+                                        <button onclick="admin.actionWith('${child.key}', '${data.uid}', ${data.amount}, 'reject')" class="flex-1 bg-red-600 py-2 rounded font-bold">رفض (إرجاع الرصيد)</button>
                                     </div>
                                 </div>
                             `;
                         }
                     });
-                    if(!hasWith) cont.innerHTML = '<p class="text-xs text-slate-500 text-center">لا توجد طلبات</p>';
+                    if(!hasWith) cont.innerHTML = '<p class="text-xs text-slate-500 text-center py-4">لا توجد طلبات سحب</p>';
                 });
             },
             async actionDep(key, uid, amount, action) {
-                if(!confirm("تأكيد الإجراء؟")) return;
+                if(!confirm("تأكيد العملية؟")) return;
                 await update(ref(db, `deposits/${key}`), { status: action });
                 if(action === 'approve') {
                     const uRef = ref(db, `users/${uid}/balance`);
@@ -417,10 +456,9 @@
                 }
             },
             async actionWith(key, uid, amount, action) {
-                if(!confirm("تأكيد الإجراء؟")) return;
+                if(!confirm("تأكيد العملية؟")) return;
                 await update(ref(db, `withdrawals/${key}`), { status: action });
                 if(action === 'reject') {
-                    // refund
                     const uRef = ref(db, `users/${uid}/balance`);
                     const snap = await get(uRef);
                     await set(uRef, (parseFloat(snap.val()) || 0) + amount);
@@ -430,27 +468,22 @@
 
         // --- GAMES LOGIC ---
         window.games = {
-            async updateBal(amt) {
-                await update(ref(db, 'users/' + currentUser.uid), { balance: userBalance + amt });
-            },
+            async updateBal(amt) { await update(ref(db, 'users/' + currentUser.uid), { balance: currentUserData.balance + amt }); },
 
-            // 1. MINES (التأديب)
             mines: {
                 active: false, bet: 0, mult: 1.0, safePicks: 0, bombs: [],
                 init() {
-                    const grid = document.getElementById('minesGrid');
-                    grid.innerHTML = '';
+                    const grid = document.getElementById('minesGrid'); grid.innerHTML = '';
                     for(let i=0; i<25; i++) grid.innerHTML += `<div id="mb_${i}" onclick="games.mines.pick(${i})" class="bg-slate-800 aspect-square rounded-lg flex items-center justify-center text-xl cursor-pointer border border-slate-700 mine-box">❓</div>`;
                 },
                 async start() {
                     if(this.active) return;
                     const amt = parseFloat(document.getElementById('minesBet').value);
-                    if(amt <= 0 || userBalance < amt) return alert("رصيد غير كافي");
+                    if(amt <= 0 || currentUserData.balance < amt) return alert("رصيد غير كافي");
                     
                     await games.updateBal(-amt);
                     this.bet = amt; this.mult = 1.0; this.safePicks = 0; this.active = true;
-                    document.getElementById('minesMult').innerText = "1.00x";
-                    document.getElementById('minesPot').innerText = amt.toFixed(2);
+                    document.getElementById('minesMult').innerText = "1.00x"; document.getElementById('minesPot').innerText = amt.toFixed(2);
                     
                     this.bombs = [];
                     while(this.bombs.length < 2) { let r = Math.floor(Math.random() * 25); if(!this.bombs.includes(r)) this.bombs.push(r); }
@@ -459,14 +492,12 @@
                     document.getElementById('minesControls').innerHTML = `<button onclick="games.mines.cashout()" class="col-span-2 bg-emerald-600 rounded-xl py-3 font-black">سحب الأرباح</button>`;
                 },
                 async pick(index) {
-                    if(!this.active) return;
-                    const box = document.getElementById(`mb_${index}`);
-                    if(box.classList.contains('revealed')) return;
-                    box.classList.add('revealed');
+                    if(!this.active) return; const box = document.getElementById(`mb_${index}`);
+                    if(box.classList.contains('revealed')) return; box.classList.add('revealed');
                     
                     if(this.bombs.includes(index)) {
                         box.innerHTML = '💣'; box.classList.replace('bg-slate-800', 'bg-red-600');
-                        this.active = false; this.revealAll(); alert("خسرت!"); this.reset();
+                        this.active = false; this.revealAll(); alert("خسرت الجولة!"); this.reset();
                     } else {
                         box.innerHTML = '💎'; box.classList.replace('bg-slate-800', 'bg-blue-600');
                         this.safePicks++;
@@ -478,24 +509,16 @@
                     }
                 },
                 async cashout() {
-                    if(!this.active) return;
-                    const win = this.bet * this.mult;
+                    if(!this.active) return; const win = this.bet * this.mult;
                     await games.updateBal(win);
-                    this.active = false; this.revealAll(); alert(`ربحت ${win.toFixed(2)}`); this.reset();
+                    this.active = false; this.revealAll(); alert(`ألف مبروك! ربحت ${win.toFixed(2)}`); this.reset();
                 },
-                revealAll() { this.bombs.forEach(i => { const b = document.getElementById(`mb_${i}`); b.innerHTML='💣'; b.classList.add('revealed'); }); },
-                reset() {
-                    setTimeout(() => {
-                        document.getElementById('minesControls').innerHTML = `<input type="number" id="minesBet" value="10" class="bg-slate-950 p-3 rounded-xl text-center font-bold outline-none border border-slate-800"><button onclick="games.mines.start()" class="bg-emerald-600 rounded-xl font-black">بدء الجولة</button>`;
-                        this.init();
-                    }, 1500);
-                }
+                revealAll() { this.bombs.forEach(i => { const b = document.getElementById(`mb_${i}`); b.innerHTML='💣'; b.classList.add('revealed'); b.classList.replace('bg-slate-800', 'bg-red-600'); }); },
+                reset() { setTimeout(() => { document.getElementById('minesControls').innerHTML = `<input type="number" id="minesBet" value="10" class="bg-slate-950 p-3 rounded-xl text-center font-bold outline-none border border-slate-800"><button onclick="games.mines.start()" class="bg-emerald-600 rounded-xl font-black">بدء الجولة</button>`; this.init(); }, 1500); }
             },
 
-            // 2. CRASH (كراش)
             crash: {
-                sys: { status: 'WAITING', mult: 1.00, target: 2.00 },
-                myBet: 0, cashed: false,
+                sys: { status: 'WAITING', mult: 1.00, target: 2.00 }, myBet: 0, cashed: false,
                 initSys() {
                     const tick = () => {
                         if(this.sys.status === 'RUNNING') {
@@ -509,6 +532,7 @@
                 resetSys() {
                     this.sys.status = 'WAITING'; this.sys.mult = 1.00;
                     const r = Math.random();
+                    // 10% chance to crash at 1.00 (House Profit)
                     if(r < 0.1) this.sys.target = 1.00; else if(r < 0.8) this.sys.target = 1.1 + Math.random() * 2.5; else this.sys.target = 3.5 + Math.random() * 15;
                     setTimeout(() => { if(this.sys.status === 'WAITING') this.sys.status = 'RUNNING'; }, 4000);
                 },
@@ -516,33 +540,30 @@
                     const el = document.getElementById('crash_mult'); const msg = document.getElementById('crash_msg'); const btn = document.getElementById('cBtn');
                     if(this.sys.status === 'WAITING') {
                         el.innerText = "WAITING"; el.style.color = "white"; msg.innerText = "تجهيز الجولة...";
-                        if(!this.myBet) { btn.innerText = "رهان"; btn.className = "bg-blue-600 rounded-2xl font-black text-xl"; btn.disabled = false; }
+                        if(!this.myBet) { btn.innerText = "رهان"; btn.className = "bg-blue-600 rounded-2xl font-black text-xl shadow-lg"; btn.disabled = false; }
                     } else if(this.sys.status === 'RUNNING') {
                         el.innerText = this.sys.mult.toFixed(2) + "x"; el.style.color = "#3b82f6"; msg.innerText = "الصاروخ يحلق!";
-                        if(this.myBet && !this.cashed) { btn.innerText = "سحب " + (this.myBet * this.sys.mult).toFixed(2); btn.className = "bg-orange-500 text-black rounded-2xl font-black text-xl"; btn.disabled = false; }
+                        if(this.myBet && !this.cashed) { btn.innerText = "سحب " + (this.myBet * this.sys.mult).toFixed(2); btn.className = "bg-orange-500 text-black rounded-2xl font-black text-xl shadow-lg"; btn.disabled = false; }
                     } else {
-                        el.innerText = "BOOM"; el.style.color = "#ef4444"; msg.innerText = "انفجر!";
+                        el.innerText = "BOOM"; el.style.color = "#ef4444"; msg.innerText = "انفجر الصاروخ!";
                         if(this.myBet && !this.cashed) { this.myBet = 0; } // lost
                     }
                 },
                 async handleAction() {
                     if(this.sys.status === 'WAITING') {
                         const amt = parseFloat(document.getElementById('cBet').value);
-                        if(amt <= 0 || userBalance < amt) return alert("رصيد غير كافي");
+                        if(amt <= 0 || currentUserData.balance < amt) return alert("رصيد غير كافي");
                         await games.updateBal(-amt);
                         this.myBet = amt; this.cashed = false;
                         document.getElementById('cBtn').innerText = "تم القبول"; document.getElementById('cBtn').disabled = true;
                     } else if(this.sys.status === 'RUNNING' && this.myBet && !this.cashed) {
-                        this.cashed = true;
-                        const win = this.myBet * this.sys.mult;
+                        this.cashed = true; const win = this.myBet * this.sys.mult;
                         await games.updateBal(win);
-                        alert(`ربحت ${win.toFixed(2)}`);
-                        this.myBet = 0;
+                        alert(`ربحت ${win.toFixed(2)}`); this.myBet = 0;
                     }
                 }
             },
 
-            // 3. APPLES (التفاحة)
             apples: {
                 level: 0, bet: 0, active: false,
                 build() {
@@ -555,17 +576,15 @@
                 },
                 async start() {
                     const amt = parseFloat(document.getElementById('aBet').value);
-                    if(amt <= 0 || userBalance < amt) return alert("رصيد غير كافي");
+                    if(amt <= 0 || currentUserData.balance < amt) return alert("رصيد غير كافي");
                     await games.updateBal(-amt);
-                    this.bet = amt; this.level = 0; this.active = true;
-                    this.build();
+                    this.bet = amt; this.level = 0; this.active = true; this.build();
                     document.getElementById('appleControls').innerHTML = `<button onclick="games.apples.cashout()" class="col-span-2 bg-orange-500 text-black rounded-xl py-3 font-black">سحب الأرباح</button>`;
                     this.updateRow();
                 },
                 updateRow() {
                     document.querySelectorAll('[id^="ar_"]').forEach(r => r.className = "flex gap-2 opacity-30 pointer-events-none");
-                    const r = document.getElementById(`ar_${this.level}`);
-                    if(r) r.className = "flex gap-2 active-row";
+                    const r = document.getElementById(`ar_${this.level}`); if(r) r.className = "flex gap-2 active-row";
                 },
                 async pick(r, c) {
                     if(!this.active || r !== this.level) return;
@@ -579,8 +598,7 @@
                         cell.innerText = "🍎"; cell.classList.replace('bg-slate-800', 'bg-green-600'); this.level++;
                         const mults = [1.2, 1.5, 1.93, 2.4, 3.8, 6.5, 12, 25, 50, 100];
                         const cm = mults[this.level-1];
-                        document.getElementById('appleMult').innerText = cm + "x";
-                        document.getElementById('applePot').innerText = (this.bet * cm).toFixed(2);
+                        document.getElementById('appleMult').innerText = cm + "x"; document.getElementById('applePot').innerText = (this.bet * cm).toFixed(2);
                         if(this.level >= 10) this.cashout(); else this.updateRow();
                     }
                 },
@@ -591,26 +609,19 @@
                     await games.updateBal(win);
                     this.active = false; alert(`ربحت ${win.toFixed(2)}`); this.reset();
                 },
-                reset() {
-                    setTimeout(() => {
-                        document.getElementById('appleMult').innerText = "1.00x"; document.getElementById('applePot').innerText = "0.00";
-                        document.getElementById('appleControls').innerHTML = `<input type="number" id="aBet" value="10" class="bg-slate-950 p-4 rounded-xl text-center font-bold outline-none border border-slate-800"><button onclick="games.apples.start()" class="bg-red-600 rounded-xl font-black">ابدأ</button>`;
-                        this.build();
-                    }, 1500);
-                }
+                reset() { setTimeout(() => { document.getElementById('appleMult').innerText = "1.00x"; document.getElementById('applePot').innerText = "0.00"; document.getElementById('appleControls').innerHTML = `<input type="number" id="aBet" value="10" class="bg-slate-950 p-4 rounded-xl text-center font-bold outline-none border border-slate-800"><button onclick="games.apples.start()" class="bg-red-600 rounded-xl font-black">ابدأ</button>`; this.build(); }, 1500); }
             },
 
-            // 4. DICE (حجر الزهر)
             dice: {
                 guess: 'over',
                 setGuess(g) {
                     this.guess = g;
-                    document.getElementById('dLess').className = g === 'under' ? "bg-amber-500 text-black p-4 rounded-xl font-black border-2 border-amber-500" : "bg-slate-950 p-4 rounded-xl font-bold border-2 border-transparent";
-                    document.getElementById('dMore').className = g === 'over' ? "bg-amber-500 text-black p-4 rounded-xl font-black border-2 border-amber-500" : "bg-slate-950 p-4 rounded-xl font-bold border-2 border-transparent";
+                    document.getElementById('dLess').className = g === 'under' ? "bg-amber-500 text-black p-4 rounded-xl font-black border-2 border-amber-500 transition" : "bg-slate-950 p-4 rounded-xl font-bold border-2 border-transparent transition";
+                    document.getElementById('dMore').className = g === 'over' ? "bg-amber-500 text-black p-4 rounded-xl font-black border-2 border-amber-500 transition" : "bg-slate-950 p-4 rounded-xl font-bold border-2 border-transparent transition";
                 },
                 async roll() {
                     const amt = parseFloat(document.getElementById('dBet').value);
-                    if(amt <= 0 || userBalance < amt) return alert("رصيد غير كافي");
+                    if(amt <= 0 || currentUserData.balance < amt) return alert("رصيد غير كافي");
                     
                     await games.updateBal(-amt);
                     const btn = document.getElementById('dBtn'); btn.disabled = true;
@@ -624,17 +635,16 @@
                         
                         const isUnder = num <= 3;
                         if((this.guess === 'under' && isUnder) || (this.guess === 'over' && !isUnder)) {
-                            const win = amt * 1.9;
+                            const win = amt * 1.9; // هنا ربح المنصة (اليوزر بياخد 1.9x والمنصة بتاخد الفرق)
                             await games.updateBal(win);
-                            alert(`كفو! الرقم ${num} فوز، ربحت ${win.toFixed(2)}`);
-                        } else { alert(`الرقم ${num}، خسارة!`); }
+                            alert(`مبروك! الرقم ${num}، ربحت ${win.toFixed(2)}`);
+                        } else { alert(`الرقم ${num}، حظ أوفر المرة القادمة!`); }
                         btn.disabled = false;
                     }, 800);
                 }
             }
         };
 
-        // Init Mines empty board on load
         window.games.mines.init();
     </script>
 </body>
